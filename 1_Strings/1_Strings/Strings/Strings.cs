@@ -59,7 +59,10 @@ namespace StringManipulationChallenge
         /// <returns></returns>
         public static string StringTrim(string usersStringWithWhiteSpace)
         {
-            throw new NotImplementedException("StringTrim method not implemented.");
+            string trimedStr = usersStringWithWhiteSpace.Trim();
+            return trimedStr;
+
+            //throw new NotImplementedException("StringTrim method not implemented.");
         }
 
         /// <summary>
