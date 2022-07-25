@@ -109,7 +109,7 @@ namespace RPSGame2
                         Console.WriteLine($"I'm sorry, {computerName} won this round.");
                         // update the tally for this gaming session of how many games the computer and the user have won.
                         computerWins += 1;// this method gives you the option of incrementing by more than 1.
-                        Console.WriteLine($"{player1Name}' score: {player1wins}\n Computer's score: {computerWins}")
+                        Console.WriteLine($"{player1Name}' score: {player1wins}\n Computer's score: {computerWins}");
                         isTie = false;
                     }
                 }
