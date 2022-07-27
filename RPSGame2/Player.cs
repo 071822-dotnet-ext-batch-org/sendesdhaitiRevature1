@@ -8,6 +8,7 @@ namespace RPSGame2
     public class Player
     {
         public string Username {get; set;}
+        private int win = 0;
         public DateTime DOB {get;set;}
 
         //The Player Constructors
@@ -18,6 +19,7 @@ namespace RPSGame2
         public Player(string username){
             this.Username = username;
         }//End of Player Construtor Scope
+
 
 
 

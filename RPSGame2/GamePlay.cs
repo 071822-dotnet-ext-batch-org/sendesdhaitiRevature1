@@ -9,6 +9,11 @@ namespace RPSGame2
     {
         //Add the data thats is obtained during 
         private Game CurrentGame;
+        internal Round CurrentRound;
+
+        private bool gameOn = true;
+        //List of games played
+
         //private Game.Gamer1
         internal void NewGame(){
             this.CurrentGame = new Game();
@@ -21,14 +26,25 @@ namespace RPSGame2
         
         internal string P1Name(string playerName){
             //playerName = this.currentGame.Gamer1.Username;
-            if (this.CurrentGame.Gamer1.Username == null){
-                this.CurrentGame.Gamer1.Username = playerName; //= playerName;
+            if (this.CurrentGame.Gamer.Username == null){
+                this.CurrentGame.Gamer.Username = playerName; //= playerName;
             }
-            return this.CurrentGame.Gamer1.Username;
+            return this.CurrentGame.Gamer.Username;
         }
 
         internal Player GetPlayerName(){
-            return this.CurrentGame.Gamer1;
+            return this.CurrentGame.Gamer;
+        }
+        internal void NewRound(){
+            this.CurrentRound = new Round();
+            //this.CurrentRound.RoundNumber = roundNum;
+            //return this.CurrentRound.RoundNumber;
+        }
+
+        internal int GetRound(int roundNum){
+            //this.CurrentRound = new Round();
+            this.CurrentRound.RoundNumber = roundNum;
+            return this.CurrentRound.RoundNumber;
         }
     }
 }
