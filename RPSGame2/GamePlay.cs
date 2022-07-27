@@ -5,22 +5,30 @@ using System.Threading.Tasks;
 
 namespace RPSGame2
 {
-    internal class GamePlay
+    public class GamePlay
     {
         //Add the data thats is obtained during 
-        private Game currentGame;
+        private Game CurrentGame;
         //private Game.Gamer1
         internal void NewGame(){
-            this.currentGame = new Game();
+            this.CurrentGame = new Game();
             Console.WriteLine("Game Starts");
         }
+
+        internal void P1Name(){
+
+        }
         
-        internal void P1Name(string playerName){
-            this.currentGame.Gamer1.Username = playerName;
+        internal string P1Name(string playerName){
+            //playerName = this.currentGame.Gamer1.Username;
+            if (this.CurrentGame.Gamer1.Username == null){
+                this.CurrentGame.Gamer1.Username = playerName; //= playerName;
+            }
+            return this.CurrentGame.Gamer1.Username;
         }
 
         internal Player GetPlayerName(){
-            return this.currentGame.Gamer1;
+            return this.CurrentGame.Gamer1;
         }
     }
 }

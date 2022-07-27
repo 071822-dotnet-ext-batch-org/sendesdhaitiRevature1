@@ -6,12 +6,23 @@ namespace RPSGame2
     {
         static void Main(string[] args)
         {
-            //What we need to run the game
+            //What we need to run the game so we create an instance of the gameplay class 
             GamePlay thisGame = new GamePlay();
+            string user1 = "";
             //Start The Game
+            thisGame.NewGame();
             Console.WriteLine("Welcome to Rock, Paper, Scissors!");
             Console.WriteLine("\tCreate your username below:");
-            thisGame.P1Name(Console.ReadLine());
+            try{
+                user1 = thisGame.P1Name(Console.ReadLine());
+
+            }catch (NullReferenceException msg){
+                Console.WriteLine($"The string method to set the P1Name was thrown by this message: '{msg.Message}'.");
+            }finally{
+                user1 = "Player 1";
+            }
+
+            Console.WriteLine($"\tYour new username is:\n\t{user1}");
             
         }
     }
