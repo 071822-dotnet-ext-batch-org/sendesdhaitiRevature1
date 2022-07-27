@@ -6,7 +6,13 @@ namespace RPSGame2
     {
         static void Main(string[] args)
         {
-            //
+            //What we need to run the game
+            GamePlay thisGame = new GamePlay();
+            //Start The Game
+            Console.WriteLine("Welcome to Rock, Paper, Scissors!");
+            Console.WriteLine("\tCreate your username below:");
+            thisGame.P1Name(Console.ReadLine());
+            
         }
     }
 }
