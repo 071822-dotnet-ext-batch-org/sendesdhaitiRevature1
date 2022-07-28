@@ -8,6 +8,7 @@ namespace RPSGame2
         {
             //What we need to run the game so we create an instance of the gameplay class 
             GamePlay thisGame = new GamePlay();
+            Player thisPlayer = new Player();
             string user1 = "";
             int count = 0;
             
@@ -16,27 +17,42 @@ namespace RPSGame2
             Console.WriteLine("Welcome to Rock, Paper, Scissors!");
             Console.WriteLine("\tCreate your username below:");
             try{
-                user1 = thisGame.P1Name(Console.ReadLine());
+                thisPlayer.Username = Console.ReadLine();
                 
 
             }catch (NullReferenceException msg){
-                Console.WriteLine($"The string method to set the P1Name was thrown by this message: '{msg.Message}'.");
-            }finally{
-                user1 = "Player 1";
+                Console.WriteLine($"\tThe string method to set the P1Name was thrown by this message: \n\t'{msg.Message}'.");
             }
 
 
 
-            Console.WriteLine($"\tYour new username is:\n\t{user1}\n\tPress ENTER to begin!\n\n");
+            Console.WriteLine($"\tYour new username is:\n\t{thisPlayer.Username}\n\tPress ENTER to begin!\n\n");
             Console.Read();
             while(true){
                 //Start of the game loop
                 thisGame.NewRound();
-                count++;
-                int round = thisGame.GetRound(count);
+                thisGame.SetRound();
+                
+                Console.WriteLine(thisGame.GetRound());
+                //count++;
+                int round = thisGame.GetRound();
                 Console.WriteLine($"\tCurrent Round: {round}");
-                Console.Write("Hello Sendes");
                 Console.WriteLine($"\tChoose 1 for Rock\n\tChoose 2 for Paper\n\tChoose 3 for Scissors");
+                try
+                {
+                    int choiceAnswer = Int32.Parse(Console.ReadLine());
+                    //thisGame.SetGamePiece();
+                    //Console.WriteLine(numVal);
+                }
+                catch (FormatException e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+                
+                // int playerChoice = thisGame.GetGamePieces();
+                // Console.WriteLine($"\tYour choice was: {playerChoice}");
+                //Make the choice of rock, paper or scissor so that the computer can choose as well
+
                 break;
             }
             

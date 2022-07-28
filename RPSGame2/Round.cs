@@ -5,15 +5,35 @@ using System.Threading.Tasks;
 
 namespace RPSGame2
 {
-    internal class Round
+    public class Round
     {
-        //List of rounds
-        private Player roundPlayer = new Player();
-        public int RoundNumber {get; set;}
+        //PRIVATE VALUES
+        //private Player roundPlayer = new Player();
+        private int roundNumber = 0;
+        public int RoundNumber {
+            get{
+                return this.roundNumber;
+            } 
+            set{
+                this.roundNumber++;
+            }
+        }
+
+        //INITIALIZATION OF VALUES
 
         internal Round(){
 
         }
+        internal Round(int round){
+            this.roundNumber = round;
+        }
+
+
+        //GETTERS
+
+
+
+        //SETTERS
         
 
         //Retrieved from the Player class(Each Player inherits a username)

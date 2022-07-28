@@ -5,15 +5,23 @@ using System.Threading.Tasks;
 
 namespace RPSGame2
 {
-    internal class Game
+    public class Game
     {
-        //Retrieved from the Player class(Each Player inherits a username) or (username and win)
-        public Player Gamer {get; set;} = new Player();
-        public Player Computer {get; set;} = new Player("Computer");
+        //PRIVATE VALUES
+        private Player Gamer {get; set;}
+        private List<Round> Rounds {get; set;} = new List<Round>();
+        private Player Computer {get; set;} = new Player("Computer");
 
+        //INITIALIZATION OF VALUES
         internal Game(){
+            //this.Gamer.Username;
+
 
         }
+
+        // internal string newGamer( name){
+            
+        // }
         // internal Game(){
         //     //
         // }
