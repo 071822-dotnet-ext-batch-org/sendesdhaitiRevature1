@@ -10,7 +10,15 @@ namespace RPSGame2
         //PRIVATE VALUES
         private Player Gamer {get; set;}
         private List<Round> Rounds {get; set;} = new List<Round>();
-        private Player Computer {get; set;} = new Player("Computer");
+        private Player computer = new Player("Computer");
+        public Player Computer{
+            get{
+                return computer;
+            }
+            set{
+                computer.Username = "Computer";
+            }
+        }
 
         //INITIALIZATION OF VALUES
         internal Game(){

@@ -7,13 +7,17 @@ namespace RPSGame2
         static void Main(string[] args)
         {
             //What we need to run the game so we create an instance of the gameplay class 
-            GamePlay thisGame = new GamePlay();
+            GamePlay thisGamePlay = new GamePlay();
+            Game thisGame = new Game();
             Player thisPlayer = new Player();
+            Round thisRound = new Round();
+            GamePieces thisGamePiece = new GamePieces();
+            thisRound.RoundNumber = 0;
             string user1 = "";
-            int count = 0;
+            //int count = 0;
             
             //Start The Game
-            thisGame.NewGame();
+            thisGamePlay.NewGame();
             Console.WriteLine("Welcome to Rock, Paper, Scissors!");
             Console.WriteLine("\tCreate your username below:");
             try{
@@ -30,17 +34,15 @@ namespace RPSGame2
             Console.Read();
             while(true){
                 //Start of the game loop
-                thisGame.NewRound();
-                thisGame.SetRound();
                 
-                Console.WriteLine(thisGame.GetRound());
-                //count++;
-                int round = thisGame.GetRound();
-                Console.WriteLine($"\tCurrent Round: {round}");
+                
+                
+                Console.WriteLine($"\tCurrent Round: {thisRound.RoundNumber++}");
+                //Console.WriteLine($"\tCurrent Round: {round}");
                 Console.WriteLine($"\tChoose 1 for Rock\n\tChoose 2 for Paper\n\tChoose 3 for Scissors");
                 try
                 {
-                    int choiceAnswer = Int32.Parse(Console.ReadLine());
+                    thisGamePiece.Choice = Int32.Parse(Console.ReadLine());
                     //thisGame.SetGamePiece();
                     //Console.WriteLine(numVal);
                 }
@@ -50,7 +52,12 @@ namespace RPSGame2
                 }
                 
                 // int playerChoice = thisGame.GetGamePieces();
-                // Console.WriteLine($"\tYour choice was: {playerChoice}");
+                Console.WriteLine($"\tYour choice was: {thisGamePiece.Choice}");
+                Console.WriteLine($"\tThe choice was: {thisPlayer.Computer}");
+
+                //Now for the Gameplay Logic
+
+
                 //Make the choice of rock, paper or scissor so that the computer can choose as well
 
                 break;

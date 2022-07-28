@@ -10,13 +10,25 @@ namespace RPSGame2
 
         //private Round roundPieces;// = new Round();
         //internal Player PlayerPiece;
-        internal int Choice {get;set;}
+        //Game game;
+        private int choice {get;set;}
         
-        internal enum Pieces {
+        public enum Pieces {
             ROCK = 1,
             PAPER = 2,
             SCISSORS = 3,
         };
+
+        public int Choice{
+            get{
+                return choice;
+            }
+            set{
+                if(value == 1 || value == 2 || value == 3){
+                    choice = value;
+                }
+            }
+        }
 
         public GamePieces(){
 

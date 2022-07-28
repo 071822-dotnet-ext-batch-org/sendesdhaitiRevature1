@@ -9,6 +9,7 @@ namespace RPSGame2
     {
 
         //PRIVATE VALUES
+        //private int pieces = GamePieces.Pieces.ROCK;
         private string username;
         public string Username {
             get{
@@ -20,6 +21,30 @@ namespace RPSGame2
                 }else{
                     username = "Default Player Name";
                 }
+            }
+        }
+        private string computer;
+        public string Computer{
+            get{
+                return computer;
+            }
+            set{
+                computer = "Computer";
+            }
+        }
+
+        private int choice;
+        public int Choice{
+            get{
+                return choice;
+            }
+            set{
+                foreach(int i in Enum.GetValues(typeof(GamePieces.Pieces)) ){
+                    if(value == i){
+                        choice = value;
+                    }
+                }
+                
             }
         }
         private int win = 0;
