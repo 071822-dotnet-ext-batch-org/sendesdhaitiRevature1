@@ -7,8 +7,31 @@ namespace RPSGame2
 {
     public class Game
     {
-        //Retrieved from the Player class(Each Player inherits a username)
-        public Player Gamer1 {get; set;} = new Player();
-        public Player Gamer2 {get; set;} = new Player("Computer");
+        //PRIVATE VALUES
+        private Player Gamer {get; set;}
+        private List<Round> Rounds {get; set;} = new List<Round>();
+        private Player computer = new Player("Computer");
+        public Player Computer{
+            get{
+                return computer;
+            }
+            set{
+                computer.Username = "Computer";
+            }
+        }
+
+        //INITIALIZATION OF VALUES
+        internal Game(){
+            //this.Gamer.Username;
+
+
+        }
+
+        // internal string newGamer( name){
+            
+        // }
+        // internal Game(){
+        //     //
+        // }
     }
 }

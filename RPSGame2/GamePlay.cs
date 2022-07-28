@@ -7,28 +7,38 @@ namespace RPSGame2
 {
     public class GamePlay
     {
-        //Add the data thats is obtained during 
+        //PRIVATE VALUES or the data that is obtained during gameplay
+        private string GamerName {get;set;}
         private Game CurrentGame;
-        //private Game.Gamer1
-        internal void NewGame(){
+        internal Round CurrentRound;
+        public Player PlayersGame;
+        Random Rand = new Random();
+
+        internal GamePieces GamePieces;
+
+
+        private bool gameOn = true;
+        //List of games played
+        //List    
+        //List of rounds
+        //List of Players
+
+
+        //INITIALIZATION OF VALUES
+        public void NewGame(){
             this.CurrentGame = new Game();
-            Console.WriteLine("Game Starts");
-        }
-
-        internal void P1Name(){
-
+            //Console.WriteLine("Game Starts");
         }
         
-        internal string P1Name(string playerName){
-            //playerName = this.currentGame.Gamer1.Username;
-            if (this.CurrentGame.Gamer1.Username == null){
-                this.CurrentGame.Gamer1.Username = playerName; //= playerName;
-            }
-            return this.CurrentGame.Gamer1.Username;
-        }
+        //Calculate Computer choice with random
+        
 
-        internal Player GetPlayerName(){
-            return this.CurrentGame.Gamer1;
-        }
+
+        //GETTERS
+        
+
+
+        //SETTERS
+        
     }
 }
