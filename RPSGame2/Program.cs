@@ -13,24 +13,28 @@ namespace RPSGame2
             Round thisRound = new Round();
             GamePieces thisGamePiece = new GamePieces();
             thisRound.RoundNumber = 0;
-            string user1 = "";
+            //string user1 = "";
             //int count = 0;
             
             //Start The Game
             thisGamePlay.NewGame();
             Console.WriteLine("Welcome to Rock, Paper, Scissors!");
-            Console.WriteLine("\tCreate your username below:");
-            try{
-                thisPlayer.Username = Console.ReadLine();
+            thisGamePlay.NewPlayer();
+            thisGamePlay.GetPlayerUsername();
+            // try{
+            //     thisPlayer.Username = Console.ReadLine();
                 
 
-            }catch (NullReferenceException msg){
-                Console.WriteLine($"\tThe string method to set the P1Name was thrown by this message: \n\t'{msg.Message}'.");
-            }
+            // }catch (NullReferenceException msg){
+            //     Console.WriteLine($"\tThe string method to set the P1Name was thrown by this message: \n\t'{msg.Message}'.");
+            // }
 
 
 
-            Console.WriteLine($"\tYour new username is:\n\t{thisPlayer.Username}\n\tPress ENTER to begin!\n\n");
+            Console.WriteLine($"\tYour new username created on {thisGamePlay.CurrentPlayer.DATECREATED} is:\n\t{thisGamePlay.CurrentPlayer.Username}\n\tPress ENTER to begin!\n\n");
+            thisGamePlay.NewRobot();
+            thisGamePlay.GetRobotName();
+
             Console.Read();
             while(true){
                 //Start of the game loop
@@ -42,9 +46,7 @@ namespace RPSGame2
                 Console.WriteLine($"\tChoose 1 for Rock\n\tChoose 2 for Paper\n\tChoose 3 for Scissors");
                 try
                 {
-                    thisGamePiece.Choice = Int32.Parse(Console.ReadLine());
-                    //thisGame.SetGamePiece();
-                    //Console.WriteLine(numVal);
+                    thisGamePlay.SetPlayerChoice();
                 }
                 catch (FormatException e)
                 {
@@ -52,15 +54,18 @@ namespace RPSGame2
                 }
                 
                 // int playerChoice = thisGame.GetGamePieces();
-                Console.WriteLine($"\tYour choice was: {thisGamePiece.Choice}");
-                Console.WriteLine($"\tThe choice was: {thisPlayer.Computer}");
+                thisGamePlay.SetRobotChoice();
+                thisGamePlay.GetPlayerChoice();
+                thisGamePlay.GetRobotChoice();
+                Console.WriteLine($"\tYour choice was: {thisGamePlay.GamePieces.PlayerChoice}");
+                Console.WriteLine($"\tThe {thisGamePlay.CurrentPlayer.ComputerName}'s choice was: {thisGamePlay.GamePieces.ComputerChoice}\n\n");
 
                 //Now for the Gameplay Logic
 
 
                 //Make the choice of rock, paper or scissor so that the computer can choose as well
 
-                break;
+                //break;
             }
             
             

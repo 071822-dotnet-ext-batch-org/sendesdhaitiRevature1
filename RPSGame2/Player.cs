@@ -23,40 +23,32 @@ namespace RPSGame2
                 }
             }
         }
-        private string computer;
-        public string Computer{
+        private string computerName;
+        public string ComputerName{
             get{
-                return computer;
+                return computerName;
             }
             set{
-                computer = "Computer";
+                computerName = "Robot";
             }
         }
 
-        private int choice;
-        public int Choice{
-            get{
-                return choice;
-            }
-            set{
-                foreach(int i in Enum.GetValues(typeof(GamePieces.Pieces)) ){
-                    if(value == i){
-                        choice = value;
-                    }
-                }
-                
-            }
-        }
+        // 
         private int win = 0;
-        public DateTime DOB {get;set;}
+        public DateTime DATECREATED {get;set;} = DateTime.Now;
 
         //INITIALIZATION OF VALUES
         public Player(){
             
         }//End of Player Construtor Scope
 
-        public Player(string username){//A Player will be able to create and have a username
+        public Player(string username, DateTime created){//A Player will be able to create and have a username
             Username = username;
+            DATECREATED = created;
+        }//End of Player Construtor Scope
+
+        public Player(string computerName){//A Computer will be able to have a username
+            ComputerName = computerName;
         }//End of Player Construtor Scope
 
         //GETTERS
@@ -64,15 +56,15 @@ namespace RPSGame2
             //This is to make sure that you cannot change the value outside of the class
             //This makes managing code easier since changes can be made in one place 
                 //and reflected everywhere else
-        public string getUsername(){
-            return this.Username;
-        }
+        // public string getUsername(){
+        //     return this.Username;
+        // }
 
 
-        //SETTERS
-        public void setUsername(string name){
-            this.Username = name;
-        }
+        // //SETTERS
+        // public void setUsername(string name){
+        //     this.Username = name;
+        // }
 
 
 
