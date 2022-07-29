@@ -12,10 +12,10 @@ namespace RPSGame2
         private int roundNumber = 0;
         public int RoundNumber {
             get{
-                return this.roundNumber;
+                return roundNumber;
             } 
             set{
-                this.roundNumber++;
+                roundNumber++;
             }
         }
 

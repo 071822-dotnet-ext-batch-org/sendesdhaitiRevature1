@@ -8,17 +8,16 @@ namespace RPSGame2
     public class Game
     {
         //PRIVATE VALUES
-        private Player Gamer {get; set;}
+        //private Player gamer;
+
+        
         private List<Round> Rounds {get; set;} = new List<Round>();
-        private Player computer = new Player("Computer");
-        public Player Computer{
-            get{
-                return computer;
-            }
-            set{
-                computer.Username = "Computer";
-            }
-        }
+        private List<Player> Players {get; set;} = new List<Player>();
+        private List<Game> Games {get; set;} = new List<Game>();
+
+
+
+        
 
         //INITIALIZATION OF VALUES
         internal Game(){
@@ -26,6 +25,8 @@ namespace RPSGame2
 
 
         }
+
+        
 
         // internal string newGamer( name){
             
