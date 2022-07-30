@@ -47,7 +47,7 @@ namespace RPSGame2
                 }else if(value >= 2 && value < 3){
                     computerChoice = 3;
                 }else{
-                    computerChoice = value;
+                    computerChoice = 0;
                 }
                 
 

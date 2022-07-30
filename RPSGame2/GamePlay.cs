@@ -71,7 +71,7 @@ namespace RPSGame2
                 Console.WriteLine($"\tThe Message: {msg.Message},\n\twas caused by the following input '{choice}'");
             }
             this.GamePieces = new GamePieces();
-            this.GamePieces.PlayerChoice = GamePieces.PlayerChoice;
+            this.GamePieces.PlayerChoice = choice;
             
         }
         public int GetPlayerChoice(){
