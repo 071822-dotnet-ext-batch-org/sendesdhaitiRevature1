@@ -1,0 +1,14 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Rev_P1
+{
+    public class User
+    {
+        private string username {get;set;}
+        private string password {get; set;}
+        
+    }
+}
