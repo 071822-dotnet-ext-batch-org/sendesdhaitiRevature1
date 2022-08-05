@@ -7,8 +7,12 @@ namespace Rev_P1
 {
     public class User
     {
-        private string username {get;set;}
-        private string password {get; set;}
+        //User currentUser = new User();
+
+        public string Username {get;set;}
+        public string Password {get; set;}
+        public User(){}
+        
         
     }
 }
