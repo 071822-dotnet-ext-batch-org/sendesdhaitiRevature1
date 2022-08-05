@@ -1,0 +1,27 @@
+This is the MixMaxSum operation method
+.
+.
+public static void miniMaxSum(List<int> arr)
+    {
+        List<int> MinSum = new List<int>();
+        List<int> MaxSum = new List<int>();
+        int Min = 0;
+        int Max = 0;
+        Min = arr.Min();
+        Max = arr.Max();
+        
+        foreach(int i in arr){
+            if(i == Max){
+                MaxSum.Add(i);
+            }else if(i == Min){
+                MinSum.Add(i);
+            }else{
+                MinSum.Add(i);
+                MaxSum.Add(i);
+            }
+            
+        }
+        Console.WriteLine($"{MinSum.Sum()} {MaxSum.Sum()}");
+        
+
+    }

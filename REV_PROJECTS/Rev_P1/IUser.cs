@@ -5,9 +5,7 @@ using System.Threading.Tasks;
 
 namespace Rev_P1
 {
-    public interface IUserInterface
-    {
-        void RegisterUser();
+
         
-    }
+    
 }

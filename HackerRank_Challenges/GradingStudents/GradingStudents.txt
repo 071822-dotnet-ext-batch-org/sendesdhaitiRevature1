@@ -1,0 +1,32 @@
+    public static List<int> gradingStudents(List<int> grades)
+    {
+        List<int> multOf5List = new List<int>();
+        List<int> newGrades = new List<int>();
+        for(int a=40; a < 100; a+=5){
+            multOf5List.Add(a);
+        }
+        int i =0;
+        int newgrade = 0;
+        foreach(int grade in grades){
+            if(grade >= 38){
+                Console.WriteLine($"{grade} is greater than 40");
+                foreach(int mult in multOf5List){
+                    if(((mult - grade) < 3) && ((mult - grade) >= 0)){
+                        newgrade = grade + (mult - grade);
+                        newGrades.Add(newgrade);
+                        Console.WriteLine($"{(mult - grade)} is less than 3 so the new grade is {newgrade}");
+                    }else if((mult - grade) == 3){
+                        newGrades.Add(grade);
+                        Console.WriteLine($"{(mult - grade)} is equal to 3");
+                    }
+                }
+            }else if(grade < 38){
+                Console.WriteLine($"{grade} is less than 40");
+                newGrades.Add(grade);
+            }
+                
+        }                
+        return newGrades;
+
+    }
+
