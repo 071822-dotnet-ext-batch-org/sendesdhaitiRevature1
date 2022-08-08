@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 
 namespace Rev_P1
 {
-    public interface IUserInterface
+    public interface IUser
     {
-        void RegisterUser();
-        
+        void SetUserName(string username);
+        void SetUserPassword(string password);
+        string GetUserName();
+        string GetUserPassword();
     }
 }
