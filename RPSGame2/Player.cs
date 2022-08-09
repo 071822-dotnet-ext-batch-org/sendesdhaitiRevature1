@@ -5,11 +5,12 @@ using System.Threading.Tasks;
 
 namespace RPSGame2
 {
-    public class Player
+    public class Player 
     {
 
         //PRIVATE VALUES
         //private int pieces = GamePieces.Pieces.ROCK;
+        private Guid PlayerID {get;set;}
         private string username;
         public string Username {
             get{
@@ -34,7 +35,25 @@ namespace RPSGame2
         }
 
         // 
-        private int win = 0;
+        private int wins = 0;
+        private int loses = 0;
+        public int Wins{
+            get{
+                return wins;
+            }
+            set{
+                wins = wins++;
+            }
+        }
+
+        public int Loses{
+            get{
+                return loses;
+            }
+            set{
+                loses = loses++;
+            }
+        }
         public DateTime DATECREATED {get;set;} = DateTime.Now;
 
         //INITIALIZATION OF VALUES
@@ -42,34 +61,9 @@ namespace RPSGame2
             
         }//End of Player Construtor Scope
 
-        public Player(string username, DateTime created){//A Player will be able to create and have a username
+        public Player(string username){//A Player will be able to create and have a username
             Username = username;
-            DATECREATED = created;
+            DATECREATED = DateTime.Now;
         }//End of Player Construtor Scope
-
-        public Player(string computerName){//A Computer will be able to have a username
-            ComputerName = computerName;
-        }//End of Player Construtor Scope
-
-        //GETTERS
-            //For ENCAPSULATION
-            //This is to make sure that you cannot change the value outside of the class
-            //This makes managing code easier since changes can be made in one place 
-                //and reflected everywhere else
-        // public string getUsername(){
-        //     return this.Username;
-        // }
-
-
-        // //SETTERS
-        // public void setUsername(string name){
-        //     this.Username = name;
-        // }
-
-
-
-
-        //private int wins;
-        //private int loses;
     }
 }
