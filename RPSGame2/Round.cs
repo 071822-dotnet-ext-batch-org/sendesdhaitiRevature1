@@ -5,11 +5,12 @@ using System.Threading.Tasks;
 
 namespace RPSGame2
 {
-    public class Round
+    public class Round : GamePlay
     {
         //PRIVATE VALUES
         //private Player roundPlayer = new Player();
-        private int roundNumber = 0;
+        //GamePlay gamePlay;
+        private int roundNumber {get;set;}= 1;
         public int RoundNumber {
             get{
                 return roundNumber;
@@ -24,9 +25,19 @@ namespace RPSGame2
         internal Round(){
 
         }
-        internal Round(int round){
-            this.roundNumber = round;
-        }
+        // internal Round(Round round){
+        //     for (int i = 0; i < Rounds.Count; i++)
+        //     {
+        //         this.Rounds[] = round;
+                
+        //     }
+        // }
+        // public List<Round> AddCurrentRoundtoList(){
+        //     Round round = new Round(RoundNumber);
+        //     return this.Rounds.Add(round); 
+        //     //I will have the gameplay run here
+        //     //GamePlay.RunGamePlay();
+        // }
 
 
         //GETTERS
