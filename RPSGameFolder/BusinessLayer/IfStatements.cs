@@ -18,15 +18,15 @@ namespace BusinessLayer
         /// This
         /// It can only be a 15 character string only containing 
         /// </summary>
-        public static string Verify_String_Answer(string questionTopic){
+        public static string? Verify_String_Answer(string questionTopic){
             bool flag = false;
-            string answer = "";
+            string? answer = "";
             do{
                 Console.WriteLine($"\n\n\tWhat is your {questionTopic}?");
                 answer = Console.ReadLine();
                 if(answer.Length < 1){
                     Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be empty\nMAKE ANOTHER RESPONSE\n");
-                    Task.Delay(2000);
+                    //Task.Delay(2000);
                     //throw new System.FormatException($"\n\n\t\tYour answer '{answer}' cannot be less than 1 characters\nMAKE ANOTHER RESPONSE\n");
 
                 }else if(answer.Length > 15){
@@ -77,7 +77,6 @@ namespace BusinessLayer
 
                     }else{
                         return answer;
-                        flag = true;
                     }
                     // }//End foreach loop
                     //return "";
@@ -87,15 +86,16 @@ namespace BusinessLayer
             return answer;
         }//End Verify Method
 
-        public static string Verify_String_Answer(string questionTopic, int responseMin, int responseMax){
+        public static string? Verify_String_Answer(string questionTopic, int responseMin, int responseMax){
             bool flag = false;
-            string answer = "";
+            string? answer = "";
             do{
                 Console.WriteLine($"\n\n\t{questionTopic}?\n\nENTER YOUR RESPONSE BELOW:");
                 answer = Console.ReadLine();
                 if(answer.Length < responseMin){
                     Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be empty\nMAKE ANOTHER RESPONSE\n");
-                    Task.Delay(2000);
+                    //Task.Delay(2000);
+                    continue;
                     //throw new System.FormatException($"\n\n\t\tYour answer '{answer}' cannot be less than 1 characters\nMAKE ANOTHER RESPONSE\n");
 
                 }else if(answer.Length > responseMax){
@@ -146,7 +146,6 @@ namespace BusinessLayer
 
                     }else{
                         return answer;
-                        flag = true;
                     }
                     // }//End foreach loop
                     //return "";
@@ -157,9 +156,9 @@ namespace BusinessLayer
         }//End Verify Method2
 
 
-        public static string Verify_String_Answer_FOR_INT(int responseMin, int responseMax){
+        public static string? Verify_String_Answer_FOR_INT(int responseMin, int responseMax){
             bool flag = false;
-            string answer = "";
+            string? answer = "";
             do{
                 //Console.WriteLine($"\n\n\t{questionTopic}?\n\nENTER YOUR RESPONSE BELOW:");
                 answer = Console.ReadLine();
@@ -233,7 +232,6 @@ namespace BusinessLayer
 
                     }else{
                         return answer;
-                        flag = true;
                     }
                     // }//End foreach loop
                     //return "";

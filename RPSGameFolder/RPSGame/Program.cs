@@ -30,11 +30,11 @@ namespace RPSGame
                         
                         var PlayerNames = GPOp.AskForName_And_ReturnListofNames();
                         
-                        Console.WriteLine("Hello");
+                        //Console.WriteLine("Hello");
                         gameplay.SetPlayer1Names(PlayerNames);
                         gameplay.SetPlayer2Names();
                         //Make the player1 choice
-                        gameplay.SetPlayer1Choice();
+                        gameplay.RunRound();
                         break;
                     }
                 }else if((answer.Trim().ToUpper() == "N")||(answer.Trim().ToUpper() == "NO") || (answer.Trim().ToUpper() == "NAH")){
