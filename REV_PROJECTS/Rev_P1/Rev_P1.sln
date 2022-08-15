@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLayer", "BusinessLayer\BusinessLayer.csproj", "{9E6DAA8B-82E2-464C-9DB9-090A8A8AFCC7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepoLayer", "RepoLayer\RepoLayer.csproj", "{1EC0FD77-212D-42CD-801F-536657F255CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelLayer", "ModelLayer\ModelLayer.csproj", "{DB458FAC-6E22-48F1-B73A-886992C99DF7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9E6DAA8B-82E2-464C-9DB9-090A8A8AFCC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E6DAA8B-82E2-464C-9DB9-090A8A8AFCC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E6DAA8B-82E2-464C-9DB9-090A8A8AFCC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E6DAA8B-82E2-464C-9DB9-090A8A8AFCC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EC0FD77-212D-42CD-801F-536657F255CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EC0FD77-212D-42CD-801F-536657F255CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EC0FD77-212D-42CD-801F-536657F255CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EC0FD77-212D-42CD-801F-536657F255CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB458FAC-6E22-48F1-B73A-886992C99DF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB458FAC-6E22-48F1-B73A-886992C99DF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB458FAC-6E22-48F1-B73A-886992C99DF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB458FAC-6E22-48F1-B73A-886992C99DF7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

@@ -10,7 +10,6 @@ namespace Rev_P1
             //Employee employee = new Employee();
             Messages message = new Messages();
             message.Welcome();
-            EmployeeAuth.RegisterEmployee();
         }
     }
 }
