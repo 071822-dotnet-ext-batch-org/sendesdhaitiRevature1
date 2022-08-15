@@ -25,12 +25,12 @@ namespace BusinessLayer
                 Console.WriteLine($"\n\n\tWhat is your {questionTopic}?");
                 answer = Console.ReadLine();
                 if(answer.Length < 1){
-                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be empty\nMAKE ANOTHER RESPONSE\n");
+                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be empty\nMAKE ANOTHER RESPONSE");
                     //Task.Delay(2000);
                     //throw new System.FormatException($"\n\n\t\tYour answer '{answer}' cannot be less than 1 characters\nMAKE ANOTHER RESPONSE\n");
 
                 }else if(answer.Length > 15){
-                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be greater than 15 characters\nMAKE ANOTHER RESPONSE\n");
+                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be greater than 15 characters\nMAKE ANOTHER RESPONSE");
                 }else{
                     // foreach(char s in answer.Trim()){
                     if(answer.Contains("0")|| 
@@ -72,7 +72,7 @@ namespace BusinessLayer
                     answer.Contains("?") ||
                     answer.Contains("/")){
                     //throw new System.FormatException($"\n\n\t\tYour answer '{answer}' cannot have numbers or special characters\nMAKE ANOTHER RESPONSE\n");
-                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot have numbers or special characters\nMAKE ANOTHER RESPONSE\n");
+                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot have numbers or special characters\nMAKE ANOTHER RESPONSE");
                     continue;
 
                     }else{
@@ -93,13 +93,13 @@ namespace BusinessLayer
                 Console.WriteLine($"\n\n\t{questionTopic}?\n\nENTER YOUR RESPONSE BELOW:");
                 answer = Console.ReadLine();
                 if(answer.Length < responseMin){
-                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be empty\nMAKE ANOTHER RESPONSE\n");
+                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be empty\nMAKE ANOTHER RESPONSE");
                     //Task.Delay(2000);
                     continue;
                     //throw new System.FormatException($"\n\n\t\tYour answer '{answer}' cannot be less than 1 characters\nMAKE ANOTHER RESPONSE\n");
 
                 }else if(answer.Length > responseMax){
-                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be greater than 15 characters\nMAKE ANOTHER RESPONSE\n");
+                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be greater than 15 characters\nMAKE ANOTHER RESPONSE");
                 }else{
                     // foreach(char s in answer.Trim()){
                     if(answer.Contains("0")|| 
@@ -141,7 +141,7 @@ namespace BusinessLayer
                     answer.Contains("?") ||
                     answer.Contains("/")){
                     //throw new System.FormatException($"\n\n\t\tYour answer '{answer}' cannot have numbers or special characters\nMAKE ANOTHER RESPONSE\n");
-                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot have numbers or special characters\nMAKE ANOTHER RESPONSE\n");
+                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot have numbers or special characters\nMAKE ANOTHER RESPONSE");
                     continue;
 
                     }else{
@@ -164,12 +164,12 @@ namespace BusinessLayer
                 answer = Console.ReadLine();
                 answer = answer.ToUpperInvariant();
                 if(answer.Length < responseMin){
-                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be empty\nMAKE ANOTHER RESPONSE\n");
+                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be empty\nMAKE ANOTHER RESPONSE");
                     Task.Delay(2000);
                     //throw new System.FormatException($"\n\n\t\tYour answer '{answer}' cannot be less than 1 characters\nMAKE ANOTHER RESPONSE\n");
 
                 }else if(answer.Length > responseMax){
-                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be greater than 15 characters\nMAKE ANOTHER RESPONSE\n");
+                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be greater than 15 characters\nMAKE ANOTHER RESPONSE");
                 }else{
                     // foreach(char s in answer.Trim()){
                     if(answer.Contains("Z")|| 
@@ -228,6 +228,91 @@ namespace BusinessLayer
                     answer.Contains("/")){
                     //throw new System.FormatException($"\n\n\t\tYour answer '{answer}' cannot have numbers or special characters\nMAKE ANOTHER RESPONSE\n");
                     Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot have LETTERS or SPECIAL characters\nMAKE ANOTHER RESPONSE\n");
+                    continue;
+
+                    }else{
+                        return answer;
+                    }
+                    // }//End foreach loop
+                    //return "";
+                }//End If
+                //return "";
+            }while(flag == false);
+            return answer;
+        }//End Verify_String_Answer_FOR_INT
+
+        public static double? Verify_String_Answer_FOR_DOUBLE(int responseMin, int responseMax){
+            bool flag = false;
+            string? answer = "";
+            do{
+                //Console.WriteLine($"\n\n\t{questionTopic}?\n\nENTER YOUR RESPONSE BELOW:");
+                answer = Console.ReadLine();
+                answer = answer.ToUpperInvariant();
+                if(answer.Length < responseMin){
+                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be empty\nMAKE ANOTHER RESPONSE");
+                    Task.Delay(2000);
+                    //throw new System.FormatException($"\n\n\t\tYour answer '{answer}' cannot be less than 1 characters\nMAKE ANOTHER RESPONSE\n");
+
+                }else if(answer.Length > responseMax){
+                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be greater than 15 characters\nMAKE ANOTHER RESPONSE");
+                }else{
+                    // foreach(char s in answer.Trim()){
+                    if(answer.Contains("Z")|| 
+                    answer.Contains("X") ||
+                    answer.Contains("C") ||
+                    answer.Contains("V") ||
+                    answer.Contains("B") ||
+                    answer.Contains("N") ||
+                    answer.Contains("M") ||
+                    answer.Contains("A") ||
+                    answer.Contains("S") ||
+                    answer.Contains("D") ||
+                    answer.Contains("F") ||
+                    answer.Contains("G") ||
+                    answer.Contains("H") ||
+                    answer.Contains("J") ||
+                    answer.Contains("K") ||
+                    answer.Contains("L") ||
+                    answer.Contains("Q") ||
+                    answer.Contains("W") ||
+                    answer.Contains("E") ||
+                    answer.Contains("R") ||
+                    answer.Contains("T") ||
+                    answer.Contains("Y") ||
+                    answer.Contains("U") ||
+                    answer.Contains("I") ||
+                    answer.Contains("O") ||
+                    answer.Contains("P") ||
+                    answer.Contains("!") ||
+                    answer.Contains("@") ||
+                    answer.Contains("#") ||
+                    answer.Contains("$") ||
+                    answer.Contains("%") ||
+                    answer.Contains("^") ||
+                    answer.Contains("&") ||
+                    answer.Contains("*") ||
+                    answer.Contains("(") ||
+                    answer.Contains(")") ||
+                    answer.Contains("-") ||
+                    answer.Contains("+") ||
+                    answer.Contains("=") ||
+                    answer.Contains("_") ||
+                    answer.Contains("{") ||
+                    answer.Contains("}") ||
+                    answer.Contains("[") ||
+                    answer.Contains("]") ||
+                    answer.Contains("|") ||
+                    answer.Contains(";") ||
+                    answer.Contains(":") ||
+                    answer.Contains("'") ||
+                    answer.Contains("<") ||
+                    answer.Contains(">") ||
+                    answer.Contains(",") ||
+                    // answer.Contains(".") ||
+                    answer.Contains("?") ||
+                    answer.Contains("/")){
+                    //throw new System.FormatException($"\n\n\t\tYour answer '{answer}' cannot have numbers or special characters\nMAKE ANOTHER RESPONSE\n");
+                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot have LETTERS or SPECIAL characters\n\t\t\tEXCEPT FOR '.'\n\nMAKE ANOTHER RESPONSE");
                     continue;
 
                     }else{

@@ -114,7 +114,7 @@ namespace RPSGame2
         public void CalcRound(){
             if(PlayerChoice > ComputerChoice){
                 Console.WriteLine($"\n\tRound {RoundNumber} Results:\n\t\tPlayer 1's choice of {PlayerChoice} '{PlayerStringChoice}'\n\t\tbeat the computer's choice of {ComputerChoice} or '{ComputerStringChoice}'");
-
+                
             }else if(PlayerChoice == ComputerChoice){
                 Console.WriteLine($"\n\tRound {RoundNumber} Results:\n\t\tPlayer 1's choice of {PlayerChoice} '{PlayerStringChoice}'\n\t\tied with the computer's choice of {ComputerChoice} or '{ComputerStringChoice}'");
             }else if(PlayerChoice < ComputerChoice){
