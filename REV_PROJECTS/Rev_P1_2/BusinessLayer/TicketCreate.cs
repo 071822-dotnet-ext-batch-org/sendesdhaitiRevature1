@@ -25,18 +25,18 @@ namespace BusinessLayer
             
             
             //If both are given
-            if ((UserticketAmount > 0.0) && (description.Length >= 0)){
+            if ((UserticketAmount > 15.0) && (description.Length > 0)&& (description.Length < 50)){
                 Ticket newTicket = new Ticket(UserticketAmount,description);
                 Console.WriteLine($"\n\tYou've request for a ReImbursement Ticket in the ammount of : '{newTicket.Amount}'.\n\n\t\tPlease allow up to 3 business days for one of our Managers to\n\t\t\t respond to your request.");
                 return newTicket;
             //if one is given
-            }else if(UserticketAmount > 0.0){
+            }else if((UserticketAmount > 15.0) && (description.Length == 0)){
                 Ticket newTicket = new Ticket(UserticketAmount);
                 Console.WriteLine($"\n\tYou've request for a ReImbursement Ticket in the ammount of : '{newTicket.Amount}'.\n\n\t\tPlease allow up to 3 business days for one of our Managers to\n\t\t\t respond to your request.");
                 return newTicket;
-            }else if(description.Length >= 0){
+            }else if((UserticketAmount < 15.0) && (description.Length > 0)){
                 //Ticket newTicket = new Ticket(UserticketUserticketAmount);
-                Console.WriteLine($"\n\t\t\tYour ticket must have an ammount to be valid");
+                Console.WriteLine($"\n\t\t\tYour ticket must have an ammount greater than $15 to be valid\n\t\t\tYour description must also be within 50 char");
                 // return newTicket;
                 goto ReStateAmountIFNeitherFieldsAreIn;
             }else{

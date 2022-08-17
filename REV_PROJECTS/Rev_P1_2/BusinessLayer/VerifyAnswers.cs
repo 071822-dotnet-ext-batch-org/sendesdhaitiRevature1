@@ -15,20 +15,23 @@ namespace BusinessLayer
 /// <param name="responseMin"></param>
 /// <param name="responseMax"></param>
 /// <returns></returns>
-        public static string? Verify_String_Answer_for_PASSWORD(int responseMin, int responseMax){
+        public static string Verify_String_Answer_for_PASSWORD(int responseMin, int responseMax){
             bool flag = false;
             string? answer = "";
             do{
                 Console.WriteLine($"\n\n\t\tWhat is your password?\n\nENTER YOUR RESPONSE BELOW:");
                 answer = Console.ReadLine();
-                if(answer.Length < responseMin){
-                    Console.WriteLine($"\n\n\t\t\tYour answer '{answer}' cannot be empty\nMAKE ANOTHER RESPONSE BELOW:");
+                if(answer?.Length < responseMin){
+                    Console.WriteLine($"\n\n\t\t\tYour answer '{answer}' cannot be less than {responseMin} or greater than {responseMax}\nMAKE ANOTHER RESPONSE BELOW:");
                     //Task.Delay(2000);
                     continue;
                     //throw new System.FormatException($"\n\n\t\tYour answer '{answer}' cannot be less than 1 characters\nMAKE ANOTHER RESPONSE\n");
 
-                }else if(answer.Length > responseMax){
+                }else if(answer?.Length > responseMax){
                     Console.WriteLine($"\n\n\t\t\tYour answer '{answer}' cannot be less than {responseMin} or greater than {responseMax} characters\nMAKE ANOTHER RESPONSE BELOW:");
+                }else if(answer.Trim() == ""){
+                    Console.WriteLine($"\n\n\t\t\tYour answer '{answer}' cannot be empty\nMAKE ANOTHER RESPONSE BELOW:");
+                    continue;
                 }else{
                     // foreach(char s in answer.Trim()){
                     if(
@@ -90,13 +93,13 @@ namespace BusinessLayer
         /// <param name="questionTopic"></param>
         /// <returns></returns>
         public static string Verify_Short_StringOnly_Answer(string questionTopic, int min, int max){
-            bool flag = false;
-            string answer = "";
+            //bool flag = false;
+            string? answer = "";
             do{
                 Console.WriteLine($"\n\n\t\tWhat is your {questionTopic}?");
                 answer = Console.ReadLine();
                 if(answer.Length < min){
-                    Console.WriteLine($"\n\n\t\t\tYour answer '{answer}' cannot be empty\nMAKE ANOTHER RESPONSE BELOW:");
+                    Console.WriteLine($"\n\n\t\t\tYour answer '{answer}' cannot be less than {min} or greater than {max} characters\nMAKE ANOTHER RESPONSE BELOW:");
                     //Task.Delay(2000);
                     //throw new System.FormatException($"\n\n\t\tYour answer '{answer}' cannot be less than 1 characters\nMAKE ANOTHER RESPONSE\n");
                     continue;
@@ -104,18 +107,22 @@ namespace BusinessLayer
                 }else if(answer.Length > max){
                     Console.WriteLine($"\n\n\t\t\tYour answer '{answer}' cannot be less than {min} or greater than {max} characters\nMAKE ANOTHER RESPONSE BELOW:");
                     continue;
+                }else if(answer.Trim() == ""){
+                    Console.WriteLine($"\n\n\t\t\tYour answer '{answer}' cannot be empty\nMAKE ANOTHER RESPONSE BELOW:");
+                    continue;
                 }else{
                     // foreach(char s in answer.Trim()){
-                    if(answer.Contains("0")|| 
-                    answer.Contains("1") ||
-                    answer.Contains("2") ||
-                    answer.Contains("3") ||
-                    answer.Contains("4") ||
-                    answer.Contains("5") ||
-                    answer.Contains("6") ||
-                    answer.Contains("7") ||
-                    answer.Contains("8") ||
-                    answer.Contains("9") ||
+                    if(
+                    // answer.Contains("0")|| 
+                    // answer.Contains("1") ||
+                    // answer.Contains("2") ||
+                    // answer.Contains("3") ||
+                    // answer.Contains("4") ||
+                    // answer.Contains("5") ||
+                    // answer.Contains("6") ||
+                    // answer.Contains("7") ||
+                    // answer.Contains("8") ||
+                    // answer.Contains("9") ||
                     answer.Contains("!") ||
                     answer.Contains("@") ||
                     answer.Contains("#") ||
@@ -145,7 +152,7 @@ namespace BusinessLayer
                     answer.Contains("?") ||
                     answer.Contains("/")){
                     //throw new System.FormatException($"\n\n\t\tYour answer '{answer}' cannot have numbers or special characters\nMAKE ANOTHER RESPONSE\n");
-                    Console.WriteLine($"\n\n\t\t\tYour answer '{answer}' cannot have numbers or special characters.\nMAKE ANOTHER RESPONSE BELOW:");
+                    Console.WriteLine($"\n\n\t\t\tYour answer '{answer}' cannot have special characters and must be less than {min} or greater than {max} characters.\nMAKE ANOTHER RESPONSE BELOW:");
                     continue;
 
                     }else{
@@ -155,8 +162,8 @@ namespace BusinessLayer
                     //return "";
                 }//End If
                 //return "";
-            }while(flag == false);
-            return answer;
+            }while(true);
+            //return answer;
         }//End Verify_Short_StringOnly_Answer
 
         /// <summary>
@@ -170,19 +177,22 @@ namespace BusinessLayer
         /// <param name="responseMax"></param>
         /// <returns></returns>
         public static string? Verify_String_Answer(string questionTopic, int responseMin, int responseMax){
-            bool flag = false;
+            //bool flag = false;
             string? answer = "";
             do{
                 Console.WriteLine($"\n\n\t\t{questionTopic}?\n\nENTER YOUR RESPONSE BELOW:");
                 answer = Console.ReadLine();
                 if(answer.Length < responseMin){
-                    Console.WriteLine($"\n\n\t\t\tYour answer '{answer}' cannot be empty\nMAKE ANOTHER RESPONSE BELOW:");
+                    Console.WriteLine($"\n\n\t\t\tYour answer '{answer}' cannot be less than {responseMin} or greater than {responseMax}\nMAKE ANOTHER RESPONSE BELOW:");
                     //Task.Delay(2000);
                     continue;
                     //throw new System.FormatException($"\n\n\t\tYour answer '{answer}' cannot be less than 1 characters\nMAKE ANOTHER RESPONSE\n");
 
                 }else if(answer.Length > responseMax){
-                    Console.WriteLine($"\n\n\t\t\tYour answer '{answer}' cannot be greater than 15 characters\nMAKE ANOTHER RESPONSE BELOW:");
+                    Console.WriteLine($"\n\n\t\t\tYour answer '{answer}' cannot be less than {responseMin} or greater than {responseMax} characters\nMAKE ANOTHER RESPONSE BELOW:");
+                }else if(answer.Trim() == ""){
+                    Console.WriteLine($"\n\n\t\t\tYour answer '{answer}' cannot be empty\nMAKE ANOTHER RESPONSE BELOW:");
+                    continue;
                 }else{
                     // foreach(char s in answer.Trim()){
                     if(answer.Contains("!") ||
@@ -224,7 +234,7 @@ namespace BusinessLayer
                     //return "";
                 }//End If
                 //return "";
-            }while(flag == false);
+            }while(true);
             return answer;
         }//End Verify_String_Answer
 
@@ -236,20 +246,23 @@ namespace BusinessLayer
         /// <param name="responseMin"></param>
         /// <param name="responseMax"></param>
         /// <returns></returns>
-        public static string? Verify_SingleString_Answer_FOR_INT(int responseMin, int responseMax){
-            bool flag = false;
+        public static int Verify_SingleString_Answer_FOR_INT(int responseMin, int responseMax){
+            //bool flag = false;
             string? answer = "";
             do{
                 //Console.WriteLine($"\n\n\t{questionTopic}?\n\nENTER YOUR RESPONSE BELOW:");
                 answer = Console.ReadLine();
                 answer = answer.ToUpperInvariant();
                 if(answer.Length < responseMin){
-                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be empty\nMAKE ANOTHER RESPONSE BELOW:");
+                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be less than {responseMin} or greater than {responseMax}\nMAKE ANOTHER RESPONSE BELOW:");
                     Task.Delay(2000);
                     //throw new System.FormatException($"\n\n\t\tYour answer '{answer}' cannot be less than 1 characters\nMAKE ANOTHER RESPONSE\n");
 
                 }else if(answer.Length > responseMax){
-                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be greater than 15 characters\nMAKE ANOTHER RESPONSE BELOW:");
+                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be less than {responseMin} or greater than {responseMax} characters\nMAKE ANOTHER RESPONSE BELOW:");
+                }else if(answer.Trim() == ""){
+                    Console.WriteLine($"\n\n\t\t\tYour answer '{answer}' cannot be empty\nMAKE ANOTHER RESPONSE BELOW:");
+                    continue;
                 }else{
                     // foreach(char s in answer.Trim()){
                     if(answer.Contains("Z")|| 
@@ -311,28 +324,31 @@ namespace BusinessLayer
                     continue;
 
                     }else{
-                        return answer;
+                        return Convert.ToInt16(answer.Trim());
                     }
                     // }//End foreach loop
                 }//End If
-            }while(flag == false);
-            return answer;
+            }while(true);
+            //return Convert.ToInt16(answer);
         }//End Verify_SingleString_Answer_FOR_INT
 
         public static double Verify_String_Answer_FOR_DOUBLE(int responseMin, int responseMax){
-            bool flag = false;
+            //bool flag = false;
             string? answer = "";
             do{
                 //Console.WriteLine($"\n\n\t{questionTopic}?\n\nENTER YOUR RESPONSE BELOW:");
                 answer = Console.ReadLine();
                 answer = answer.ToUpperInvariant();
                 if(answer.Length < responseMin){
-                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be empty\nMAKE ANOTHER RESPONSE");
+                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be less than {responseMin} or greater than {responseMax}\nMAKE ANOTHER RESPONSE");
                     Task.Delay(2000);
                     //throw new System.FormatException($"\n\n\t\tYour answer '{answer}' cannot be less than 1 characters\nMAKE ANOTHER RESPONSE\n");
 
                 }else if(answer.Length > responseMax){
-                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be greater than 15 characters\nMAKE ANOTHER RESPONSE");
+                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be less than {responseMin} or greater than {responseMax} characters\nMAKE ANOTHER RESPONSE");
+                }else if(answer.Trim() == ""){
+                    Console.WriteLine($"\n\n\t\t\tYour answer '{answer}' cannot be empty\nMAKE ANOTHER RESPONSE BELOW:");
+                    continue;
                 }else{
                     // foreach(char s in answer.Trim()){
                     if(answer.Contains("Z")|| 
@@ -400,9 +416,9 @@ namespace BusinessLayer
                     //return "";
                 }//End If
                 //return "";
-            }while(flag == false);
+            }while(true);
             return Convert.ToDouble(answer);;
-        }//End Verify Method2
+        }//End Verify for double
 
         
     }
