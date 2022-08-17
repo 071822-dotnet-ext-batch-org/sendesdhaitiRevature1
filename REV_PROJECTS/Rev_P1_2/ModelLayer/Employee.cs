@@ -8,18 +8,18 @@ namespace ModelLayer
 {
     public class Employee
     {
-        private Guid employeeID {get;set;} 
-        private Ticket? employeeTicket {get;set;}
+        private Guid employeeID {get;set;} = Guid.NewGuid();
+        private Ticket employeeTicket {get;set;}
 
         //[Required]
-        private string? fname {get;set;}
-        private string? lname {get; set;}
+        private string fname {get;set;}
+        private string lname {get; set;}
         private bool manager {get; set;} = false;
         private string username {get;set;}
         private string password {get;set;}
-        private DateTime? datecreated {get;set;}
-        private DateTime? lastsignedin {get;set;}
-        private List<Ticket> listofallTickets {get;set;} = null;
+        private DateTime datecreated {get;set;}
+        private DateTime lastsignedin {get;set;}
+        private List<Ticket> listofallTickets {get;set;}
         public Guid EmployeeID {
             get{
                 return this.employeeID;
@@ -42,7 +42,7 @@ namespace ModelLayer
             }
         }
 
-        public string? Fname {
+        public string Fname {
             get{
                 return this.fname;
             }set{
@@ -50,7 +50,7 @@ namespace ModelLayer
             }
         }
 
-        public string? Lname {
+        public string Lname {
             get{
                 return this.lname;
             }set{
@@ -66,14 +66,14 @@ namespace ModelLayer
             }
         }
 
-        public DateTime? SIGNUPDATE{
+        public DateTime SIGNUPDATE{
             get{
                 return this.datecreated;
             }set{
                 this.datecreated = value;
             }
         }
-        public DateTime? LASTSIGNEDIN{
+        public DateTime LASTSIGNEDIN{
             get{
                 return this.lastsignedin;
             }set{
@@ -81,7 +81,7 @@ namespace ModelLayer
             }
         }
 
-        public Ticket? EmployeeTicket{
+        public Ticket EmployeeTicket{
             get{
                 return this.employeeTicket;
             }
@@ -108,7 +108,8 @@ namespace ModelLayer
         /// <param name="username"></param>
         /// <param name="password"></param>
         public Employee(string fName, string lName, string username, string password){
-            this.EmployeeID = new Guid();
+            this.EmployeeID = Guid.NewGuid();
+            //Console.WriteLine(this.EmployeeID);
             this.EmployeeTicket = new Ticket();
             this.Username = username;
             this.Password = password;
@@ -132,12 +133,12 @@ namespace ModelLayer
         /// <param name="signupdate"></param>
         /// <param name="manager"></param>
         public Employee(string username, string password){
-            this.EmployeeID = new Guid("e0123b39-0e2a-4bb3-b62d-31ffbef24ae7");
-            this.EmployeeTicket = null;
+            this.EmployeeID = new Guid();
+            this.EmployeeTicket = new Ticket();
             this.Username = username;
             this.Password = password;
-            this.Fname = "First Name";
-            this.Lname = "Last Name";
+            this.Fname = "nullFname";
+            this.Lname = "nullLname";
             this.Manager = false;
             this.SIGNUPDATE = new DateTime().Date;
             this.LASTSIGNEDIN = new DateTime().Date;
