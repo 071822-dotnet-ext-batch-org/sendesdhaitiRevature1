@@ -36,7 +36,7 @@ namespace BusinessLayer
             username = VerifyAnswers.Verify_Short_StringOnly_Answer(username, 2, 30);
             password = VerifyAnswers.Verify_String_Answer_for_PASSWORD(2,50);
             Employee employee = new Employee(username, password);
-            Messages.Regular($"\tThe Employee with username {employee.Username} and password {employee.Password} will now be validated.");
+            Messages.Regular1($"\tThe Employee with username {employee.Username} and password {employee.Password} will now be validated.");
             return employee;
         }
         

@@ -19,7 +19,8 @@ namespace ModelLayer
         private string password {get;set;}
         private DateTime datecreated {get;set;}
         private DateTime lastsignedin {get;set;}
-        private List<Ticket> listofallTickets {get;set;}
+        private List<Ticket> listofallTickets {get;set;} = new List<Ticket>();
+        private protected DateTime newDateToday = new DateTime();
         public Guid EmployeeID {
             get{
                 return this.employeeID;
@@ -116,7 +117,9 @@ namespace ModelLayer
             this.Fname = fName;
             this.Lname = lName;
             this.Manager = false;
-            this.SIGNUPDATE = new DateTime().Date;
+            
+            this.SIGNUPDATE = newDateToday.ToLocalTime();
+            this.LASTSIGNEDIN = newDateToday.ToLocalTime();
             this.ListofAllTickets = new List<Ticket>();
         }
         
@@ -140,8 +143,8 @@ namespace ModelLayer
             this.Fname = "nullFname";
             this.Lname = "nullLname";
             this.Manager = false;
-            this.SIGNUPDATE = new DateTime().Date;
-            this.LASTSIGNEDIN = new DateTime().Date;
+            this.SIGNUPDATE = new DateTime();
+            this.LASTSIGNEDIN = new DateTime();
             this.ListofAllTickets = new List<Ticket>();
         }
     }

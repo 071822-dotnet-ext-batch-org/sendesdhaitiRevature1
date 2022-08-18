@@ -8,8 +8,8 @@ namespace BusinessLayer
 {
     public class TicketCreate
     {
-        public Ticket CreateTicket(){
-            Console.WriteLine($"\n\t\tWe understand your frustrations and are here to serve!\n\t\tPlease specify the necessary UserticketAmount to be reimbursted,\n\t\t\tand a description of the transaction.");
+        public static Ticket CreateTicket(){
+            Console.WriteLine($"\n\t\tWe understand your frustrations and are here to serve!\n\t\tPlease specify the necessary amount(0.00) to be reimbursted,\n\t\t\tand a description of the transaction.");
             double UserticketAmount = 0.0;
             string description = "";
             
@@ -20,7 +20,7 @@ namespace BusinessLayer
             UserticketAmount = VerifyAnswers.Verify_String_Answer_FOR_DOUBLE(2,5);
             
             //What is the description of the ticket
-            Messages.WhatIsYour_ConsoleMessage("description of your ticket");
+            //Messages.WhatIsYour_ConsoleMessage("description of your ticket");
             description = VerifyAnswers.Verify_String_Answer("\n\t\tFeel free to add a description of the request you're sending.", 0,50);
             
             
