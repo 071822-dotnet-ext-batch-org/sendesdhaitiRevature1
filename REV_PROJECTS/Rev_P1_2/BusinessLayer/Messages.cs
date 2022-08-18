@@ -35,8 +35,25 @@ namespace BusinessLayer
         /// Regularly indented message
         /// </summary>
         /// <param name="message"></param>
-        public static void Regular(string message){
-            Console.WriteLine($"\n\n\t{message}");
+        public async static Task Regular(string message){
+            
+            await Task.Delay(300);
+            Console.WriteLine($"\n\t.");
+            await Task.Delay(250);
+            Console.WriteLine($"\n\t.");
+            await Task.Delay(210);
+            Console.WriteLine($"\n\t.");
+            await Task.Delay(200);
+            Console.WriteLine($"\n\t{message}");
+
+        }
+
+        public static void Regular1(string message){
+            Console.WriteLine($"\n\t.");
+            Console.WriteLine($"\n\t.");
+            Console.WriteLine($"\n\t.");
+            Console.WriteLine($"\n\t{message}");
+
         }
 
     }
