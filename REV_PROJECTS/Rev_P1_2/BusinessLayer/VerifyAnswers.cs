@@ -420,6 +420,107 @@ namespace BusinessLayer
             return Convert.ToDouble(answer);;
         }//End Verify for double
 
-        
+        public static bool Verify_StringAnswer_For_Descrition(string strinVal, int responseMin,int responseMax)
+        {
+            string? answer = strinVal;
+            do
+            {
+                //Console.WriteLine($"\n\n\t{questionTopic}?\n\nENTER YOUR RESPONSE BELOW:");
+                //answer = Console.ReadLine();
+                //answer = answer.ToUpperInvariant();
+                if (answer.Length < responseMin)
+                {
+                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be less than {responseMin} or greater than {responseMax}\nMAKE ANOTHER RESPONSE");
+                    //Task.Delay(2000);
+                    //throw new System.FormatException($"\n\n\t\tYour answer '{answer}' cannot be less than 1 characters\nMAKE ANOTHER RESPONSE\n");
+
+                }
+                else if (answer.Length > responseMax)
+                {
+                    Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be less than {responseMin} or greater than {responseMax} characters\nMAKE ANOTHER RESPONSE");
+                }
+                else if (answer.Trim() == "")
+                {
+                    Console.WriteLine($"\n\n\t\t\tYour answer '{answer}' cannot be empty\nMAKE ANOTHER RESPONSE BELOW:");
+                    continue;
+                }
+                else
+                {
+                    // foreach(char s in answer.Trim()){
+                    if (
+                    //answer.Contains("Z") ||
+                    //answer.Contains("X") ||
+                    //answer.Contains("C") ||
+                    //answer.Contains("V") ||
+                    //answer.Contains("B") ||
+                    //answer.Contains("N") ||
+                    //answer.Contains("M") ||
+                    //answer.Contains("A") ||
+                    //answer.Contains("S") ||
+                    //answer.Contains("D") ||
+                    //answer.Contains("F") ||
+                    //answer.Contains("G") ||
+                    //answer.Contains("H") ||
+                    //answer.Contains("J") ||
+                    //answer.Contains("K") ||
+                    //answer.Contains("L") ||
+                    //answer.Contains("Q") ||
+                    //answer.Contains("W") ||
+                    //answer.Contains("E") ||
+                    //answer.Contains("R") ||
+                    //answer.Contains("T") ||
+                    //answer.Contains("Y") ||
+                    //answer.Contains("U") ||
+                    //answer.Contains("I") ||
+                    //answer.Contains("O") ||
+                    //answer.Contains("P") ||
+                    answer.Contains("!") ||
+                    answer.Contains("@") ||
+                    answer.Contains("#") ||
+                    answer.Contains("$") ||
+                    answer.Contains("%") ||
+                    answer.Contains("^") ||
+                    answer.Contains("&") ||
+                    answer.Contains("*") ||
+                    answer.Contains("(") ||
+                    answer.Contains(")") ||
+                    answer.Contains("-") ||
+                    answer.Contains("+") ||
+                    answer.Contains("=") ||
+                    answer.Contains("_") ||
+                    answer.Contains("{") ||
+                    answer.Contains("}") ||
+                    answer.Contains("[") ||
+                    answer.Contains("]") ||
+                    answer.Contains("|") ||
+                    answer.Contains(";") ||
+                    answer.Contains(":") ||
+                    answer.Contains("'") ||
+                    answer.Contains("<") ||
+                    answer.Contains(">") ||
+                    answer.Contains(",") ||
+                    // answer.Contains(".") ||
+                    answer.Contains("?") ||
+                    answer.Contains("/"))
+                    {
+                        //throw new System.FormatException($"\n\n\t\tYour answer '{answer}' cannot have numbers or special characters\nMAKE ANOTHER RESPONSE\n");
+                        Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot have SPECIAL characters\n\t\t\tEXCEPT FOR '.'\n\nMAKE ANOTHER RESPONSE");
+                        continue;
+
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                    // }//End foreach loop
+                    //return "";
+                }//End If
+                //return "";
+            } while (true);
+            return false; ;
+
+        }
+
+
     }
 }
