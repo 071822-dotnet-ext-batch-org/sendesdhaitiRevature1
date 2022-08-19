@@ -7,64 +7,126 @@ namespace ModelLayer
 {
     public class Ticket
     {
-        private Guid ticketID {get;set;} = new Guid();
+        private Guid TicketID {get;set;} = Guid.NewGuid();
+        private decimal Amount {get;set;} = 0;
+        private string? Description {get;set;}
+        private int Ticket_Status {get;set;}
+        private DateTime DateSubmitted { get; set; }
+        private DateTime? DateReviewed {get;set;}
+        private Guid? FK_Employee_ID { get; set; }
+        private Guid? FK_ManagerReviewer_ID { get; set; }
+
+
+        //Enum for ticket status
         private enum Status{
             Pending = 1,
             Approved = 2,
             Denied = 0
 
         }
-        private Enum status {get;set;} = Status.Pending;
-        private DateTime datesubmitted {get;set;}
-        private DateTime? datereviewed {get;set;}
-        private double amount {get;set;} = 0;
-        private string? description {get;set;} = "Description is currently empty";
-        public Employee? FK_EmployeeID {get;set;} = new Employee();
 
-        public Guid TicketID {
-            get{
-                return this.ticketID;
-            }set{
-                this.ticketID = value;
+
+        /// <summary>
+        /// The Ticket ID
+        /// </summary>
+        public Guid ticketID
+        {
+            get
+            {
+                return this.TicketID;
+            }
+            set
+            {
+                this.TicketID = value;
             }
         }
 
-        public Enum Ticket_Status {
-            get{
-                return this.status;
-            }set{
-                this.status = value;
+
+        /// <summary>
+        /// Ticket status
+        /// | 1 is Pending |
+        /// | 2 is Aprroved |
+        /// | 0 id Denied |
+        /// </summary>
+        public int ticket_Status
+        {
+            get
+            {
+                return (int)Status.Pending;
+            }
+            set
+            {
+                value = (int)Status.Pending;
             }
         }
 
-        public DateTime DateSubmitted {
-            get{
-                return this.datesubmitted;
-            }set{
-                this.datesubmitted = value;
+        public DateTime dateSubmitted
+        {
+            get
+            {
+                return this.DateSubmitted;
+            }
+            set
+            {
+                this.DateSubmitted = value;
             }
         }
-        public DateTime? DateReviewed {
-            get{
-                return this.datereviewed;
-            }set{
-                this.datereviewed = value;
+        public DateTime? dateReviewed
+        {
+            get
+            {
+                return this.DateReviewed;
+            }
+            set
+            {
+                this.DateReviewed = value;
             }
         }
 
-        public double Amount {
-            get{
-                return this.amount;
-            }set{
-                this.amount = value;
+        public decimal amount
+        {
+            get
+            {
+                return this.Amount;
+            }
+            set
+            {
+                this.Amount = value;
             }
         }
 
-        public string? Description {
-            get{
-                return this.description;
-            }set{
-                this.description = value;
+        public string? description
+        {
+            get
+            {
+                return this.Description;
+            }
+            set
+            {
+                this.Description = value;
+            }
+        }
+        public Guid? fk_Employee_ID
+        {
+            get
+            {
+                return this.FK_Employee_ID;
+            }
+            set
+            {
+                this.FK_Employee_ID = value;
+            }
+        }
+
+        public Guid? fk_Manager_ID
+        {
+            get
+            {
+                return this.FK_ManagerReviewer_ID;
+            }
+            set
+            {
+                this.FK_ManagerReviewer_ID = value;
             }
         }
 
@@ -72,37 +134,57 @@ namespace ModelLayer
 
         }
 
-        public Ticket(double amount){
-            this.TicketID = new Guid();
-            this.FK_EmployeeID = new Employee();
+
+        //New ticket with only amount and no description
+        /// <summary>
+        /// New ticket with only amount and no description
+        /// </summary>
+        /// <param name="amount"></param>
+        public Ticket(decimal amount){
+            this.TicketID = Guid.NewGuid();
             this.Amount = amount;
-            this.Description = "This description is empty";
-            this.DateSubmitted = new DateTime().Date;
-            this.DateReviewed = null;
-            this.Ticket_Status = Status.Pending;
+            this.Description = "Empty";
+            this.DateSubmitted = DateTime.Now;
+            this.DateReviewed = DateTime.Now;
+            this.Ticket_Status = (int)Status.Pending;
+            this.FK_Employee_ID = Guid.NewGuid();
+            this.FK_ManagerReviewer_ID = null;
         }
 
-        //New ticket
-        public Ticket(double amount, string description){
-            this.TicketID = new Guid();
-            this.FK_EmployeeID = new Employee();
+        //New ticket with description
+        /// <summary>
+        /// New Ticket with descrition
+        /// </summary>
+        /// <param name="amount"></param>
+        /// <param name="description"></param>
+        public Ticket(decimal amount, string description){
+            this.TicketID = Guid.NewGuid();
             this.Amount = amount;
             this.Description = description;
-            this.DateSubmitted = new DateTime().Date;
-            this.DateReviewed = null;
-            this.Ticket_Status = Status.Pending;
+            this.DateSubmitted = DateTime.Now;
+            this.DateReviewed = DateTime.Now;
+            this.Ticket_Status = (int)Status.Pending;
+            this.FK_Employee_ID = Guid.NewGuid();
+            this.FK_ManagerReviewer_ID = null;
 
         }
 
         //Previous Tickets
-        public Ticket(Guid ticketID){
+
+        /// <summary>
+        /// Previously made tickets
+        /// </summary>
+        /// <param name="ticketID"></param>
+        public Ticket(Guid ticketID)
+        {
             this.TicketID = ticketID;
-            this.FK_EmployeeID = new Employee();
-            this.Amount = amount;
-            this.Description = description;
-            this.DateSubmitted = datesubmitted;
-            this.DateReviewed = datereviewed;
-            this.Ticket_Status = Status.Pending;
+            this.Amount = 0;
+            this.Description = "Empty";
+            this.DateSubmitted = DateTime.Now;
+            this.DateReviewed = DateTime.Now;
+            this.Ticket_Status = Ticket_Status;
+            this.FK_Employee_ID = Guid.NewGuid();
+            this.FK_ManagerReviewer_ID = null;
         }
     }
 }

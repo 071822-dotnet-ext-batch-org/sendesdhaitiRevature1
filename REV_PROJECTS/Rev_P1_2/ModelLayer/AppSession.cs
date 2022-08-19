@@ -7,21 +7,41 @@ namespace ModelLayer
 {
     public class AppSession
     {
-        private Guid sessionID {get;set;}= Guid.NewGuid();
-        private Employee employee {get;set;} = new Employee();
+        private Guid SessionID { get; set; } = Guid.NewGuid();
 
-        private Ticket? ticket {get;set;} = new Ticket();
+        private Guid? FK_Employee_ID {get;set;} = Guid.NewGuid();
+        private Guid? FK_ManagerReviewer_ID { get; set; } = Guid.NewGuid();
+
+
+        private Employee? sessionEm { get; set; }
+        //private Manager? sessionMang { get; set; }
+
+
+        //private Ticket? ticket {get;set;} = new Ticket();
+        //private Manager? SessionManager {get;set;} = new Manager();
 
         public AppSession(){}
 
         public Employee Employee {
             get{
-                return this.employee;
+                return this.sessionEm;
             }
             set{
-                this.employee = value;
+                this.sessionEm = value;
             }
         }
+
+        //public Manager Manager
+        //{
+        //    get
+        //    {
+        //        return this.sessionMang;
+        //    }
+        //    set
+        //    {
+        //        this.sessionMang = value;
+        //    }
+        //}
 
         // public Ticket? Ticket {
         //     get{
@@ -31,6 +51,6 @@ namespace ModelLayer
         //         this.ticket = value;
         //     }
         // }
-        
+
     }
 }
