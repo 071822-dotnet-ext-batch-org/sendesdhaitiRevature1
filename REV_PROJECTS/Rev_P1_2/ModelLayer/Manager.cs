@@ -1,36 +1,101 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+
 namespace ModelLayer
 {
     public class Manager : Employee
     {
-        private Guid ManagerID { get; set; } = Guid.NewGuid();
-        private string MFUsername { get; set; }
-        private string MFPassword { get; set; }
-        private string? MFname { get; set; }
-        private string? MLname { get; set; }
-        private Guid? FK_Ticket_ID { get; set; }
+        //Fields for manager
+        private Guid manager_ID { get; set; } //not null
+        private string? fname { get; set; } //null
+        private string? lname { get; set; } //null
+        [Required(ErrorMessage = "You must have a valid!")]
+        private string username { get; set; } //not null
+        [Required(ErrorMessage = "A password is required!")]
+        private string password { get; set; } //not null
+        private DateTime dateRegistered { get; set; } //not null
 
-        private List<Ticket>? Tickets_for_Review { get; set; } 
+        //Manager specific Porperties
+        //private List<Ticket> tickets_for_review;
+        //private List<Ticket> reviewed_tickets;
 
-        public Manager(){}
 
-        /// <summary>
-        /// WHen someone makes a new manager
-        /// They will need a username and password
-        /// </summary>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
-        public Manager(string username, string password)
+        //Getters and Setters for Fields
+        public Guid Manager_ID
         {
-            this.ManagerID = Guid.NewGuid();
-            this.MFUsername = username;
-            this.MFPassword = password;
-            this.MFname = null;
-            this.MLname = null;
-            this.FK_Ticket_ID = null;
-            this.Tickets_for_Review = new List<Ticket>();
-
+            get
+            {
+                return manager_ID;
+            }
+            set
+            {
+                manager_ID = value;
+            }
         }
+
+        public string? MFname
+        {
+            get
+            {
+                return fname;
+            }
+            set
+            {
+                fname = value;
+            }
+        }
+
+        public string? MLname
+        {
+            get
+            {
+                return lname;
+            }
+            set
+            {
+                lname = value;
+            }
+        }
+
+        public string MUsername
+        {
+            get
+            {
+                return username;
+            }
+            set
+            {
+                username = value;
+            }
+        }
+
+        public string MPassword
+        {
+            get
+            {
+                return password;
+            }
+            set
+            {
+                password = value;
+            }
+        }
+
+        public DateTime MDateRegistered
+        {
+            get
+            {
+                return dateRegistered;
+            }
+            set
+            {
+                dateRegistered = value;
+            }
+        }
+
+
+
+
     }
 }
 
