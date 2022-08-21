@@ -431,6 +431,7 @@ namespace BusinessLayer
                 if (answer.Length < responseMin)
                 {
                     Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be less than {responseMin} or greater than {responseMax}\nMAKE ANOTHER RESPONSE");
+                    return false;
                     //Task.Delay(2000);
                     //throw new System.FormatException($"\n\n\t\tYour answer '{answer}' cannot be less than 1 characters\nMAKE ANOTHER RESPONSE\n");
 
@@ -438,11 +439,12 @@ namespace BusinessLayer
                 else if (answer.Length > responseMax)
                 {
                     Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot be less than {responseMin} or greater than {responseMax} characters\nMAKE ANOTHER RESPONSE");
+                    return false;
                 }
                 else if (answer.Trim() == "")
                 {
                     Console.WriteLine($"\n\n\t\t\tYour answer '{answer}' cannot be empty\nMAKE ANOTHER RESPONSE BELOW:");
-                    continue;
+                    return false;
                 }
                 else
                 {
@@ -474,10 +476,10 @@ namespace BusinessLayer
                     //answer.Contains("I") ||
                     //answer.Contains("O") ||
                     //answer.Contains("P") ||
-                    answer.Contains("!") ||
+                    //answer.Contains("!") ||
                     answer.Contains("@") ||
                     answer.Contains("#") ||
-                    answer.Contains("$") ||
+                    //answer.Contains("$") ||
                     answer.Contains("%") ||
                     answer.Contains("^") ||
                     answer.Contains("&") ||
@@ -485,7 +487,7 @@ namespace BusinessLayer
                     answer.Contains("(") ||
                     answer.Contains(")") ||
                     answer.Contains("-") ||
-                    answer.Contains("+") ||
+                    //answer.Contains("+") ||
                     answer.Contains("=") ||
                     answer.Contains("_") ||
                     answer.Contains("{") ||
@@ -495,17 +497,17 @@ namespace BusinessLayer
                     answer.Contains("|") ||
                     answer.Contains(";") ||
                     answer.Contains(":") ||
-                    answer.Contains("'") ||
+                    //answer.Contains("'") ||
                     answer.Contains("<") ||
                     answer.Contains(">") ||
-                    answer.Contains(",") ||
+                    //answer.Contains(",") ||
                     // answer.Contains(".") ||
-                    answer.Contains("?") ||
+                    //answer.Contains("?") ||
                     answer.Contains("/"))
                     {
                         //throw new System.FormatException($"\n\n\t\tYour answer '{answer}' cannot have numbers or special characters\nMAKE ANOTHER RESPONSE\n");
-                        Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot have SPECIAL characters\n\t\t\tEXCEPT FOR '.'\n\nMAKE ANOTHER RESPONSE");
-                        continue;
+                        Console.WriteLine($"\n\n\t\tYour answer '{answer}' cannot have SPECIAL characters\n\t\t\tEXCEPT FOR (. , $ + ' ? !) \n\nMAKE ANOTHER RESPONSE");
+                        return false;
 
                     }
                     else
@@ -513,11 +515,11 @@ namespace BusinessLayer
                         return true;
                     }
                     // }//End foreach loop
-                    //return "";
+                    return false;
                 }//End If
                 //return "";
             } while (true);
-            return false; ;
+            //return false;
 
         }
 

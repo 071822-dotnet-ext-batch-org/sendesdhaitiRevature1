@@ -5,186 +5,111 @@ using System.Threading.Tasks;
 
 namespace ModelLayer
 {
+    //--------separate
+    public enum Status
+    {
+        Pending = 1,
+        Approved = 2,
+        Denied = 0
+    }
+    //--------separate
     public class Ticket
     {
-        private Guid TicketID {get;set;} = Guid.NewGuid();
-        private decimal Amount {get;set;} = 0;
-        private string? Description {get;set;}
-        private int Ticket_Status {get;set;}
-        private DateTime DateSubmitted { get; set; }
-        private DateTime? DateReviewed {get;set;}
-        private Guid? FK_Employee_ID { get; set; }
-        private Guid? FK_ManagerReviewer_ID { get; set; }
+        private Guid ticket_ID { get; set; }
+        private decimal amount { get; set; }
+        private string? description { get; set; }
+        private Status ticket_status;
+        private DateTime submitDate { get; set; }
+        private DateTime reviewDate { get; set; }
 
 
-        //Enum for ticket status
-        private enum Status{
-            Pending = 1,
-            Approved = 2,
-            Denied = 0
-
-        }
 
 
-        /// <summary>
-        /// The Ticket ID
-        /// </summary>
-        public Guid ticketID
+        public Guid Ticket_ID
         {
             get
             {
-                return this.TicketID;
+                return ticket_ID;
             }
             set
             {
-                this.TicketID = value;
+                ticket_ID = value;
             }
         }
 
-
-        /// <summary>
-        /// Ticket status
-        /// | 1 is Pending |
-        /// | 2 is Aprroved |
-        /// | 0 id Denied |
-        /// </summary>
-        public int ticket_Status
+        public decimal Amount
         {
             get
             {
-                return (int)Status.Pending;
+                return amount;
             }
             set
             {
-                value = (int)Status.Pending;
+                amount = value;
             }
         }
 
-        public DateTime dateSubmitted
+        public string? Description
         {
             get
             {
-                return this.DateSubmitted;
+                return description;
             }
             set
             {
-                this.DateSubmitted = value;
+                description = value;
             }
         }
-        public DateTime? dateReviewed
+
+        public Status TicketStatus
         {
             get
             {
-                return this.DateReviewed;
+                return ticket_status;
             }
             set
             {
-                this.DateReviewed = value;
+                ticket_status = Status.Pending;
             }
         }
 
-        public decimal amount
+        public DateTime SubmitDate
         {
             get
             {
-                return this.Amount;
+                return submitDate;
             }
             set
             {
-                this.Amount = value;
+                submitDate = value;
             }
         }
 
-        public string? description
+        public DateTime ReviewDate
         {
             get
             {
-                return this.Description;
+                return reviewDate;
             }
             set
             {
-                this.Description = value;
+                reviewDate = value;
             }
         }
-        public Guid? fk_Employee_ID
+
+
+        //THe Constructors for Tickets
+
+        public Ticket() { }
+        public Ticket(TicketDTO ticket)
         {
-            get
-            {
-                return this.FK_Employee_ID;
-            }
-            set
-            {
-                this.FK_Employee_ID = value;
-            }
-        }
+            Ticket_ID= ticket.ticket_ID;
+            Amount = ticket.amount;
+            Description = ticket.description;
+            TicketStatus = ticket._status;
+            SubmitDate = ticket.submitDate;
+            ReviewDate = ticket.reviewDate;
 
-        public Guid? fk_Manager_ID
-        {
-            get
-            {
-                return this.FK_ManagerReviewer_ID;
-            }
-            set
-            {
-                this.FK_ManagerReviewer_ID = value;
-            }
-        }
-
-        public Ticket(){
-
-        }
-
-
-        //New ticket with only amount and no description
-        /// <summary>
-        /// New ticket with only amount and no description
-        /// </summary>
-        /// <param name="amount"></param>
-        public Ticket(decimal amount){
-            this.TicketID = Guid.NewGuid();
-            this.Amount = amount;
-            this.Description = "Empty";
-            this.DateSubmitted = DateTime.Now;
-            this.DateReviewed = DateTime.Now;
-            this.Ticket_Status = (int)Status.Pending;
-            this.FK_Employee_ID = Guid.NewGuid();
-            this.FK_ManagerReviewer_ID = null;
-        }
-
-        //New ticket with description
-        /// <summary>
-        /// New Ticket with descrition
-        /// </summary>
-        /// <param name="amount"></param>
-        /// <param name="description"></param>
-        public Ticket(decimal amount, string description){
-            this.TicketID = Guid.NewGuid();
-            this.Amount = amount;
-            this.Description = description;
-            this.DateSubmitted = DateTime.Now;
-            this.DateReviewed = DateTime.Now;
-            this.Ticket_Status = (int)Status.Pending;
-            this.FK_Employee_ID = Guid.NewGuid();
-            this.FK_ManagerReviewer_ID = null;
-
-        }
-
-        //Previous Tickets
-
-        /// <summary>
-        /// Previously made tickets
-        /// </summary>
-        /// <param name="ticketID"></param>
-        public Ticket(Guid ticketID)
-        {
-            this.TicketID = ticketID;
-            this.Amount = 0;
-            this.Description = "Empty";
-            this.DateSubmitted = DateTime.Now;
-            this.DateReviewed = DateTime.Now;
-            this.Ticket_Status = Ticket_Status;
-            this.FK_Employee_ID = Guid.NewGuid();
-            this.FK_ManagerReviewer_ID = null;
         }
     }
 }

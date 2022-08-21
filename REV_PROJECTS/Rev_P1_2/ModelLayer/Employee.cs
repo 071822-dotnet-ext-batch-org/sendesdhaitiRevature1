@@ -2,201 +2,99 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 //using System.ComponentModel.DataAnnotations;
 
 namespace ModelLayer
 {
     public class Employee
     {
-        private Guid EmployeeID {get;set;} = Guid.NewGuid();
-        private Guid? FK_TicketID {get;set;} = Guid.NewGuid();
+        //Employee Data Fields
+        private Guid employee_ID { get; set; } //not null
+        private string? fname { get; set; } //null
+        private string? lname { get; set; } //null
+        [Required(ErrorMessage = "You must have a valid!")]
+        private string username { get; set; } //not null
+        [Required(ErrorMessage = "A password is required!")]
+        private string password { get; set; } //not null
+        private DateTime dateRegistered { get; set; } //not null
 
-        //[Required]
-        private string? Fname {get;set;}
-        private string? Lname {get; set;}
-        //private bool manager {get; set;} = false;
-        private string Username {get;set;}
-        private string Password {get;set;}
-        private DateTime SignUpDate { get;set;}
-        private DateTime? LastSignedIn { get;set;}
-        private List<Ticket>? ListofallTickets {get;set;}
 
-        /// <summary>
-        /// Employee ID
-        /// </summary>
-        public Guid employeeID
+        //Getters and Setters for Fields
+        public Guid Employee_ID
         {
             get
             {
-                return this.EmployeeID;
+                return employee_ID;
             }
             set
             {
-                this.EmployeeID = value;
+                employee_ID = value;
             }
         }
 
-
-        /// <summary>
-        /// Employee Ticket Foreign Key ID
-        /// </summary>
-        public Guid? fk_TicketID
+        public string? Fname
         {
             get
             {
-                return this.FK_TicketID;
+                return fname;
             }
             set
             {
-                this.FK_TicketID = value;
+                fname = value;
             }
         }
 
-        /// <summary>
-        /// The Employee's Username
-        /// </summary>
-        public string username
+        public string? Lname
         {
             get
             {
-                return this.Username;
+                return lname;
             }
             set
             {
-                this.Username = value;
+                lname = value;
             }
         }
 
-        /// <summary>
-        /// The Employee's Passowrd
-        /// </summary>
-        public string password
+        public string Username
         {
             get
             {
-                return this.Password;
+                return username;
             }
             set
             {
-                this.Password = value;
+                username = value;
             }
         }
 
-
-        /// <summary>
-        /// The Employee's First name
-        /// </summary>
-        public string? fname
+        public string Password
         {
             get
             {
-                return this.Fname;
+                return password;
             }
             set
             {
-                this.Fname = value;
+                password = value;
             }
         }
 
-        /// <summary>
-        /// The Employee's Last name
-        /// </summary>
-        public string? lname
+        public DateTime DateRegistered
         {
             get
             {
-                return this.Lname;
+                return dateRegistered;
             }
             set
             {
-                this.Lname = value;
+                dateRegistered = value;
             }
         }
 
-        /// <summary>
-        /// Date the Employee signed up
-        /// </summary>
-        public DateTime signUpDate
-        {
-            get
-            {
-                return this.SignUpDate;
-            }
-            set
-            {
-                this.SignUpDate = value;
-            }
-        }
 
-        /// <summary>
-        /// Last known date Employee signed in
-        /// </summary>
-        public DateTime? lastSignedIn
-        {
-            get
-            {
-                return this.LastSignedIn;
-            }
-            set
-            {
-                this.LastSignedIn = value;
-            }
-        }
 
-        /// <summary>
-        /// Employee's List of tickets
-        /// </summary>
-        public List<Ticket>? listofallTickets
-        {
-            get
-            {
-                return this.ListofallTickets;
-            }
-            set
-            {
-                this.ListofallTickets = value;
-            }
-        }
-        public Employee(){}
 
-        /// <summary>
-        /// This is an employee that is signing up for the first time
-        /// </summary>
-        /// <param name="fName"></param>
-        /// <param name="lName"></param>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
-        public Employee(string fName, string lName, string username, string password){
-            this.EmployeeID = Guid.NewGuid();
-            this.FK_TicketID = Guid.NewGuid();
-            this.Username = username;
-            this.Password = password;
-            this.Fname = fName;
-            this.Lname = lName;
-            this.SignUpDate = new DateTime();
-            this.LastSignedIn = null;
-            this.ListofallTickets = new List<Ticket>();
-        }
-        
-
-        /// <summary>
-        /// This is an employee that has signed back into the system
-        /// 
-        /// It generates a new employee in the session 
-        /// with the parameters/data that employee previously had
-        /// </summary>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
-        public Employee(string username, string password){
-            this.EmployeeID = Guid.NewGuid();
-            this.FK_TicketID = Guid.NewGuid();
-            this.Username = username;
-            this.Password = password;
-            this.Fname = "nullFname";
-            this.Lname = "nullLname";
-            this.SignUpDate = new DateTime();
-            this.LastSignedIn = new DateTime();
-            this.ListofallTickets = new List<Ticket>();
-        }
     }
 }

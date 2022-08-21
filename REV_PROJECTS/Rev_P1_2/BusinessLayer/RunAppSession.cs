@@ -10,33 +10,46 @@ namespace BusinessLayer
 {
     public class RunAppSession
     {
-        private AppSession _newAppSession = new AppSession();
-        private Employee _sessionEmployee = new Employee();
-        private Manager? _sessionManager = new Manager();
 
-        private Ticket? _sessionTicket = new Ticket();
         private readonly AdoDotnetAccessPoint _accessPoint = new AdoDotnetAccessPoint();
-        private List<Ticket> sessionTickets { get; set; } = new List<Ticket>();
-        
-        /// <summary>
-        /// This method starts/creates a new AppSession
-        /// </summary>
-        public void NewAppSession(){
+        private AppSession _newAppSession = new AppSession();
+        private List<Ticket>? _sessionTickets = new List<Ticket>();
+        private Ticket? _mostRecentTicket = new Ticket();
+
+        //private Employee _sessionEmployee = new Employee();
+        //private Manager? _sessionManager = new Manager();
+        //Our Model Layer - All Data saved for the session
+        ////Gonna need a List model to hold all tickets - makee it a derived class
+        //private List<Ticket> _sessionTickets { get; set; } = new List<Ticket>();
+
+        ////Our Repo Layer - All Data dsaved and retrieved from Database
+
+
+        ////------------------------------------------------Run Session Section
+        ///// <summary>
+        ///// This method starts/creates a new AppSession
+        ///// </summary>
+        public void NewAppSession()
+        {
             this._newAppSession = new AppSession();
         }
+
+
+
+        ////------------------------------------------------Employee Checks and Pages Section
 
         /// <summary>
         /// This method in the currently ran session returns a true or false if the Employee's login credential match
         /// </summary>
         /// <param name="employeeInput"></param>
         /// <returns></returns>
-        public async Task<bool> CheckIfExists_Employee(Employee employeeInput)
+        public async Task<bool> CheckIfExists_Employee(EmployeeDTO emCheckDTO)
         {
-            Employee em = new Employee();
-            em = employeeInput;
+            //Employee em = new Employee(employeeInput.username, employeeInput.password);
+            //em = employeeInput;
             //Check if employee exists from the repo layer
-            bool checkAP = await _accessPoint.Employee_LoginCheck(em);
-            if(checkAP == false)
+            bool checkAP = await _accessPoint.Employee_LoginCheck(emCheckDTO);
+            if (checkAP == false)
             {
                 return false;
             }
@@ -48,70 +61,158 @@ namespace BusinessLayer
         }
 
         /// <summary>
-        /// This logs the user in based on the Employee obj
+        /// This logs the user in based on the EmployeeDTO obj
         /// </summary>
-        /// <param name="employeeInput"></param>
+        /// <param name="emCheckDTO"></param>
         /// <returns></returns>
-        public async Task<Employee?> Login_Employee(Employee employeeInput)
+        public async Task<EmployeeDTO?> Login_Employee(EmployeeDTO emCheckDTO)
         {
-            //Employee? em = new Employee();
-            _sessionEmployee = await _accessPoint.Employee_Login(employeeInput);
-            return _sessionEmployee;
+            EmployeeDTO? em = new EmployeeDTO();
+            em = await _accessPoint.Employee_Login(emCheckDTO);
+            return em;
         }
 
-        public async Task<bool> CheckIfExists_Ticket(int employeeInput)
+
+        public async Task<bool> Register_Employee(EmployeeDTO emDTO)
         {
-            Ticket em = new Ticket();
-            em.ticket_Status = employeeInput;
+            var emSaveResponse = await _accessPoint.Employee_Register(emDTO);
+            return emSaveResponse;
+        }
+
+
+
+        ////------------------------------------------------Manager Checks and Pages Section
+
+
+        public async Task<bool> CheckIfExists_Manager(ManagerDTO managerInput)
+        {
             //Check if employee exists from the repo layer
-            bool checkAP = await _accessPoint.Employee_TicketCheck(em);
+            bool checkAP = await _accessPoint.Manager_LoginCheck(managerInput);
             if (checkAP == false)
             {
                 return false;
             }
             else
             {
-                //add ticket to list for every ticket that matches the id
                 return true;
-            }
-
-        }//End of Ticket Check
-
-        public async Task<Ticket?> Get_Ticket_Employee(int input_T)
-        {
-            Ticket em = new Ticket();
-            em.ticket_Status = input_T;
-            Ticket? checkT = await _accessPoint.Employee_TicketGet(em);
-            if(checkT == null)
-            {
-                Console.WriteLine("The ticket could not be viewed");
-                return null;
-            }
-            else
-            {
-                Console.WriteLine("The ticket was found");
-                return checkT;
             }
 
         }
 
-        //Submit ticket
-        public async Task<bool> Submit_EmployeeTicket(Ticket emTicket)
+        public async Task<ManagerDTO?> Login_Manager(ManagerDTO managerInput)
         {
-            _sessionTicket = emTicket;
-            _sessionTicket.fk_Employee_ID = this._sessionEmployee.employeeID;
-            bool checkIfSaved = await _accessPoint.Employee_TicketSubmit(_sessionTicket);
-            if (checkIfSaved == true)
+            ManagerDTO? mang = new ManagerDTO();
+            mang = await _accessPoint.Manager_Login(managerInput);
+            return mang;
+        }
+
+        public async Task<bool> Register_Manager(ManagerDTO mangDTO)
+        {
+            var mangSaveResponse = await _accessPoint.Manager_Register(mangDTO);
+            return mangSaveResponse;
+        }
+
+
+
+        ////------------------------------------------------Tickets Getting, Saving, and Updating Section
+        public async Task<List<TicketDTO>?> Get_AllTickets()
+        {
+            //Ticket em = new Ticket();
+            //em.Ticket_Status = input_T;
+            this._sessionTickets = await _accessPoint.Get_All_Tickets();
+
+            List<TicketDTO>? tickDTO = new List<TicketDTO>();
+            if (_sessionTickets != null)
             {
-                Console.WriteLine("Ticket Recorded");
-                return true;
+                foreach(Ticket t in _sessionTickets)
+                {
+                    TicketDTO retirevedDTO_Ticket = new TicketDTO(t);
+                    tickDTO.Add(retirevedDTO_Ticket);
+                }
+
+                Console.WriteLine("the list of tickets were found");
+                return tickDTO;
             }
             else
             {
-                Console.WriteLine("Ticket could not be saved");
+                Console.WriteLine("The list of tickets is empty");
+                return tickDTO;
+            }
+
+        }
+
+        public async Task<bool> Create_Ticket(TicketDTO emTicketDTO)
+        {
+            //Check if ticket DTO values are good before converting to Ticket OBJ
+            bool descCheck = VerifyAnswers.Verify_StringAnswer_For_Descrition(emTicketDTO.description, 0, 200);
+            if(emTicketDTO.amount <= 0)
+            {
+                //If amount is zero
+                Console.WriteLine($"The amount of {emTicketDTO.amount} cannot be zero");
                 return false;
             }
+            
+            else
+            {
+                //If description is a valid descrition
+                if(descCheck == true)
+                {
+                    //Convert Ticket DTO obj to Ticket obj
+                    _mostRecentTicket = new Ticket()
+                    {
+                        Ticket_ID = emTicketDTO.ticket_ID,
+                        Amount = (decimal)emTicketDTO.amount,
+                        Description = emTicketDTO.description,
+                        TicketStatus = emTicketDTO._status,
+                        SubmitDate = emTicketDTO.submitDate,
+                        ReviewDate = emTicketDTO.reviewDate
+                    };
+                    Console.WriteLine(emTicketDTO.ticket_ID);
+
+                    bool checkIfSaved = await _accessPoint.Employee_TicketSubmit(_mostRecentTicket);
+                    if (checkIfSaved == true)
+                    {
+                        Console.WriteLine("Ticket Recorded");
+                        return true;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ticket could not be saved");
+                        return false;
+                    }
+
+                }
+                else
+                {
+                    Console.WriteLine($"The description of '{emTicketDTO.description}' was invalid");
+                    return false;
+                }
+               
+            }
         }
+
+        //public async Task<bool> CheckIfExists_Ticket(int employeeInput)
+        //{
+        //    Ticket em = new Ticket();
+        //    em.ticket_Status = employeeInput;
+        //    //Check if employee exists from the repo layer
+        //    bool checkAP = await _accessPoint.Employee_TicketCheck(em);
+        //    if (checkAP == false)
+        //    {
+        //        return false;
+        //    }
+        //    else
+        //    {
+        //        //add ticket to list for every ticket that matches the id
+        //        return true;
+        //    }
+
+        //}//End of Ticket Check
+
+
+
+
+        ////Submit ticket
 
 
 

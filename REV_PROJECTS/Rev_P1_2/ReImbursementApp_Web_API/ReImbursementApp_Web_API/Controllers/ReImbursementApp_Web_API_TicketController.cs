@@ -13,96 +13,48 @@ namespace ReImbursementApp_Web_API.Controllers
     [Route("api/[controller]")]
     public class ReImbursementApp_Web_API_TicketController : Controller
     {
-        private readonly Ticket _ticket = new Ticket();
-        private readonly RunAppSession _runAppSession = new RunAppSession();
-        // GET: api/values
-        [HttpGet("Ticket/{ticket_Status}/")]
-        public async Task<ActionResult<Ticket?>> Get(int ticket_Status)
+
+        private static readonly RunAppSession _currentSession = new RunAppSession();
+
+        [HttpGet("Ticket/")]
+        //[HttpGet("Ticket/{id}/")]
+        //[HttpGet("Ticket/{status}/")]
+        public async Task<ActionResult<IEnumerable<ModelLayer.TicketDTO>?>> GetTickets()
         {
-            //check if any tickets
-            var checkTick = await this._runAppSession.CheckIfExists_Ticket(ticket_Status);
 
-            if(checkTick == true)
+
+            //Retrieve a list of all ticketDTOs whether empty or not
+            List<TicketDTO>? allTickets = await _currentSession.Get_AllTickets();
+
+            //If list if not empty
+            if (allTickets != null)
             {
-                //Found all tickets
-                var getTick = await this._runAppSession.Get_Ticket_Employee(ticket_Status);
-
-
-                return Ok(getTick);
-
+                //show the list of tickets
+                return Ok(allTickets);
             }
             else
             {
-                //get all tickets
-                return NotFound(checkTick);
+                //show an epty list of tickets
+                return Ok(allTickets);
             }
         }
 
 
-        //Make new ticket
-        [HttpGet("Ticket/create/")]
-        public async Task<ActionResult<bool?>> Submit_Ticket(decimal emAM, string desc)
-        {
-            bool? result = null;
-            if(emAM <= 0)
-            {
-                Console.WriteLine($"Ticket cannot be empty");
-                return BadRequest(emAM);
-
-            }
-            else
-            {
-                //this._ticket.amount = emAM;
-                bool descResult = VerifyAnswers.Verify_StringAnswer_For_Descrition(desc, 0, 200);
-                if(descResult == false)
-                {
-                    Console.WriteLine("Something wrong with your description");
-                    return BadRequest(desc);
-                }
-                else
-                {
-                    //this._ticket.description = desc;
-                    Ticket newTick = new Ticket(emAM, desc);
-                    result = await this._runAppSession.Submit_EmployeeTicket(newTick);
-                    if(result == true)
-                    {
-                        //Saved successfully
-                        return Ok(result);
-                    }
-                    else
-                    {
-                        return Ok(result);
-                    }
-
-                }
-
-            }
-        }
-
-        // GET api/values/5
-        //[HttpGet("Tickets/{ticket_status}/")]
-        //public async Task<ActionResult<Ticket?>> Get_Employee_Ticket(int ticket_Status)
-        //{
-        //    //check if any tickets
-        //    var checkTick = await this.runAppSession.Get_Ticket_Employee(ticket_Status);
-
-        //    if (checkTick != null)
-        //    {
-        //        //Found all tickets
-        //        return Ok(checkTick);
-
-        //    }
-        //    else
-        //    {
-        //        //get all tickets
-        //        return NotFound(checkTick);
-        //    }
-        //}
 
         // POST api/values
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPost("Create/")]
+        public async Task<ActionResult<bool>> Create_Ticket([FromBody]TicketDTO ticket)
         {
+            //ModelLayer.TicketDTO newTicket = new ModelLayer.TicketDTO(amount, description);
+            bool savedTicket = await _currentSession.Create_Ticket(ticket);
+            if(savedTicket == true)
+            {
+                return Created("Create",savedTicket);
+            }
+            else
+            {
+                return BadRequest(savedTicket);
+            }
         }
 
         // PUT api/values/5
