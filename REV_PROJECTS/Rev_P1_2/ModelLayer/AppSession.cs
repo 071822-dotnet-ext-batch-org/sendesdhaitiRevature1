@@ -7,7 +7,7 @@ namespace ModelLayer
 {
     public class AppSession
     {
-        private Guid SessionID { get; set; } = Guid.NewGuid();
+        private Guid SessionID { get; set; }
 
         //private Guid? FK_Employee_ID {get;set;} = Guid.NewGuid();
         //private Guid? FK_ManagerReviewer_ID { get; set; } = Guid.NewGuid();

@@ -95,6 +95,21 @@ namespace ModelLayer
 
 
 
+        //Constructors for Employee
+        public Employee() {
+            Employee_ID = Guid.NewGuid();
+        }
+        public Employee(EmployeeDTO e)
+        {
+            Employee_ID = Guid.NewGuid();
+            Fname = e.fname;
+            Lname = e.lname;
+            Username = e.username;
+            Password = e.password;
+            DateRegistered = e.dateRegistered;
+        }
+
+
 
     }
 }

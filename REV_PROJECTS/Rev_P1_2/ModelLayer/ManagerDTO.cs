@@ -14,6 +14,8 @@ namespace ModelLayer
         [Required(ErrorMessage = "A password is required!")]
         public string password { get; set; } //not null
         public DateTime dateRegistered { get; set; } //not null
+        public string role { get; set; } = "Manager";
+       
 
         //Manager specific Porperties
         //private List<Ticket> tickets_for_review;
@@ -30,12 +32,13 @@ namespace ModelLayer
         /// <param name="password"></param>
         public ManagerDTO(string username, string password)
         {
-            Manager_ID = Guid.NewGuid();
-            fname = "First Name";
-            lname = "Last Name";
+            this.Manager_ID = Guid.NewGuid();
+            this.fname = "First Name";
+            this.lname = "Last Name";
             this.username = username;
             this.password = password;
-            dateRegistered = DateTime.Now;
+            this.dateRegistered = DateTime.Now;
+            this.role = "Manager";
         }
 
         /// <summary>
@@ -44,12 +47,13 @@ namespace ModelLayer
         /// <param name="m"></param>
         public ManagerDTO(Manager m)
         {
-            Manager_ID = m.Manager_ID;
-            this.fname = m.MFname;
-            this.lname = m.MLname;
-            this.username = m.MUsername;
-            this.password = m.MPassword;
-            dateRegistered = m.MDateRegistered;
+            this.Manager_ID = m.Employee_ID;
+            this.fname = m.Fname;
+            this.lname = m.Lname;
+            this.username = m.Username;
+            this.password = m.Password;
+            this.dateRegistered = m.DateRegistered;
+            this.role = m.Role;
         }
 
         /// <summary>
@@ -61,12 +65,13 @@ namespace ModelLayer
         /// <param name="lname"></param>
         public ManagerDTO(string username, string password, string fname, string lname)
         {
-            Manager_ID = Guid.NewGuid();
+            this.Manager_ID = Guid.NewGuid();
             this.fname = fname;
             this.lname = lname;
             this.username = username;
             this.password = password;
-            dateRegistered = DateTime.Now;
+            this.role = "Manager";
+            this.dateRegistered = DateTime.Now;
         }
     }
 }

@@ -15,12 +15,13 @@ namespace ModelLayer
     //--------separate
     public class Ticket
     {
-        private Guid ticket_ID { get; set; }
+        private Guid ticket_ID { get; set; }// = Guid.NewGuid();
         private decimal amount { get; set; }
         private string? description { get; set; }
-        private Status ticket_status;
+        private string ticket_status;
         private DateTime submitDate { get; set; }
         private DateTime reviewDate { get; set; }
+        private Guid? fk_employeeID { get; set; }// = Guid.NewGuid();
 
 
 
@@ -61,7 +62,7 @@ namespace ModelLayer
             }
         }
 
-        public Status TicketStatus
+        public string TicketStatus
         {
             get
             {
@@ -69,7 +70,7 @@ namespace ModelLayer
             }
             set
             {
-                ticket_status = Status.Pending;
+                ticket_status = Status.Pending.ToString();
             }
         }
 
@@ -97,18 +98,32 @@ namespace ModelLayer
             }
         }
 
+        public Guid? FK_EmployeeID
+        {
+            get
+            {
+                return fk_employeeID;
+            }
+            set
+            {
+                fk_employeeID = value;
+            }
+        }
+
 
         //THe Constructors for Tickets
 
         public Ticket() { }
         public Ticket(TicketDTO ticket)
         {
-            Ticket_ID= ticket.ticket_ID;
-            Amount = ticket.amount;
-            Description = ticket.description;
-            TicketStatus = ticket._status;
-            SubmitDate = ticket.submitDate;
-            ReviewDate = ticket.reviewDate;
+            this.Ticket_ID = Guid.NewGuid();
+            this.Amount = ticket.amount;
+            this.Description = ticket.description;
+            this.TicketStatus = ticket._status;
+            this.SubmitDate = DateTime.Now;
+            this.ReviewDate = DateTime.Now;
+            this.FK_EmployeeID = Guid.NewGuid();
+
 
         }
     }

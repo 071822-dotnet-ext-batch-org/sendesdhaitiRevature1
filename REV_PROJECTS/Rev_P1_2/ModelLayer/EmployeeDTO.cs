@@ -54,7 +54,7 @@ namespace ModelLayer
         /// <param name="e"></param>
         public EmployeeDTO(Employee e)
         {
-            employee_ID = Guid.NewGuid();
+            employee_ID = e.Employee_ID;
             fname = e.Fname;
             lname = e.Lname;
             username = e.Username;

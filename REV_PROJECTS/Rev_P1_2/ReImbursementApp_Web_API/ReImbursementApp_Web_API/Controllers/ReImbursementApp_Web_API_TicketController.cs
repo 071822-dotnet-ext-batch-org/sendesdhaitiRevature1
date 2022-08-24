@@ -43,9 +43,11 @@ namespace ReImbursementApp_Web_API.Controllers
 
         // POST api/values
         [HttpPost("Create/")]
-        public async Task<ActionResult<bool>> Create_Ticket([FromBody]TicketDTO ticket)
+        public async Task<ActionResult<bool>> Create_Ticket([FromQuery]TicketDTO ticket)
         {
-            //ModelLayer.TicketDTO newTicket = new ModelLayer.TicketDTO(amount, description);
+            //ModelLayer.TicketDTO newTicket = new ModelLayer.TicketDTO(ticket);
+            RunAppSession _currentSession = new RunAppSession();
+
             bool savedTicket = await _currentSession.Create_Ticket(ticket);
             if(savedTicket == true)
             {
@@ -59,7 +61,7 @@ namespace ReImbursementApp_Web_API.Controllers
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void UpdateTicket(int id, [FromBody] string value)
         {
         }
 

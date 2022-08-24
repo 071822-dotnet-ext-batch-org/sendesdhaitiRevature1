@@ -10,14 +10,13 @@ namespace BusinessLayer
 {
     public class RunAppSession
     {
-
         private readonly AdoDotnetAccessPoint _accessPoint = new AdoDotnetAccessPoint();
-        private AppSession _newAppSession = new AppSession();
+        private AppSession _newAppSession;// = new AppSession();
         private List<Ticket>? _sessionTickets = new List<Ticket>();
         private Ticket? _mostRecentTicket = new Ticket();
+        private Employee _sessionEmployee = new Employee();
+        private Manager? _sessionManager = new Manager();
 
-        //private Employee _sessionEmployee = new Employee();
-        //private Manager? _sessionManager = new Manager();
         //Our Model Layer - All Data saved for the session
         ////Gonna need a List model to hold all tickets - makee it a derived class
         //private List<Ticket> _sessionTickets { get; set; } = new List<Ticket>();
@@ -29,9 +28,13 @@ namespace BusinessLayer
         ///// <summary>
         ///// This method starts/creates a new AppSession
         ///// </summary>
-        public void NewAppSession()
+        public RunAppSession()
         {
+            this._accessPoint = new AdoDotnetAccessPoint();
             this._newAppSession = new AppSession();
+            //this._sessionEmployee = new Employee();
+            //this._sessionManager = new Manager();
+            //this._
         }
 
 
@@ -45,10 +48,11 @@ namespace BusinessLayer
         /// <returns></returns>
         public async Task<bool> CheckIfExists_Employee(EmployeeDTO emCheckDTO)
         {
-            //Employee em = new Employee(employeeInput.username, employeeInput.password);
+            //Check if username has any symbols or special characters
+            Employee checkEm = new Employee(emCheckDTO);
             //em = employeeInput;
             //Check if employee exists from the repo layer
-            bool checkAP = await _accessPoint.Employee_LoginCheck(emCheckDTO);
+            bool checkAP = await this._accessPoint.Employee_LoginCheck(checkEm);
             if (checkAP == false)
             {
                 return false;
@@ -67,15 +71,19 @@ namespace BusinessLayer
         /// <returns></returns>
         public async Task<EmployeeDTO?> Login_Employee(EmployeeDTO emCheckDTO)
         {
-            EmployeeDTO? em = new EmployeeDTO();
-            em = await _accessPoint.Employee_Login(emCheckDTO);
+            Employee _sessionEmployee = new Employee(emCheckDTO);
+            _sessionEmployee = await this._accessPoint.Employee_Login(_sessionEmployee);
+            this._sessionEmployee = _sessionEmployee;
+            EmployeeDTO em = new EmployeeDTO(_sessionEmployee);
             return em;
         }
 
 
         public async Task<bool> Register_Employee(EmployeeDTO emDTO)
         {
-            var emSaveResponse = await _accessPoint.Employee_Register(emDTO);
+            Employee _sessionEmployee = new Employee(emDTO);
+            this._sessionEmployee = _sessionEmployee;
+            var emSaveResponse = await this._accessPoint.Employee_Register(_sessionEmployee);
             return emSaveResponse;
         }
 
@@ -87,7 +95,8 @@ namespace BusinessLayer
         public async Task<bool> CheckIfExists_Manager(ManagerDTO managerInput)
         {
             //Check if employee exists from the repo layer
-            bool checkAP = await _accessPoint.Manager_LoginCheck(managerInput);
+            Manager checkMang = new Manager(managerInput);
+            bool checkAP = await this._accessPoint.Manager_LoginCheck(checkMang);
             if (checkAP == false)
             {
                 return false;
@@ -101,14 +110,27 @@ namespace BusinessLayer
 
         public async Task<ManagerDTO?> Login_Manager(ManagerDTO managerInput)
         {
-            ManagerDTO? mang = new ManagerDTO();
-            mang = await _accessPoint.Manager_Login(managerInput);
-            return mang;
+            Manager _sessionManager = new Manager(managerInput);
+            _sessionManager = await this._accessPoint.Manager_Login(_sessionManager);
+            if(_sessionManager != null)
+            {
+                this._sessionManager = _sessionManager;
+                Console.WriteLine($"The manager '{this._sessionManager.Username}' is now logged in");
+                ManagerDTO? mangDTO = new ManagerDTO(_sessionManager);
+                return mangDTO;
+            }
+            else
+            {
+                Console.WriteLine($"The manager '{managerInput.username}' could not be found!");
+                return null;
+            }
         }
 
         public async Task<bool> Register_Manager(ManagerDTO mangDTO)
         {
-            var mangSaveResponse = await _accessPoint.Manager_Register(mangDTO);
+            Manager _sessionManager = new Manager(mangDTO);
+            this._sessionManager = _sessionManager;
+            var mangSaveResponse = await this._accessPoint.Manager_Register(_sessionManager);
             return mangSaveResponse;
         }
 
@@ -119,7 +141,7 @@ namespace BusinessLayer
         {
             //Ticket em = new Ticket();
             //em.Ticket_Status = input_T;
-            this._sessionTickets = await _accessPoint.Get_All_Tickets();
+            List<Ticket>? _sessionTickets = await _accessPoint.Get_All_Tickets();
 
             List<TicketDTO>? tickDTO = new List<TicketDTO>();
             if (_sessionTickets != null)
@@ -141,6 +163,11 @@ namespace BusinessLayer
 
         }
 
+        /// <summary>
+        /// This method creates a new ticket by a specific employee
+        /// </summary>
+        /// <param name="emTicketDTO"></param>
+        /// <returns></returns>
         public async Task<bool> Create_Ticket(TicketDTO emTicketDTO)
         {
             //Check if ticket DTO values are good before converting to Ticket OBJ
@@ -158,18 +185,23 @@ namespace BusinessLayer
                 if(descCheck == true)
                 {
                     //Convert Ticket DTO obj to Ticket obj
-                    _mostRecentTicket = new Ticket()
+                    //Ticket newTicket = new Ticket();
+                    Ticket _mostRecentTicket = new Ticket()
                     {
-                        Ticket_ID = emTicketDTO.ticket_ID,
+                        Ticket_ID = Guid.NewGuid(),
                         Amount = (decimal)emTicketDTO.amount,
                         Description = emTicketDTO.description,
                         TicketStatus = emTicketDTO._status,
-                        SubmitDate = emTicketDTO.submitDate,
-                        ReviewDate = emTicketDTO.reviewDate
+                        SubmitDate = DateTime.Now,
+                        ReviewDate = DateTime.Now,
+                        FK_EmployeeID = this._sessionEmployee.Employee_ID
                     };
-                    Console.WriteLine(emTicketDTO.ticket_ID);
+                    Console.WriteLine($"\n\n\t\tTicket ID : {_mostRecentTicket.Ticket_ID}");
+                    Console.WriteLine($"\t\tSession Employee: {this._sessionEmployee.Employee_ID}");
+                    Console.WriteLine($"\t\tSession Employee: {_mostRecentTicket.FK_EmployeeID}");
 
-                    bool checkIfSaved = await _accessPoint.Employee_TicketSubmit(_mostRecentTicket);
+
+                    bool checkIfSaved = await this._accessPoint.Employee_TicketSubmit(_mostRecentTicket);
                     if (checkIfSaved == true)
                     {
                         Console.WriteLine("Ticket Recorded");
