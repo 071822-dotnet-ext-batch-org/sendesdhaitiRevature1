@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
+using System.Data;
 using ModelLayer;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using System.Data.Common;
 
 
 namespace RepoLayer
@@ -14,6 +16,8 @@ namespace RepoLayer
 
         //The connection stream to the Database
         private static readonly SqlConnection connection = new SqlConnection("Server=tcp:sendesdhaiti-revature-server.database.windows.net,1433;Initial Catalog=sendesdhaiti-revature-server;Persist Security Info=False;User ID=SendesD;Password=@Arcade30;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+        private Employee _repoEm = new Employee();
+        private Manager _repoMang = new Manager();
 
 
 
@@ -25,14 +29,24 @@ namespace RepoLayer
         /// </summary>
         /// <param name="emP"></param>
         /// <returns></returns>
-        public async Task<bool> Employee_LoginCheck(EmployeeDTO emP)
+        public async Task<bool> Employee_LoginCheck(Employee emP)
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP 1 EmployeeID,  Fname, Lname, Username, Password, SignUpDate FROM Employees WHERE Username=@UN", connection))
             {
-                command.Parameters.AddWithValue("@UN", emP.username);
+                command.Parameters.AddWithValue("@UN", emP.Username);
                 //command.Parameters.AddWithValue("@UP", emP.password);
 
-                connection.Open();
+                if (connection != null && connection.State == ConnectionState.Closed)
+                {
+                    // do something
+                    // ...
+                    connection.Open();
+                }
+                else
+                {
+                    connection.Close();
+                    connection.Open();
+                }
 
                 SqlDataReader? data = await command.ExecuteReaderAsync();
 
@@ -43,12 +57,10 @@ namespace RepoLayer
                     Console.WriteLine("\t\tAccount with matching data was found");
                     return true;
                 }
-                else
-                {
-                    connection.Close();
-                    Console.WriteLine("\t\tNo matching data was found");
-                    return false;
-                }
+                connection.Close();
+                Console.WriteLine("\t\tNo matching data was found");
+                return false;
+                
 
             }
 
@@ -60,54 +72,74 @@ namespace RepoLayer
         /// </summary>
         /// <param name="emP"></param>
         /// <returns></returns>
-        public async Task<EmployeeDTO?> Employee_Login(EmployeeDTO emP)
+        public async Task<Employee?> Employee_Login(Employee emP)
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP 1 EmployeeID,  Fname, Lname, Username, Password, SignUpDate FROM Employees WHERE Username=@UN AND Password=@UP", connection))
             {
-                Employee employee = new Employee();
-                command.Parameters.AddWithValue("@UN", emP.username);
-                command.Parameters.AddWithValue("@UP", emP.password);
+                //Employee employee = new Employee();
+                command.Parameters.AddWithValue("@UN", emP.Username);
+                command.Parameters.AddWithValue("@UP", emP.Password);
 
-                connection.Open();
-                SqlDataReader? data = await command.ExecuteReaderAsync();
-                if (data.Read())
+                if (connection != null && connection.State == ConnectionState.Closed)
                 {
-                    Console.WriteLine("\t\tAccount with matching data was found");
-                    emP.employee_ID = data.GetGuid(0);
-                    emP.fname = data.GetString(1);
-                    emP.lname = data.GetString(2);
-                    emP.username = data.GetString(3);
-                    emP.password = data.GetString(4);
-                    emP.dateRegistered = data.GetDateTime(5);
-                    connection.Close();
-                    return emP;
+                    // do something
+                    // ...
+                    connection.Open();
                 }
                 else
                 {
                     connection.Close();
-                    Console.WriteLine("\t\tNo matching data was found");
-                    return null;
+                    connection.Open();
                 }
+                SqlDataReader? data = await command.ExecuteReaderAsync();
+                if (data.Read())
+                {
+                    Console.WriteLine("\t\tAccount with matching data was found");
+                    emP.Employee_ID = data.GetGuid(0);
+                    emP.Fname = data.GetString(1);
+                    emP.Lname = data.GetString(2);
+                    emP.Username = data.GetString(3);
+                    emP.Password = data.GetString(4);
+                    emP.DateRegistered = data.GetDateTime(5);
+                    connection.Close();
+                    this._repoEm = emP;
+                    Console.WriteLine($"\t\t\tRepoLayer Employee Login ID: {emP.Employee_ID}\n\n\n");
+                    return emP;
+                }
+                connection.Close();
+                Console.WriteLine("\t\tNo matching data was found");
+                return null;
+                
 
             }
 
         }//End of Login for Employee
 
-        public async Task<bool> Employee_Register(EmployeeDTO emDTO)
+        public async Task<bool> Employee_Register(Employee em)
         {
             using (SqlCommand command = new SqlCommand($"INSERT INTO Employees VALUES(@emID, @emF, @emL, @emU, @emP, @emS)", connection))
             {
                 //To be able to input variables directly into the command, you use parameters
                 //This Parameters also prevents against sql injection when users save data
-                command.Parameters.AddWithValue("@emID", emDTO.employee_ID);
-                command.Parameters.AddWithValue("@emF", emDTO.fname);
-                command.Parameters.AddWithValue("@emL", emDTO.lname);
-                command.Parameters.AddWithValue("@emU", emDTO.username);
-                command.Parameters.AddWithValue("@emP", emDTO.password);
-                command.Parameters.AddWithValue("@emS", emDTO.dateRegistered);
+                command.Parameters.AddWithValue("@emID", em.Employee_ID);
+                command.Parameters.AddWithValue("@emF", em.Fname);
+                command.Parameters.AddWithValue("@emL", em.Lname);
+                command.Parameters.AddWithValue("@emU", em.Username);
+                command.Parameters.AddWithValue("@emP", em.Password);
+                command.Parameters.AddWithValue("@emS", em.DateRegistered);
                 //command.Parameters.AddWithValue("@Tick_EmID", emTickSub.fk_Employee_ID);
                 //command.Parameters.AddWithValue("@Tick_MangID", emTickSub.fk_Employee_ID);
-                connection.Open();
+                if (connection != null && connection.State == ConnectionState.Closed)
+                {
+                    // do something
+                    // ...
+                    connection.Open();
+                }
+                else
+                {
+                    connection.Close();
+                    connection.Open();
+                }
 
                 //The ExecuteNonQuery returns a response from the DB 
                 //letting you know if the command was successful or not
@@ -120,13 +152,11 @@ namespace RepoLayer
                     connection.Close();
                     return true;
                 }
-                else
-                {
-                    //If the command was anything besides those first 2 conditions
-                    Console.WriteLine($"Status Code: {checkIfSaved} - Ticket Not Saved");
-                    connection.Close();
-                    return false;
-                }
+                //If the command was anything besides those first 2 conditions
+                Console.WriteLine($"Status Code: {checkIfSaved} - Ticket Not Saved");
+                connection.Close();
+                return false;
+                
             }
         }//End Register Employee
 
@@ -141,14 +171,24 @@ namespace RepoLayer
         /// </summary>
         /// <param name="Mang"></param>
         /// <returns></returns>
-        public async Task<bool> Manager_LoginCheck(ManagerDTO Mang)
+        public async Task<bool> Manager_LoginCheck(Manager Mang)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT TOP 1 ManagerID,  MFname, MLname, MFUsername, MFPassword, SignUpDate FROM Managers WHERE MFUsername=@UN", connection))
+            using (SqlCommand command = new SqlCommand($"SELECT TOP 1 ManagerID,  Fname, Lname, Username, Password, Role, SignUpDate FROM Managers WHERE Username=@UN", connection))
             {
-                command.Parameters.AddWithValue("@UN", Mang.username);
+                command.Parameters.AddWithValue("@UN", Mang.Username);
                 //command.Parameters.AddWithValue("@UP", Mang.password);
 
-                connection.Open();
+                if (connection != null && connection.State == ConnectionState.Closed)
+                {
+                    // do something
+                    // ...
+                    connection.Open();
+                }
+                else
+                {
+                    connection.Close();
+                    connection.Open();
+                }
 
                 SqlDataReader? data = await command.ExecuteReaderAsync();
 
@@ -159,67 +199,87 @@ namespace RepoLayer
                     Console.WriteLine("\t\tAccount with matching data was found");
                     return true;
                 }
-                else
-                {
-                    connection.Close();
-                    Console.WriteLine("\t\tNo matching data was found");
-                    return false;
-                }
+                connection.Close();
+                Console.WriteLine("\t\tNo matching data was found");
+                return false;
+                
 
             }
 
         }//Login Check for Returning Manager
 
 
-        public async Task<ManagerDTO?> Manager_Login(ManagerDTO Mang)
+        public async Task<Manager?> Manager_Login(Manager Mang)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT TOP 1 ManagerID,  MFname, MLname, MFUsername, MFPassword, SignUpDate FROM Managers WHERE MFUsername=@UN AND MFPassword=@UP", connection))
+            using (SqlCommand command = new SqlCommand($"SELECT TOP 1 ManagerID,  Fname, Lname, Username, Password, Role, SignUpDate FROM Managers WHERE Username=@UN AND Password=@UP", connection))
             {
-                command.Parameters.AddWithValue("@UN", Mang.username);
-                command.Parameters.AddWithValue("@UP", Mang.password);
+                command.Parameters.AddWithValue("@UN", Mang.Username);
+                command.Parameters.AddWithValue("@UP", Mang.Password);
 
-                connection.Open();
-                SqlDataReader? data = await command.ExecuteReaderAsync();
-                if (data.Read())
+                if (connection != null && connection.State == ConnectionState.Closed)
                 {
-                    Console.WriteLine("\t\tAccount with matching data was found");
-                    Mang.Manager_ID = data.GetGuid(0);
-                    Mang.fname = data.GetString(1);
-                    Mang.lname = data.GetString(2);
-                    Mang.username = data.GetString(3);
-                    Mang.password = data.GetString(4);
-                    Mang.dateRegistered = data.GetDateTime(5);
-                    connection.Close();
-                    //emP.fk_TicketID = data.GetGuid(7);
-                    return Mang;
+                    // do something
+                    // ...
+                    connection.Open();
                 }
                 else
                 {
                     connection.Close();
-                    Console.WriteLine("\t\tNo matching data was found");
-                    return null;
+                    connection.Open();
                 }
+                SqlDataReader? data = await command.ExecuteReaderAsync();
+                if (data.Read())
+                {
+                    Console.WriteLine("\t\tAccount with matching data was found");
+                    Mang.Employee_ID = data.GetGuid(0);
+                    Mang.Fname = data.GetString(1);
+                    Mang.Lname = data.GetString(2);
+                    Mang.Username = data.GetString(3);
+                    Mang.Password = data.GetString(4);
+                    Mang.Role = data.GetString(5);
+                    Mang.DateRegistered = data.GetDateTime(6);
+                    connection.Close();
+                    //emP.fk_TicketID = data.GetGuid(7);
+                    this._repoMang = Mang;
+                    Console.WriteLine($"\t\t\tRepoLayer Manager Login ID: {this._repoMang.Employee_ID}\n\n\n");
+                    return Mang;
+                }
+                connection.Close();
+                Console.WriteLine("\t\tNo matching data was found");
+                return null;
+                
 
             }
 
         }//End of Login for Manager
 
 
-        public async Task<bool> Manager_Register(ManagerDTO mangDTO)
+        public async Task<bool> Manager_Register(Manager mang)
         {
-            using (SqlCommand command = new SqlCommand($"INSERT INTO Managers VALUES(@emID, @emF, @emL, @emU, @emP, @emS)", connection))
+            using (SqlCommand command = new SqlCommand($"INSERT INTO Managers VALUES(@emID, @emF, @emL, @emU, @emP, @emR, @emD)", connection))
             {
                 //To be able to input variables directly into the command, you use parameters
                 //This Parameters also prevents against sql injection when users save data
-                command.Parameters.AddWithValue("@emID", mangDTO.Manager_ID);
-                command.Parameters.AddWithValue("@emF", mangDTO.fname);
-                command.Parameters.AddWithValue("@emL", mangDTO.lname);
-                command.Parameters.AddWithValue("@emU", mangDTO.username);
-                command.Parameters.AddWithValue("@emP", mangDTO.password);
-                command.Parameters.AddWithValue("@emS", mangDTO.dateRegistered);
+                command.Parameters.AddWithValue("@emID", mang.Employee_ID);
+                command.Parameters.AddWithValue("@emF", mang.Fname);
+                command.Parameters.AddWithValue("@emL", mang.Lname);
+                command.Parameters.AddWithValue("@emU", mang.Username);
+                command.Parameters.AddWithValue("@emP", mang.Password);
+                command.Parameters.AddWithValue("@emR", mang.Role);
+                command.Parameters.AddWithValue("@emD", mang.DateRegistered);
                 //command.Parameters.AddWithValue("@Tick_EmID", emTickSub.fk_Employee_ID);
                 //command.Parameters.AddWithValue("@Tick_MangID", emTickSub.fk_Employee_ID);
-                connection.Open();
+                if (connection != null && connection.State == ConnectionState.Closed)
+                {
+                    // do something
+                    // ...
+                    connection.Open();
+                }
+                else
+                {
+                    connection.Close();
+                    connection.Open();
+                }
 
                 //The ExecuteNonQuery returns a response from the DB 
                 //letting you know if the command was successful or not
@@ -232,13 +292,11 @@ namespace RepoLayer
                     connection.Close();
                     return true;
                 }
-                else
-                {
-                    //If the command was anything besides those first 2 conditions
-                    Console.WriteLine($"Status Code: {checkIfSaved} - Ticket Not Saved");
-                    connection.Close();
-                    return false;
-                }
+                //If the command was anything besides those first 2 conditions
+                Console.WriteLine($"Status Code: {checkIfSaved} - Ticket Not Saved");
+                connection.Close();
+                return false;
+                
             }
         }//End Register Employee
 
@@ -249,11 +307,21 @@ namespace RepoLayer
         public async Task<List<Ticket>?> Get_All_Tickets()
         {
             List<Ticket> allTicks = new List<Ticket>();
-            using (SqlCommand command = new SqlCommand($"SELECT TicketID, Amount, Description, DateSubmitted, DateReviewed, Ticket_Status FROM Tickets", connection))
+            using (SqlCommand command = new SqlCommand($"SELECT TicketID, Amount, Description, Status, SubmitDate, ReviewDate, FK_EmployeeID FROM Tickets", connection))
             {
                 //command.Parameters.AddWithValue("@TStatus", employee.ticket_Status);
 
-                connection.Open();
+                if (connection != null && connection.State == ConnectionState.Closed)
+                {
+                    // do something
+                    // ...
+                    connection.Open();
+                }
+                else
+                {
+                    connection.Close();
+                    connection.Open();
+                }
 
                 SqlDataReader? data = await command.ExecuteReaderAsync();
 
@@ -265,14 +333,15 @@ namespace RepoLayer
                     {
                         //Convert data to a TickDTO OBJ
                         Ticket Tick = new Ticket();
-                        Status stat;
-                        Enum.TryParse<Status>(data.GetString(5), out stat);
+                        //Status stat;
+                        //Enum.TryParse<Status>(data.GetString(3), out stat);
                         Tick.Ticket_ID = data.GetGuid(0);
                         Tick.Amount = data.GetDecimal(1);
                         Tick.Description = data.GetString(2);
-                        Tick.SubmitDate = data.GetDateTime(3);
-                        Tick.ReviewDate = data.GetDateTime(4);
-                        Tick.TicketStatus = stat;
+                        Tick.TicketStatus = data.GetString(3);
+                        Tick.SubmitDate = data.GetDateTime(4);
+                        Tick.ReviewDate = data.GetDateTime(5);
+                        Tick.FK_EmployeeID = data.GetGuid(6);
                         allTicks.Add(Tick);
                     }
                     //true - data exists
@@ -281,12 +350,10 @@ namespace RepoLayer
                     connection.Close();
                     return allTicks;
                 }
-                else
-                {
-                    Console.WriteLine("\t\tNo matching data was found");
-                    connection.Close();
-                    return allTicks;
-                }
+                Console.WriteLine("\t\tNo matching data was found");
+                connection.Close();
+                return allTicks;
+                
 
             }
 
@@ -295,19 +362,33 @@ namespace RepoLayer
 
         public async Task<bool> Employee_TicketSubmit(Ticket emTickSub)
         {
-            using (SqlCommand command = new SqlCommand($"INSERT INTO Tickets VALUES(@TickID, @TickAM, @Tickdesc, @TickSubDate, @TickRevDate, @TickStatus)", connection))
+            using (SqlCommand command = new SqlCommand($"INSERT INTO Tickets VALUES(@TickID, @TickAM, @Tickdesc, @TickStatus, @TickSubDate, @TickRevDate, @FK_EmployeeID)", connection))
             {
                 //To be able to input variables directly into the command, you use parameters
                 //This Parameters also prevents against sql injection when users save data
                 command.Parameters.AddWithValue("@TickID", emTickSub.Ticket_ID);
                 command.Parameters.AddWithValue("@TickAM", emTickSub.Amount);
                 command.Parameters.AddWithValue("@Tickdesc", emTickSub.Description);
+                command.Parameters.AddWithValue("@TickStatus", emTickSub.TicketStatus.ToString());
                 command.Parameters.AddWithValue("@TickSubDate", emTickSub.SubmitDate);
                 command.Parameters.AddWithValue("@TickRevDate", emTickSub.ReviewDate);
-                command.Parameters.AddWithValue("@TickStatus", emTickSub.TicketStatus);
+                command.Parameters.AddWithValue("@FK_EmployeeID", emTickSub.FK_EmployeeID);
+                Console.WriteLine($"\t\t\tRepoLayer Employee ID: {this._repoEm.Employee_ID}\n\n\n");
                 //command.Parameters.AddWithValue("@Tick_EmID", emTickSub.fk_Employee_ID);
                 //command.Parameters.AddWithValue("@Tick_MangID", emTickSub.fk_Employee_ID);
-                connection.Open();
+
+
+                if (connection != null && connection.State == ConnectionState.Closed)
+                {
+                    // do something
+                    // ...
+                    connection.Open();
+                }
+                else
+                {
+                    connection.Close();
+                    connection.Open();
+                }
 
                 //The ExecuteNonQuery returns a response from the DB 
                 //letting you know if the command was successful or not
@@ -320,13 +401,11 @@ namespace RepoLayer
                     connection.Close();
                     return true;
                 }
-                else
-                {
-                    //If the command was anything besides those first 2 conditions
-                    Console.WriteLine($"Status Code: {checkIfSaved} - Ticket Not Saved");
-                    connection.Close();
-                    return false;
-                }
+                //If the command was anything besides those first 2 conditions
+                Console.WriteLine($"Status Code: {checkIfSaved} - Ticket Not Saved");
+                connection.Close();
+                return false;
+                
             }
 
 

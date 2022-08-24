@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using BusinessLayer;
+using ModelLayer;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -14,7 +15,11 @@ namespace ReImbursementApp_Web_API.Controllers
     [Route("api/[controller]")]
     public class ReImbursementApp_Web_API_AuthController : ControllerBase//instead of Controller
     {
-        private static readonly RunAppSession _currentSession = new RunAppSession();
+        private readonly RunAppSession _currentSession;// = new RunAppSession();
+        public ReImbursementApp_Web_API_AuthController()
+        {
+            this._currentSession = new RunAppSession();
+        }
 
 
         /// <summary>
@@ -24,10 +29,10 @@ namespace ReImbursementApp_Web_API.Controllers
         /// <param name="password"></param>
         /// <returns></returns>
         [HttpGet("Employee/Login/")]
-        public async Task<ActionResult<ModelLayer.EmployeeDTO>> GetEmployee(string username, string password)
+        public async Task<ActionResult<EmployeeDTO>> GetEmployee([FromQuery]string username, [FromQuery]string password)
         {
             //RunAppSession _currentSession = new RunAppSession();
-            ModelLayer.EmployeeDTO em = new ModelLayer.EmployeeDTO(username, password);
+            EmployeeDTO em = new EmployeeDTO(username, password);
 
 
             //Send the Employee DTO to be checked
@@ -49,7 +54,7 @@ namespace ReImbursementApp_Web_API.Controllers
             }
             else
             {
-                return BadRequest("Your response could not be determined");
+                return Conflict("Your response could not be determined");
             }
         }
 
@@ -62,10 +67,10 @@ namespace ReImbursementApp_Web_API.Controllers
         /// <param name="password"></param>
         /// <returns></returns>
         [HttpGet("Manager/Login/")]
-        public async Task<ActionResult<ModelLayer.ManagerDTO>> GetManager(string username, string password)
+        public async Task<ActionResult<ManagerDTO>> GetManager([FromQuery]string username, [FromQuery]string password)
         {
             RunAppSession _currentSession = new RunAppSession();
-            ModelLayer.ManagerDTO manag = new ModelLayer.ManagerDTO(username, password);
+            ManagerDTO manag = new ManagerDTO(username, password);
 
 
             //Send the Employee DTO to be checked
@@ -93,9 +98,9 @@ namespace ReImbursementApp_Web_API.Controllers
 
 
         [HttpPost("Employee/Register")]
-        public async Task<ActionResult<bool>> RegisterEmployee(string username, string password,string fn, string ln )
+        public async Task<ActionResult<bool>> RegisterEmployee([FromQuery]string username, [FromQuery]string password, [FromQuery]string fn, [FromQuery]string ln )
         {
-            ModelLayer.EmployeeDTO newEm = new ModelLayer.EmployeeDTO(username, password, fn, ln);
+            EmployeeDTO newEm = new EmployeeDTO(username, password, fn, ln);
 
             //check if employee username is not already taken
             var check = await _currentSession.CheckIfExists_Employee(newEm);
@@ -121,9 +126,9 @@ namespace ReImbursementApp_Web_API.Controllers
         }
 
         [HttpPost("Manager/Register")]
-        public async Task<ActionResult<bool>> RegisterManager(string username, string password, string fn, string ln)
+        public async Task<ActionResult<bool>> RegisterManager([FromQuery]string username, [FromQuery]string password, [FromQuery]string fn, [FromQuery]string ln)
         {
-            ModelLayer.ManagerDTO newMang = new ModelLayer.ManagerDTO(username, password, fn, ln);
+            ManagerDTO newMang = new ManagerDTO(username, password, fn, ln);
 
             //check if employee username is not already taken
             var check = await _currentSession.CheckIfExists_Manager(newMang);
