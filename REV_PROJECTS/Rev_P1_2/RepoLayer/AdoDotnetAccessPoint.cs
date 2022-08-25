@@ -16,9 +16,44 @@ namespace RepoLayer
 
         //The connection stream to the Database
         private static readonly SqlConnection connection = new SqlConnection("Server=tcp:sendesdhaiti-revature-server.database.windows.net,1433;Initial Catalog=sendesdhaiti-revature-server;Persist Security Info=False;User ID=SendesD;Password=@Arcade30;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+        private Guid? currentID { get; set; }
         private Employee _repoEm = new Employee();
         private Manager _repoMang = new Manager();
 
+
+
+        private Guid? _CurrentID
+        {
+            get
+            {
+                return this.currentID;
+            }
+            set
+            {
+                this.currentID = value;
+            }
+        }
+
+        /// <summary>
+        /// Method to set and track login id across the repo
+        /// </summary>
+        /// <param name="id"></param>
+        public Guid? setCurrentID(Guid? id)
+        {
+            this._CurrentID = id;
+            Console.WriteLine($"My ID is {this._CurrentID}");
+            return this._CurrentID;
+            
+        }
+
+        /// <summary>
+        /// Method to get the current login id of the user
+        /// </summary>
+        /// <returns></returns>
+        public Guid? getCurrentID()
+        {
+            return this._CurrentID;
+        }
 
 
         //----------------------------------------------Employee Section
@@ -102,8 +137,9 @@ namespace RepoLayer
                     emP.Password = data.GetString(4);
                     emP.DateRegistered = data.GetDateTime(5);
                     connection.Close();
+                    setCurrentID(emP.Employee_ID);
                     this._repoEm = emP;
-                    Console.WriteLine($"\t\t\tRepoLayer Employee Login ID: {emP.Employee_ID}\n\n\n");
+                    Console.WriteLine($"\t\t\tRepoLayer Employee Login ID: {getCurrentID()}\n\n\n");
                     return emP;
                 }
                 connection.Close();
@@ -127,6 +163,7 @@ namespace RepoLayer
                 command.Parameters.AddWithValue("@emU", em.Username);
                 command.Parameters.AddWithValue("@emP", em.Password);
                 command.Parameters.AddWithValue("@emS", em.DateRegistered);
+
                 //command.Parameters.AddWithValue("@Tick_EmID", emTickSub.fk_Employee_ID);
                 //command.Parameters.AddWithValue("@Tick_MangID", emTickSub.fk_Employee_ID);
                 if (connection != null && connection.State == ConnectionState.Closed)
@@ -238,6 +275,7 @@ namespace RepoLayer
                     Mang.Password = data.GetString(4);
                     Mang.Role = data.GetString(5);
                     Mang.DateRegistered = data.GetDateTime(6);
+                    setCurrentID(Mang.Employee_ID);
                     connection.Close();
                     //emP.fk_TicketID = data.GetGuid(7);
                     this._repoMang = Mang;
@@ -373,7 +411,7 @@ namespace RepoLayer
                 command.Parameters.AddWithValue("@TickSubDate", emTickSub.SubmitDate);
                 command.Parameters.AddWithValue("@TickRevDate", emTickSub.ReviewDate);
                 command.Parameters.AddWithValue("@FK_EmployeeID", emTickSub.FK_EmployeeID);
-                Console.WriteLine($"\t\t\tRepoLayer Employee ID: {this._repoEm.Employee_ID}\n\n\n");
+                Console.WriteLine($"\t\t\tRepoLayer Employee ID that's Submitting Ticket: {getCurrentID()}\n\n\n");
                 //command.Parameters.AddWithValue("@Tick_EmID", emTickSub.fk_Employee_ID);
                 //command.Parameters.AddWithValue("@Tick_MangID", emTickSub.fk_Employee_ID);
 
@@ -409,7 +447,164 @@ namespace RepoLayer
             }
 
 
-        }
+        }//End Ticket Create
+
+
+        public async Task<Guid?> Employee_GETID(string username)
+        {
+            using (SqlCommand command = new SqlCommand($"SELECT TOP 1 EmployeeID FROM Employees WHERE Username=@UN", connection))
+            {
+                Guid? myID = new Guid();
+                //Employee employee = new Employee();
+                command.Parameters.AddWithValue("@UN", username);
+                //command.Parameters.AddWithValue("@UP", emP.Password);
+
+                if (connection != null && connection.State == ConnectionState.Closed)
+                {//If connection is closed, open it up
+                    connection.Open();
+                }
+                else
+                {//close the connection and open again
+                    connection.Close();
+                    connection.Open();
+                }
+                SqlDataReader? data = await command.ExecuteReaderAsync();
+                if (data.Read())
+                {
+                    Console.WriteLine("\t\tAccount with matching data was found");
+                    myID = data.GetGuid(0);
+                    connection.Close();
+                    setCurrentID(myID);
+                    //this._repoEm = emP;
+                    Console.WriteLine($"\t\t\tRepoLayer Employee Ticket Creation ID: {getCurrentID()}\n\n\n");
+                    return myID;
+                }
+                connection.Close();
+                Console.WriteLine("\t\tNo matching data was found");
+                return null;
+
+
+            }
+
+        }//End of Get EmployeeID
+
+        public async Task<Guid?> Manager_GETID(string username)
+        {
+            using (SqlCommand command = new SqlCommand($"SELECT TOP 1 ManagerID FROM Managers WHERE Username=@UN", connection))
+            {
+                Guid? myID = new Guid();
+                //Employee employee = new Employee();
+                command.Parameters.AddWithValue("@UN", username);
+                //command.Parameters.AddWithValue("@UP", emP.Password);
+
+                if (connection != null && connection.State == ConnectionState.Closed)
+                {//If connection is closed, open it up
+                    connection.Open();
+                }
+                else
+                {//close the connection and open again
+                    connection.Close();
+                    connection.Open();
+                }
+                SqlDataReader? data = await command.ExecuteReaderAsync();
+                if (data.Read())
+                {
+                    Console.WriteLine("\t\tAccount with matching data was found");
+                    myID = data.GetGuid(0);
+                    connection.Close();
+                    setCurrentID(myID);
+                    //this._repoEm = emP;
+                    Console.WriteLine($"\t\t\tRepoLayer Employee Ticket Creation ID: {getCurrentID()}\n\n\n");
+                    return myID;
+                }
+                connection.Close();
+                Console.WriteLine("\t\tNo matching data was found");
+                return null;
+
+
+            }
+
+        }//End of Get ManagerID
+
+
+        public async Task<bool> Manager_UpdateTicket(string status, Guid ticketID)
+        {
+            using (SqlCommand command = new SqlCommand($"UPDATE Tickets set Status=@Status WHERE TicketID=@ID", connection))
+            {
+                command.Parameters.AddWithValue("@Status", status);
+                command.Parameters.AddWithValue("@ID", ticketID);
+
+                if (connection != null && connection.State == ConnectionState.Closed)
+                {//If connection is closed, open it up
+                    connection.Open();
+                }
+                else
+                {//close the connection and open again
+                    connection.Close();
+                    connection.Open();
+                }
+                SqlDataReader? data = await command.ExecuteReaderAsync();
+                if (data.Read())
+                {
+                    //If data was saved return back true
+                    Console.WriteLine($"\t\t\tTicket update status {true}\n\n\n");
+                    return true;
+                }
+                connection.Close();
+                Console.WriteLine("\t\tTicket was not saved");
+                return false;
+            }
+        }//End of Manger updating a ticket\
+
+        public async Task<bool> Manager_SavingTo_Junc_T_M(Guid ticketID, Guid? ManagerID)
+        {
+            using (SqlCommand command = new SqlCommand($"INSERT INTO Junc_T_M VALUES(@JuncID, @TickID, @ManagerID)", connection))
+            {
+                //To be able to input variables directly into the command, you use parameters
+                //This Parameters also prevents against sql injection when users save data
+                command.Parameters.AddWithValue("@JuncID", Guid.NewGuid());
+                command.Parameters.AddWithValue("@TickID", ticketID);
+                command.Parameters.AddWithValue("@ManagerID", ManagerID);
+
+
+                if (connection != null && connection.State == ConnectionState.Closed)
+                {
+                    // do something
+                    // ...
+                    connection.Open();
+                }
+                else
+                {
+                    connection.Close();
+                    connection.Open();
+                }
+
+                //The ExecuteNonQuery returns a response from the DB 
+                //letting you know if the command was successful or not
+                int checkIfSaved = await command.ExecuteNonQueryAsync();
+
+                if (checkIfSaved > 0)
+                {
+                    //If the command was successful
+                    Console.WriteLine($"Status Code {checkIfSaved} - Ticket Saved");
+                    connection.Close();
+                    return true;
+                }
+                //If the command was anything besides those first 2 conditions
+                Console.WriteLine($"Status Code: {checkIfSaved} - Ticket Not Saved");
+                connection.Close();
+                return false;
+
+            }
+
+
+        }//End Manager and Ticket Saving to Junction Table
+
+
+
+
+
+
         //public async Task<bool> Employee_TicketCheck(Ticket emT)
         //{
         //    Ticket employee = new Ticket();
