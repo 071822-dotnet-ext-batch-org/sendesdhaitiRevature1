@@ -16,6 +16,41 @@ namespace BusinessLayer
         private Ticket? _mostRecentTicket = new Ticket();
         private Employee _sessionEmployee = new Employee();
         private Manager? _sessionManager = new Manager();
+        //private Guid? _sessionID { get; set; }
+        //public Guid? _SessionID
+        //{
+        //    get
+        //    {
+        //        return this._sessionID;
+        //    }
+        //    set
+        //    {
+        //        this._sessionID = value;
+        //    }
+        //}
+
+
+        /// <summary>
+        /// Method to set and track login id across the repo
+        /// </summary>
+        /// <param name="id"></param>
+        //public Guid? setCurrentID(Guid? id)
+        //{
+        //    this._SessionID = id;
+        //    Console.WriteLine($"My ID is {this._SessionID}");
+        //    return this._SessionID;
+
+        //}
+
+        ///// <summary>
+        ///// Method to get the current login id of the user
+        ///// </summary>
+        ///// <returns></returns>
+        //public Guid? getCurrentID()
+        //{
+        //    return this._SessionID;
+        //}
+
 
         //Our Model Layer - All Data saved for the session
         ////Gonna need a List model to hold all tickets - makee it a derived class
@@ -32,9 +67,6 @@ namespace BusinessLayer
         {
             this._accessPoint = new AdoDotnetAccessPoint();
             this._newAppSession = new AppSession();
-            //this._sessionEmployee = new Employee();
-            //this._sessionManager = new Manager();
-            //this._
         }
 
 
@@ -50,8 +82,6 @@ namespace BusinessLayer
         {
             //Check if username has any symbols or special characters
             Employee checkEm = new Employee(emCheckDTO);
-            //em = employeeInput;
-            //Check if employee exists from the repo layer
             bool checkAP = await this._accessPoint.Employee_LoginCheck(checkEm);
             if (checkAP == false)
             {
@@ -73,6 +103,10 @@ namespace BusinessLayer
         {
             Employee _sessionEmployee = new Employee(emCheckDTO);
             _sessionEmployee = await this._accessPoint.Employee_Login(_sessionEmployee);
+            if(_sessionEmployee == null)
+            {
+                return null;
+            }
             this._sessionEmployee = _sessionEmployee;
             EmployeeDTO em = new EmployeeDTO(_sessionEmployee);
             return em;
@@ -129,7 +163,6 @@ namespace BusinessLayer
         public async Task<bool> Register_Manager(ManagerDTO mangDTO)
         {
             Manager _sessionManager = new Manager(mangDTO);
-            this._sessionManager = _sessionManager;
             var mangSaveResponse = await this._accessPoint.Manager_Register(_sessionManager);
             return mangSaveResponse;
         }
@@ -184,22 +217,16 @@ namespace BusinessLayer
                 //If description is a valid descrition
                 if(descCheck == true)
                 {
-                    //Convert Ticket DTO obj to Ticket obj
-                    //Ticket newTicket = new Ticket();
                     Ticket _mostRecentTicket = new Ticket()
                     {
                         Ticket_ID = Guid.NewGuid(),
-                        Amount = (decimal)emTicketDTO.amount,
+                        Amount = emTicketDTO.amount,
                         Description = emTicketDTO.description,
                         TicketStatus = emTicketDTO._status,
                         SubmitDate = DateTime.Now,
                         ReviewDate = DateTime.Now,
-                        FK_EmployeeID = this._sessionEmployee.Employee_ID
-                    };
-                    Console.WriteLine($"\n\n\t\tTicket ID : {_mostRecentTicket.Ticket_ID}");
-                    Console.WriteLine($"\t\tSession Employee: {this._sessionEmployee.Employee_ID}");
-                    Console.WriteLine($"\t\tSession Employee: {_mostRecentTicket.FK_EmployeeID}");
-
+                        FK_EmployeeID = await this._accessPoint.Employee_GETID(emTicketDTO.Username)//this._accessPoint.getCurrentID()
+                };
 
                     bool checkIfSaved = await this._accessPoint.Employee_TicketSubmit(_mostRecentTicket);
                     if (checkIfSaved == true)
@@ -221,275 +248,62 @@ namespace BusinessLayer
                 }
                
             }
-        }
-
-        //public async Task<bool> CheckIfExists_Ticket(int employeeInput)
-        //{
-        //    Ticket em = new Ticket();
-        //    em.ticket_Status = employeeInput;
-        //    //Check if employee exists from the repo layer
-        //    bool checkAP = await _accessPoint.Employee_TicketCheck(em);
-        //    if (checkAP == false)
-        //    {
-        //        return false;
-        //    }
-        //    else
-        //    {
-        //        //add ticket to list for every ticket that matches the id
-        //        return true;
-        //    }
-
-        //}//End of Ticket Check
+        }//End of Create Ticket
 
 
+        public async Task<string?> Update_Ticket(string status, string managerName, Guid tickID)
+        {
+            //Get the manager
+            Guid? mangID = await _accessPoint.Manager_GETID(managerName);
+            if(mangID != null)//If there is an ID retrieved
+            {
+                //Get the ticket
+                //verify status
+                if((status == Status.Approved.ToString()) || (status == Status.Denied.ToString()))
+                {
+                    //If this is the status -- Do operation here
+                    bool didTicketSave = await _accessPoint.Manager_UpdateTicket(status, tickID);
 
 
-        ////Submit ticket
+                    if (didTicketSave == true)//If the ticket saved
+                    {
+                        bool didT_M_Save_TO_Junc = await _accessPoint.Manager_SavingTo_Junc_T_M(tickID, mangID);
+                        if(didT_M_Save_TO_Junc == true)
+                        {
+                            return $"The manager {managerName} with the id {mangID} updated ticket with id [{tickID}]";
+
+                        }
+                        return $"The manager {managerName} with the id {mangID} updated ticket with id [{tickID}], but did not update T_M data";
+                    }
+                    else
+                    {
+                        return $"The manager {managerName} with the id {mangID} didn't update anything";
+                    }
+                }else if (status == Status.Pending.ToString())
+                {
+                    //If this is the status -- Do not check DB
+                    return $"The manager {managerName} didn't update anything. You can only change status from 'Pending' to 'Approved or Denied'";
+                }
+                else
+                {
+                    //If you didnt make the right choice
+                    Console.WriteLine($"\n\n\t\tThe Status '{status}' the manager entered was not part of the choices\n\n");
+                    return $"The manager {managerName} didn't update anything. You can only change status from 'Pending' to 'Approved or Denied'";
+                }
+
+            }
+            else
+            {
+                //If your username for manager was wrong
+                Console.WriteLine($"\n\n\t\tThe username '{managerName}' the manager entered was incorrect\n\n");
+                return null;
+            }
 
 
 
+            //Change the status by saving
 
-        //public async Task<Employee?> AddNewEmployee(){
-        //    RestartRegistration:
-        //    Messages.Regular1("Let's get you signed up!");
-        //    await Task.Delay(961);
-        //    this._newAppSession.Employee = EmployeeAuth.RegisterNewEmployee();
-
-
-
-        //    Guid userID = this._newAppSession.Employee.EmployeeID; 
-        //    string userN = this._newAppSession.Employee.Username; 
-        //    string userP = this._newAppSession.Employee.Password;
-        //    string userF = this._newAppSession.Employee.Fname;
-        //    string userL = this._newAppSession.Employee.Lname;
-        //    bool userM = this._newAppSession.Employee.Manager;
-        //    DateTime userSignup = this._newAppSession.Employee.SIGNUPDATE;
-        //    DateTime userLastMod = this._newAppSession.Employee.LASTSIGNEDIN;
-
-        //    //We nee to check if the credentials entered are not present already before they enter the portal
-        //    var check = await _accessPoint.Check_If_Employee_Exists_Async(userN);
-        //    //Messages.Regular1(check.ToString());
-        //    if(check == true){
-        //        //check found your data
-        //        ReAskResponse:
-        //        Messages.Regular1("Sign Up Again? or Login?");
-        //        Messages.Regular1("|1 for Sign Up\n\t|2 for Login");
-        //        int? response = VerifyAnswers.Verify_SingleString_Answer_FOR_INT(1,1);
-        //        if(response == 1){
-        //            Messages.Regular1("Restarting.....");
-        //            await Task.Delay(2000);
-        //            goto RestartRegistration;
-        //        }else if(response == 2){
-        //            //var logEm = await LoginEmployee();
-        //            await Task.Delay(2000);
-        //            return null;
-        //        }else{
-        //            Messages.Regular1("Incorrect response");
-        //            await Task.Delay(2000);
-        //            goto ReAskResponse;
-        //        }
-
-        //    }else{
-        //        //check did not find your data
-        //        Employee em = new Employee(){
-        //            EmployeeID = userID,
-        //            Username = userN,
-        //            Fname =userF,
-        //            Lname = userL,
-        //            Manager = userM,
-        //            SIGNUPDATE = userSignup,
-        //            LASTSIGNEDIN = userLastMod,
-        //            Password = userP
-
-        //        };
-        //        Messages.Regular1(em.EmployeeID.ToString());
-        //        Messages.Regular1(em.Username);
-        //        Messages.Regular1(em.Fname);
-        //        Messages.Regular1(em.Lname);
-        //        Messages.Regular1(em.Password);
-        //        Messages.Regular1(em.Manager.ToString());
-        //        Messages.Regular1(em.SIGNUPDATE.ToString());
-        //        Messages.Regular1(em.LASTSIGNEDIN.ToString());
-        //        //Messages.Regular1("check did not find your data");
-        //        //var AddTODB = await _accessPoint.REGISTER_Employee_Async();
-        //        Messages.Regular1($"Your new account is {em.Username} with id: {em.EmployeeID}");
-
-        //        await Task.Delay(2000);
-        //        return em;
-        //        // goto RestartRegistration;
-        //    }
-
-
-        //    string welcome = $"Welcome to your ReImbursement Portal {userN}";
-        //    Messages.Regular1(welcome);
-        //}
-
-        //public async Task<Employee> LoginEmployee(string userN, string userP)
-        //{
-
-
-        //    this._newAppSession.Employee = new Employee();
-
-        //    Messages.Regular1("\tLet's Sign In.");
-
-        //    //RestartLogin:
-        //    ////this._newAppSession.Employee = EmployeeAuth.LoginNewEmployee();
-        //    ////Guid userID = this._newAppSession.Employee.EmployeeID; 
-        //    ////string userN = this._newAppSession.Employee.Username; 
-        //    ////string userP = this._newAppSession.Employee.Password;
-        //    ////string userF = this._newAppSession.Employee.Fname;
-        //    ////string userL = this._newAppSession.Employee.Lname;
-        //    ////bool userM = this._newAppSession.Employee.Manager;
-        //    //// Messages.Regular1($"{userID}");
-        //    //// Messages.Regular1($"{userN}");
-        //    //// Messages.Regular1($"{userP}");
-        //    //// Messages.Regular1($"{userF}");
-        //    //// Messages.Regular1($"{userL}");
-
-        //    bool? check = await _accessPoint.Check_If_Employee_Exists_UN_and_PW_Async(userN, userP);
-        //    if (check == null)
-        //    {
-        //        //If employee with Username is not in DB
-        //        Console.WriteLine($"Employee '{userN}' is not found");
-        //        return null;
-        //    }
-        //    else
-        //    {
-        //        //THe employee was found and must now check the password
-
-        //    }
-        //    //if(check == true){
-        //    //    //The check was successful, which means 
-        //    //    Messages.Regular1("Check was successful, you may contine to log in.");
-        //    //    //userN = this._newAppSession.Employee.Username; 
-        //    //    //userP = this._newAppSession.Employee.Password; 
-        //    //    Employee connResultLogin = await _accessPoint.LOGIN_Employee_Async(userN,userP);
-        //    //    this._newAppSession.Employee = connResultLogin;
-        //    //    while(true){
-        //    //        if(this._newAppSession.Employee == null){
-        //    //            //this._newAppSession.Employee = new Employee(userN, userP);
-        //    //            Messages.Regular1("\tEmployee was does not exist in our records. \n\t\tTry Again!.");
-        //    //            goto RestartLogin;
-        //    //        }else{
-
-        //    //            Messages.Regular1($"Ok {this._newAppSession.Employee.Fname}, you are now signed in.");
-        //    //            Messages.Regular1($"YOUR SIGNUP DATE {this._newAppSession.Employee.SIGNUPDATE}");
-        //    //            Messages.Regular1("\tWould you like to view a ticket?");
-        //    //            this._newAppSession.Employee.LASTSIGNEDIN = DateTime.Now;
-        //    //            return this._newAppSession.Employee;
-        //    //        }
-        //    //    }
-        //    //}else{
-        //    //    reTryaskToLogin:
-        //    //    Messages.Regular1("Check was not successful, would like to try again?\n\t\t\t|1 for Yes\n\t\t\t|0 for No");
-        //    //    int? askTryLogAgain = VerifyAnswers.Verify_SingleString_Answer_FOR_INT(1,2);
-        //    //    if(askTryLogAgain == 1){
-        //    //        goto RestartLogin;
-        //    //    }else if(askTryLogAgain == 0){
-        //    //        Messages.Regular1("You chose not to log in again. Goodbye.");
-        //    //        return this._newAppSession.Employee;
-        //    //    }else{
-        //    //        Messages.Regular1($"Your answer {askTryLogAgain} must be either 1 or 0.");
-        //    //        goto reTryaskToLogin;
-        //    //    }
-        //    //}
-
-
-        //}
-
-        //public string GetFname(){
-        //    string a = _newAppSession.Employee.Fname;
-        //    return a;
-        //}
-
-        //public string GetLname(){
-        //    string a = _newAppSession.Employee.Lname;
-        //    return a;
-        //}
-
-        //public string GetUname(){
-        //    string a = _newAppSession.Employee.Username;
-        //    return a;
-        //}
-
-        //public bool GetifManager(){
-        //    bool a = _newAppSession.Employee.Manager;
-        //    return a;
-        //}
-
-        //public DateTime GetSignUpDate(){
-        //    DateTime namefirst = _newAppSession.Employee.SIGNUPDATE;
-        //    return namefirst;
-        //}
-
-        //public void EnterRISystem(){
-        //    Messages.Regular1($"You've now entered your ReImbursement Portal {this._newAppSession.Employee.Fname}");
-
-
-        //}
-
-        //public void example(){
-        //    Messages.Regular1("1");
-        //    example2();
-        //}
-
-        //public void example2(){
-        //    Messages.Regular1("2");
-        //    example();
-        //}
-
-        //public bool CreateATicket(){
-        //    var emTicket = TicketCreate.CreateTicket();
-        //    if(emTicket == null){
-        //        Console.WriteLine("This ticket could not be saved");
-        //        return false;
-        //    }else{
-        //        this._newAppSession.Employee.EmployeeTicket = emTicket;
-        //        return true;
-        //    }
-
-        //}
-
-        //public Ticket GetTicket(){
-        //    return this._newAppSession.Employee.EmployeeTicket;
-        //}
-
-        //public Ticket NewTicket(){
-        //    return _ticket = new Ticket();
-        //}
-        //public List<Ticket> GetListTickets(){
-        //    return this._newAppSession.Employee.ListofAllTickets;
-        //}
-        //public List<Ticket> AddToTicketsList(){
-        //    List<Ticket>? _List_of_tickets = new List<Ticket>();
-        //    Ticket? emTicket = GetTicket();
-        //    if(emTicket != null){
-        //        this._newAppSession.Employee.ListofAllTickets.Add(emTicket);
-        //        _List_of_tickets = this._newAppSession.Employee.ListofAllTickets;
-
-        //        return _List_of_tickets;
-        //    }else{
-        //        Console.WriteLine("Your list of tickets is empty...");
-        //        return this._newAppSession.Employee.ListofAllTickets;
-        //    }
-        //}
-
-        //public  void ViewListofTickets(){
-        //    List<Ticket> tList = this.GetListTickets();
-        //    int count = 0;
-        //    foreach( Ticket i in tList){
-        //        Messages.Regular1($"List {count++ +1}"+
-        //            $"\tTicket Amount: {i.Amount}\n"+
-        //        $"\tTicket Description: {i.Description}\n"+
-        //        $"\tIs Ticket Pending: {i.Ticket_Status.ToString()}");
-
-        //    }
-        //}
-
-        //public Employee GetEmployee(){
-        //    return this._newAppSession.Employee;
-        //}
-
+        }//End of Update Ticket
 
     }
 }

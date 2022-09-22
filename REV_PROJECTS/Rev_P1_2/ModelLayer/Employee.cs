@@ -13,9 +13,7 @@ namespace ModelLayer
         private Guid employee_ID { get; set; } //not null
         private string? fname { get; set; } //null
         private string? lname { get; set; } //null
-        [Required(ErrorMessage = "You must have a valid!")]
-        private string username { get; set; } //not null
-        [Required(ErrorMessage = "A password is required!")]
+        private string username { get; set; }
         private string password { get; set; } //not null
         private DateTime dateRegistered { get; set; } //not null
 

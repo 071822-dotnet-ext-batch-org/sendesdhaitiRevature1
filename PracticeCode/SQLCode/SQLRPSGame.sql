@@ -92,6 +92,18 @@ ADD CONSTRAINT FK_TicketID
 EXEC sp_rename 'Junc_T_and_Employee', 'Junc_T_E';
 
 
+--The syntax for sp_rename goes like this:
+
+sp_rename
+    [ @objname = ] 'object_name' ,
+    [ @newname = ] 'new_name'
+    [ , [ @objtype = ] 'object_type' ]
+
+
+  --Change the name of a table ROWS
+  EXEC sp_rename '[doc].[_MyTable].[PK_MyTable]', '[PK__MyTable]'
+
+
 
 ALTER TABLE [dbo].[Employee]
 ADD CONSTRAINT PK_Employee PRIMARY KEY (EmployeeID) ;
@@ -166,6 +178,12 @@ WHERE TABLE_NAME='Employees';
 
 
 
+----------------------Add Constraint with Custom name-----------------
+ALTER TABLE Users
+ADD CONSTRAINT Unique_Email_Constraint
+Unique (Email)
+
+
 ---------------------If There is a default value constraint - This might make every new ticket or obj
 -------------------------a new ticket or obj, with the same ticket id...IF!!!, the automatic generating method
 ----------------------------is in the parenthesis (). So... Default(NEWID()) is gonna be THE VERY FIRST id generated
@@ -228,3 +246,147 @@ select * from [dbo].[Tickets]
 select * from [dbo].[Managers]
 select * from [dbo].[Employees]
 select * from [dbo].[Junc_T_M]
+
+
+
+
+
+
+
+
+---------------------------Creating a Stored Procedure ---------------
+CREATE PROCEDURE GetProductDesc
+AS
+BEGIN
+SET NOCOUNT ON
+
+SELECT P.ProductID,P.ProductName,PD.ProductDescription  FROM
+Product P
+INNER JOIN ProductDescription PD ON P.ProductID=PD.ProductID
+
+END
+
+
+
+
+
+----------------------------Creating Stored Procedure with Parameter ---------------
+CREATE PROCEDURE GetProductDesc_withparameters
+(@PID INT)
+AS
+BEGIN
+SET NOCOUNT ON
+
+SELECT P.ProductID,P.ProductName,PD.ProductDescription  FROM
+Product P
+INNER JOIN ProductDescription PD ON P.ProductID=PD.ProductID
+WHERE P.ProductID=@PID
+
+END
+
+
+
+
+
+
+
+
+---------------------------Execute stored PROCEDURE -----------------------
+EXEC GetProductDesc_withparameters 706 ----------with parameter
+
+
+
+
+
+
+
+
+---------------------Last Session -------( Delete after copying) -------------
+select * from [dbo].[Tickets]
+select * from [dbo].[Managers]
+select * from [dbo].[Employees]
+select * from [dbo].[Junc_T_M]
+
+update [dbo].[Tickets]
+set FK_EmployeeID='e0369a10-996f-453b-b361-94c902507182'
+where FK_EmployeeID='00000000-0000-0000-0000-000000000000';
+
+
+truncate table [dbo].[Tickets]
+truncate column where
+FK_Employee =
+
+
+SELECT TABLE_NAME,
+       CONSTRAINT_TYPE,CONSTRAINT_NAME
+FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
+WHERE TABLE_NAME='Tickets';
+
+alter table [dbo].[Junc_T_M]
+drop constraint FK_Junc_TicketID
+
+alter table [dbo].[Tickets]
+add FK__Tickets__EmployeeID Uniqueidentifier not null default newid() foreign key references Employees(EmployeeID)
+
+
+--AZURE DEVOPS FULL ACCESS TOKEN: dll3qmh2jxkbmrp3zefz2uc6becihzl4b4nlth65h64ee3lwib5a
+--Token2: k3nrlhbuslfoiwdqk5iagfyvxptfamzx2szfztfp2osi54d35rdq
+
+--Creating the Ecommerce Tables Users, Products
+CREATE TABLE Users(
+PK_EmployeeID UNIQUEIDENTIFIER DEFAULT(NEWID()) NOT NULL primary key, --NEWID() function returns a GUID
+Username NVARCHAR(50) UNIQUE NOT NULL,
+Password NVARCHAR(50) not null,
+Firstname NVARCHAR(50) NULL,
+Lastname NVARCHAR(50) NULL,
+Email NVARCHAR(100) not null,
+Role NVARCHAR(20) NOT NULL,
+SignUpDate DATETIME DEFAULT(getdate()) NOT NULL,
+);
+
+CREATE TABLE Products(
+PK_ProductID UNIQUEIDENTIFIER DEFAULT(NEWID()) NOT NULL primary key, --NEWID() function returns a GUID
+PublicID int  IDENTITY(906,37),
+Title NVARCHAR(50) UNIQUE NOT NULL,
+Description NVARCHAR(150)  not null,
+Price smallmoney not NULL,
+Inventory int  default(0) not NULL,
+DateCreated datetime default(getdate()) not null,
+CreatedBy NVARCHAR(50) foreign key references Users(Username) NOT NULL
+);
+
+Create Table ProductsOfOrders(
+LinkID UNIQUEIDENTIFIER DEFAULT(NEWID()) NOT NULL primary key,
+FK_OrderID UNIQUEIDENTIFIER foreign Key references Orders(PK_OrderID) not null,
+FK_ProductID UNIQUEIDENTIFIER foreign Key references Products(PK_ProductID) not null,
+);
+
+
+CREATE TABLE Orders(
+PK_OrderID UNIQUEIDENTIFIER DEFAULT(NEWID()) NOT NULL primary key, --NEWID() function returns a GUID
+Firstname NVARCHAR(50) NOT NULL,
+Lastname NVARCHAR(50) not null,
+Email NVARCHAR(100) Not NULL,
+StreetAddress NVARCHAR(100) Not Null,
+City NVARCHAR(100) Not Null,
+State NVARCHAR(100) Not Null,
+Country NVARCHAR(100) Not Null,
+AreaCode INT Not Null,
+Total smallmoney not NULL,
+DatePurchased datetime default(getdate()) not null,
+Status NVARCHAR(20) Not Null
+);
+
+
+
+
+Create Table Profiles(
+PK_ProfilesID UNIQUEIDENTIFIER DEFAULT(NEWID()) NOT NULL primary key, --NEWID() function returns a GUID
+About Nvarchar(150) default('Empty') not null,
+FK_Username nvarchar(50) foreign key references Users(Username)
+);
+
+
+---If System.InvalidOperationException: The ConnectionString property has not been initialized.
+_dbString["ConnectionStrings:EcomProjectAPIDB"] --the connection string must be used without this keyword
+this._dbString["ConnectionStrings:EcomProjectAPIDB"] --Causes
