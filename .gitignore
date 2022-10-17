@@ -3,6 +3,16 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# -----------My IGONORED FILES--------------
+PracticeCode/
+1_Strings/
+codingChallenges/
+InherPoly2/
+InherPoly/
+File_I_O/
+RPSGame2/
+
+
 # User-specific files
 *.rsuser
 *.suo
