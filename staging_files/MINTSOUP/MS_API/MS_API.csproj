@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>13b13de5-d13f-41f4-ac23-ea2d7dbbbc14</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MS_API1_Users_LogicLayer\MS_API1_Users_LogicLayer.csproj" />
+    <ProjectReference Include="..\MS_API1_Users_Model\MS_API1_Users_Model.csproj" />
+    <ProjectReference Include="..\MS_API1_Users_API\MS_API1_Users_API.csproj" />
+    <ProjectReference Include="..\Tests.MS_API1\Tests.MS_API1.csproj" />
+  </ItemGroup>
+
+</Project>
