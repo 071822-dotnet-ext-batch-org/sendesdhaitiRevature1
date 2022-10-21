@@ -14,6 +14,7 @@ namespace Models
         public Guid? FK_ViewerID_Owner {get;set;}
         public string? ShowName {get;set;}
         public string? ShowImage {get;set;}
+        public int? SubscribersCount {get;set;}
         public int? Views {get;set;}
         public int? Likes {get;set;}
         public int? Comments {get;set;}
@@ -39,7 +40,7 @@ namespace Models
         /// <summary>
         /// This is the model to create a new Show - A Show must have (Guid? id, Guid? ownerID, string? showname, int? views, double? rating, int? rank,  DateTime? dateCreated, DateTime? lastLive, PrivacyLevel? privacyLevel, List<Follower?>? subscribers, List<ShowLikes?>? likes, List<ShowComment?>? comments, List<ShowDonation?>? donations)
         /// </summary>
-        public Show(Guid? id, Guid? ownerID, string? showname, string? showImage, int? views, int? likes, int? comments, double? rating, int? rank, PrivacyLevel? privacyLevel, ShowStanding? showStatus, DateTime? dateCreated, DateTime? lastLive, 
+        public Show(Guid? id, Guid? ownerID, string? showname, string? showImage, int? subscribersCount, int? views, int? likes, int? comments, double? rating, int? rank, PrivacyLevel? privacyLevel, ShowStanding? showStatus, DateTime? dateCreated, DateTime? lastLive, 
             List<Follower?>? subscribers, List<ShowLikes?>? showLikes, List<ShowComment?>? showComments, List<ShowDonation?>? donations)
         {
             //shows properties
@@ -47,6 +48,7 @@ namespace Models
             this.FK_ViewerID_Owner = ownerID;
             this.ShowName = showname;
             this.ShowImage = showImage;
+            this.SubscribersCount = subscribersCount;
             this.Views = views;
             this.Likes = likes;
             this.Comments = comments;

@@ -1,8 +1,10 @@
 ﻿using System.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-// using MS_API1_Users_Model;
+using MS_API1_Users_Model;
+using Models;
 namespace MS_API1_Users_Repo;
-public class GET_AccessLayer
+
+public class GET_AccessLayer : IGET_AccessLayer
 {
     private readonly IConfiguration _config;
     private readonly SqlConnection _conn;
@@ -11,23 +13,23 @@ public class GET_AccessLayer
     {
         _config = config;
 
-        
+
         if (string.Equals(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"), "Development", StringComparison.InvariantCultureIgnoreCase))
         {
             _conn = new SqlConnection(_config["ConnectionStrings:Development"]);
         }
         else
         {
-            _conn = new SqlConnection(_config["ConnectionStrings:ProductionString"]);
-        }    
+            _conn = new SqlConnection(_config["ConnectionStrings:Production"]);
+        }
 
     }
 
-//-----------------------GET VIEWER SECTION---------------------
-    public async Task<List<Models.Viewer?>> GET_allViewers(Models.GET_with_anAuth0ID_DTO? getViewerDTO)
+    //-----------------------GET VIEWER SECTION---------------------
+    public async Task<List<Models.Viewer?>> GET_allViewers(string? Auth0ID)
     {
         List<Models.Viewer?> listOfViewers = new List<Models.Viewer?>();
-        if(getViewerDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM Viewers Order By LastSignedIn DESC", _conn))
             {
@@ -36,7 +38,7 @@ public class GET_AccessLayer
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    while(ret.Read())
+                    while (ret.Read())
                     {
                         Models.Viewer viewer = new Models.Viewer();
                         viewer.ID = ret.GetGuid(0);
@@ -45,24 +47,27 @@ public class GET_AccessLayer
                         viewer.Ln = ret.GetString(3);
                         viewer.Email = ret.GetString(4);
                         viewer.Image = ret.GetString(5);
-                        viewer.Username =  ret.GetString(6);
-                        viewer.AboutMe =  ret.GetString(7);
-                        viewer.StreetAddy =  ret.GetString(8);
-                        viewer.City =  ret.GetString(9);
+                        if(!ret.IsDBNull(6))
+                        {
+                            viewer.Username = ret.GetString(6);
+                        }else{viewer.Username = "PLEASE CREATE USERNAME!!";}
+                        viewer.AboutMe = ret.GetString(7);
+                        viewer.StreetAddy = ret.GetString(8);
+                        viewer.City = ret.GetString(9);
                         viewer.State = ret.GetString(10);
                         viewer.Country = ret.GetString(11);
-                        viewer.AreaCode =  ret.GetInt32(12);
+                        viewer.AreaCode = ret.GetInt32(12);
 
-                        if(ret.GetString(13) == "Viewer"){viewer.Role = Models.Role.Viewer;}
-                        else if(ret.GetString(13) == "Host"){viewer.Role = Models.Role.Host;}
-                        else if(ret.GetString(13) == "Admin"){viewer.Role = Models.Role.Admin;}
+                        if (ret.GetString(13) == "Viewer") { viewer.Role = Models.Role.Viewer; }
+                        else if (ret.GetString(13) == "Host") { viewer.Role = Models.Role.Host; }
+                        else if (ret.GetString(13) == "Admin") { viewer.Role = Models.Role.Admin; }
                         else viewer.Role = Models.Role.Viewer;
 
-                        if(ret.GetString(14) == "Viewer"){viewer.MembershipStatus = Models.ViewerStatus.Viewer;}
+                        if (ret.GetString(14) == "Viewer") { viewer.MembershipStatus = Models.ViewerStatus.Viewer; }
                         else viewer.MembershipStatus = Models.ViewerStatus.Guest;
 
-                        viewer.DateSignedUp =  ret.GetDateTime(15);
-                        viewer.LastSignedIn =  ret.GetDateTime(16);
+                        viewer.DateSignedUp = ret.GetDateTime(15);
+                        viewer.LastSignedIn = ret.GetDateTime(16);
                         listOfViewers.Add(viewer);
                     }
 
@@ -82,13 +87,13 @@ public class GET_AccessLayer
         }
     }//End of GET_allViewers
 
-    public async Task<Models.Viewer?> GET_myViewer_by_auth0ID(Models.GET_with_anAuth0ID_DTO? getViewerDTO)
+    public async Task<Models.Viewer?> GET_myViewer_by_auth0ID(string? Auth0ID)
     {
-        if(getViewerDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Viewers Where Auth0ID = @Auth0ID", _conn))
             {
-                command.Parameters.AddWithValue("@Auth0ID", getViewerDTO?.Auth0ID);
+                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -101,23 +106,27 @@ public class GET_AccessLayer
                     viewer.Ln = ret.GetString(3);
                     viewer.Email = ret.GetString(4);
                     viewer.Image = ret.GetString(5);
-                    viewer.Username =  ret.GetString(6);
-                    viewer.AboutMe =  ret.GetString(7);
-                    viewer.StreetAddy =  ret.GetString(8);
-                    viewer.City =  ret.GetString(9);
+                    if(!ret.IsDBNull(6))
+                    {
+                        viewer.Username = ret.GetString(6);
+                    }else{viewer.Username = "PLEASE CREATE USERNAME!!";}
+                    viewer.AboutMe = ret.GetString(7);
+                    viewer.StreetAddy = ret.GetString(8);
+                    viewer.City = ret.GetString(9);
                     viewer.State = ret.GetString(10);
                     viewer.Country = ret.GetString(11);
-                    viewer.AreaCode =  ret.GetInt32(12);
-                    if(ret.GetString(13) == "Viewer"){viewer.Role = Models.Role.Viewer;}
-                    else if(ret.GetString(13) == "Host"){viewer.Role = Models.Role.Host;}
-                    else if(ret.GetString(13) == "Admin"){viewer.Role = Models.Role.Admin;}
+                    viewer.AreaCode = ret.GetInt32(12);
+
+                    if (ret.GetString(13) == "Viewer") { viewer.Role = Models.Role.Viewer; }
+                    else if (ret.GetString(13) == "Host") { viewer.Role = Models.Role.Host; }
+                    else if (ret.GetString(13) == "Admin") { viewer.Role = Models.Role.Admin; }
                     else viewer.Role = Models.Role.Viewer;
 
-                    if(ret.GetString(14) == "Viewer"){viewer.MembershipStatus = Models.ViewerStatus.Viewer;}
+                    if (ret.GetString(14) == "Viewer") { viewer.MembershipStatus = Models.ViewerStatus.Viewer; }
                     else viewer.MembershipStatus = Models.ViewerStatus.Guest;
 
-                    viewer.DateSignedUp =  ret.GetDateTime(15);
-                    viewer.LastSignedIn =  ret.GetDateTime(16);
+                    viewer.DateSignedUp = ret.GetDateTime(15);
+                    viewer.LastSignedIn = ret.GetDateTime(16);
 
                     _conn.Close();
                     return viewer;
@@ -135,13 +144,13 @@ public class GET_AccessLayer
         }
     }//End of Get_Viewer_by_auth0ID
 
-    public async Task<Models.Viewer?> GET_aViewer_by_aViewerID(Models.GET_anOBJ_by_1GUID_with_auth0ID? getViewerDTO)
+    public async Task<Models.Viewer?> GET_aViewer_by_aViewerID(string? Auth0ID, Guid? OBJID)
     {
-        if((getViewerDTO?.Auth0ID != null) && (getViewerDTO?.OBJID != null))
+        if ((Auth0ID != null) && (OBJID != null))
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Viewers Where ID = @ID", _conn))
             {
-                command.Parameters.AddWithValue("@ID", getViewerDTO?.OBJID);
+                command.Parameters.AddWithValue("@ID", OBJID);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -154,25 +163,28 @@ public class GET_AccessLayer
                     viewer.Ln = ret.GetString(3);
                     viewer.Email = ret.GetString(4);
                     viewer.Image = ret.GetString(5);
-                    viewer.Username =  ret.GetString(6);
-                    viewer.AboutMe =  ret.GetString(7);
-                    viewer.StreetAddy =  ret.GetString(8);
-                    viewer.City =  ret.GetString(9);
+                    if(!ret.IsDBNull(6))
+                    {
+                        viewer.Username = ret.GetString(6);
+                    }else{viewer.Username = "PLEASE CREATE USERNAME!!";}
+                    viewer.AboutMe = ret.GetString(7);
+                    viewer.StreetAddy = ret.GetString(8);
+                    viewer.City = ret.GetString(9);
                     viewer.State = ret.GetString(10);
                     viewer.Country = ret.GetString(11);
-                    viewer.AreaCode =  ret.GetInt32(12);
-                    if(ret.GetString(13) == "Viewer"){viewer.Role = Models.Role.Viewer;}
-                    else if(ret.GetString(13) == "Host"){viewer.Role = Models.Role.Host;}
-                    else if(ret.GetString(13) == "Admin"){viewer.Role = Models.Role.Admin;}
+                    viewer.AreaCode = ret.GetInt32(12);
+                    if (ret.GetString(13) == "Viewer") { viewer.Role = Models.Role.Viewer; }
+                    else if (ret.GetString(13) == "Host") { viewer.Role = Models.Role.Host; }
+                    else if (ret.GetString(13) == "Admin") { viewer.Role = Models.Role.Admin; }
                     else viewer.Role = Models.Role.Viewer;
 
 
-                    if(ret.GetString(14) == "Viewer"){viewer.MembershipStatus = Models.ViewerStatus.Viewer;}
+                    if (ret.GetString(14) == "Viewer") { viewer.MembershipStatus = Models.ViewerStatus.Viewer; }
                     else viewer.MembershipStatus = Models.ViewerStatus.Guest;
 
-                    viewer.DateSignedUp =  ret.GetDateTime(15);
-                    viewer.LastSignedIn =  ret.GetDateTime(16);
-                    
+                    viewer.DateSignedUp = ret.GetDateTime(15);
+                    viewer.LastSignedIn = ret.GetDateTime(16);
+
 
                     _conn.Close();
                     return viewer;
@@ -190,14 +202,14 @@ public class GET_AccessLayer
         }
     }//End of GET_aViewer_by_aViewerID
 
-//-----------------------GET ADMIN SECTION---------------------
-    public async Task<Models.Admin?> GET_myAdmin_by_auth0ID(Models.GET_with_anAuth0ID_DTO? getAdminDTO)
+    //-----------------------GET ADMIN SECTION---------------------
+    public async Task<Models.Admin?> GET_myAdmin_by_auth0ID(string? Auth0ID)
     {
-        if(getAdminDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Admins Where Auth0ID = @Auth0ID", _conn))
             {
-                command.Parameters.AddWithValue("@Auth0ID", getAdminDTO?.Auth0ID);
+                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -207,16 +219,20 @@ public class GET_AccessLayer
                     admin.ID = ret.GetGuid(0);
                     admin.Auth0ID = ret.GetString(1);
                     admin.Email = ret.GetString(2);
-                    admin.Username =  ret.GetString(3);
+                    if(!ret.IsDBNull(3))
+                    {
+                        admin.Username = ret.GetString(3);
+                    }else{admin.Username = "PLEASE CREATE USERNAME!!";}
 
-                    if(ret.GetString(4) == "Admin"){admin.AdminStatus = Models.AdminStatus.Admin;}
-                    else{
+                    if (ret.GetString(4) == "Admin") { admin.AdminStatus = Models.AdminStatus.Admin; }
+                    else
+                    {
                         admin.AdminStatus = Models.AdminStatus.NonAdmin;
                     }
-                    
 
-                    admin.DateCreated =  ret.GetDateTime(5);
-                    admin.LastSignedIn =  ret.GetDateTime(6);
+
+                    admin.DateCreated = ret.GetDateTime(5);
+                    admin.LastSignedIn = ret.GetDateTime(6);
 
                     _conn.Close();
                     return admin;
@@ -234,11 +250,11 @@ public class GET_AccessLayer
         }
     }//End of GET_myAdmin_by_auth0ID
 
-//-----------------------GET FRIEND SECTION---------------------
-    public async Task<List<Models.Friend?>> GET_allFriends(Models.GET_with_anAuth0ID_DTO? getFriendsDTO)
+    //-----------------------GET FRIEND SECTION---------------------
+    public async Task<List<Models.Friend?>> GET_allFriends(string? Auth0ID)
     {
         List<Models.Friend?> friendsList = new List<Models.Friend?>();
-        if(getFriendsDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM Friends Order By FriendUpdateDate DESC", _conn))
             {
@@ -247,7 +263,7 @@ public class GET_AccessLayer
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    while(ret.Read())
+                    while (ret.Read())
                     {
                         Models.Friend friend = new Models.Friend();
 
@@ -255,9 +271,9 @@ public class GET_AccessLayer
                         friend.FK_ViewerID_Friender = ret.GetGuid(1);
                         friend.FK_ViewerID_Friendie = ret.GetGuid(2);
 
-                        if(ret.GetString(3) == "Friend"){friend.FriendshipStatus = Models.FriendShipStatus.Friend;}
-                        else if(ret.GetString(3) == "PendingFriend"){friend.FriendshipStatus = Models.FriendShipStatus.PendingFriend;}
-                        else if(ret.GetString(3) == "UnFriended"){friend.FriendshipStatus = Models.FriendShipStatus.UnFriended;}
+                        if (ret.GetString(3) == "Friend") { friend.FriendshipStatus = Models.FriendShipStatus.Friend; }
+                        else if (ret.GetString(3) == "PendingFriend") { friend.FriendshipStatus = Models.FriendShipStatus.PendingFriend; }
+                        else if (ret.GetString(3) == "UnFriended") { friend.FriendshipStatus = Models.FriendShipStatus.UnFriended; }
                         else friend.FriendshipStatus = Models.FriendShipStatus.Friend;
 
                         friend.FriendDate = ret.GetDateTime(4);
@@ -281,20 +297,20 @@ public class GET_AccessLayer
         }
     }//End of GET_allFriends
 
-    public async Task<List<Models.Friend?>> GET_myFriends_by_ViewerID_Freinder(Models.GET_with_anAuth0ID_DTO? getMyFriendsDTO)
+    public async Task<List<Models.Friend?>> GET_myFriends_by_ViewerID_Freinder(string? Auth0ID)
     {
         List<Models.Friend?> friendsList = new List<Models.Friend?>();
-        if(getMyFriendsDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM Friends Where FK_ViewerID_Friender = (select ID from Viewers Where Auth0ID = @Auth0ID) Order By FriendUpdateDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@Auth0ID", getMyFriendsDTO?.Auth0ID);
+                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    while(ret.Read())
+                    while (ret.Read())
                     {
                         Models.Friend friend = new Models.Friend();
 
@@ -302,9 +318,9 @@ public class GET_AccessLayer
                         friend.FK_ViewerID_Friender = ret.GetGuid(1);
                         friend.FK_ViewerID_Friendie = ret.GetGuid(2);
 
-                        if(ret.GetString(3) == "Friend"){friend.FriendshipStatus = Models.FriendShipStatus.Friend;}
-                        else if(ret.GetString(3) == "PendingFriend"){friend.FriendshipStatus = Models.FriendShipStatus.PendingFriend;}
-                        else if(ret.GetString(3) == "UnFriended"){friend.FriendshipStatus = Models.FriendShipStatus.UnFriended;}
+                        if (ret.GetString(3) == "Friend") { friend.FriendshipStatus = Models.FriendShipStatus.Friend; }
+                        else if (ret.GetString(3) == "PendingFriend") { friend.FriendshipStatus = Models.FriendShipStatus.PendingFriend; }
+                        else if (ret.GetString(3) == "UnFriended") { friend.FriendshipStatus = Models.FriendShipStatus.UnFriended; }
                         else friend.FriendshipStatus = Models.FriendShipStatus.Friend;
 
                         friend.FriendDate = ret.GetDateTime(4);
@@ -328,14 +344,14 @@ public class GET_AccessLayer
         }
     }//End of Get_myFriends_by_ViewerID_Freinder
 
-    public async Task<Models.Friend?> GET_aFriend_by_ViewerID_Freinder(Models.GET_Friend_with_ViewerID_Friender? getFriendDTO)
+    public async Task<Models.Friend?> GET_aFriend_by_ViewerID_Freinder(string? Auth0ID, Guid? FriendID, Guid? viewerID_Friender)
     {
-        if(getFriendDTO?.FK_ViewerID_Friender != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Friends Where ID = @ID AND FK_ViewerID_Friender = @FK_ViewerID_Friender ", _conn))
             {
-                command.Parameters.AddWithValue("@ID", getFriendDTO?.FriendID);
-                command.Parameters.AddWithValue("@FK_ViewerID_Friender", getFriendDTO?.FK_ViewerID_Friender);
+                command.Parameters.AddWithValue("@ID", FriendID);
+                command.Parameters.AddWithValue("@FK_ViewerID_Friender", viewerID_Friender);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -347,9 +363,9 @@ public class GET_AccessLayer
                     friend.FK_ViewerID_Friender = ret.GetGuid(1);
                     friend.FK_ViewerID_Friendie = ret.GetGuid(2);
 
-                    if(ret.GetString(3) == "Friend"){friend.FriendshipStatus = Models.FriendShipStatus.Friend;}
-                    else if(ret.GetString(3) == "PendingFriend"){friend.FriendshipStatus = Models.FriendShipStatus.PendingFriend;}
-                    else if(ret.GetString(3) == "UnFriended"){friend.FriendshipStatus = Models.FriendShipStatus.UnFriended;}
+                    if (ret.GetString(3) == "Friend") { friend.FriendshipStatus = Models.FriendShipStatus.Friend; }
+                    else if (ret.GetString(3) == "PendingFriend") { friend.FriendshipStatus = Models.FriendShipStatus.PendingFriend; }
+                    else if (ret.GetString(3) == "UnFriended") { friend.FriendshipStatus = Models.FriendShipStatus.UnFriended; }
                     else friend.FriendshipStatus = Models.FriendShipStatus.Friend;
 
                     friend.FriendDate = ret.GetDateTime(4);
@@ -373,20 +389,20 @@ public class GET_AccessLayer
 
 
 
-//-----------------------GET FOLLOWER SECTION---------------------
-    public async Task<List<Models.Follower?>> GET_allFollowers(Models.GET_with_anAuth0ID_DTO? getFollowersDTO)
+    //-----------------------GET FOLLOWER SECTION---------------------
+    public async Task<List<Models.Follower?>> GET_allFollowers(string? Auth0ID)
     {
         List<Models.Follower?> followerList = new List<Models.Follower?>();
-        if(getFollowersDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM Followers Where Order By StatusUpdateDate DESC", _conn))
+            using (SqlCommand command = new SqlCommand($"SELECT * FROM Followers Order By StatusUpdateDate DESC", _conn))
             {
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    while(ret.Read())
+                    while (ret.Read())
                     {
                         Models.Follower follower = new Models.Follower();
 
@@ -395,9 +411,9 @@ public class GET_AccessLayer
                         follower.FK_ViewerID_Followie = ret.GetGuid(2);
                         follower.FK_ShowID_Followie = ret.GetGuid(3);
 
-                        if(ret.GetString(4) == "Follower"){follower.FollowerStatus = Models.FollowerStatus.Follower;}
-                        else if(ret.GetString(4) == "UnFollowed"){follower.FollowerStatus = Models.FollowerStatus.UnFollowed;}
-                        else if(ret.GetString(4) == "NonFollower"){follower.FollowerStatus = Models.FollowerStatus.NonFollower;}
+                        if (ret.GetString(4) == "Follower") { follower.FollowerStatus = Models.FollowerStatus.Follower; }
+                        else if (ret.GetString(4) == "UnFollowed") { follower.FollowerStatus = Models.FollowerStatus.UnFollowed; }
+                        else if (ret.GetString(4) == "NonFollower") { follower.FollowerStatus = Models.FollowerStatus.NonFollower; }
                         else follower.FollowerStatus = Models.FollowerStatus.Follower;
 
                         follower.FollowDate = ret.GetDateTime(5);
@@ -420,20 +436,20 @@ public class GET_AccessLayer
         }
     }//End of GET_allFollowers
 
-    public async Task<List<Models.Follower?>> GET_myFollowers_by_ViewerID_Follower(Models.GET_with_anAuth0ID_DTO? getMyFollowersDTO)
+    public async Task<List<Models.Follower?>> GET_myFollowers_by_ViewerID_Follower(string? Auth0ID)
     {
         List<Models.Follower?> followerList = new List<Models.Follower?>();
-        if(getMyFollowersDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM Followers Where FK_ViewerID_Follower = (select ID from Viewers Where Auth0ID = @Auth0ID) Order By FollowDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@Auth0ID", getMyFollowersDTO?.Auth0ID);
+                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    while(ret.Read())
+                    while (ret.Read())
                     {
                         Models.Follower follower = new Models.Follower();
 
@@ -442,9 +458,9 @@ public class GET_AccessLayer
                         follower.FK_ViewerID_Followie = ret.GetGuid(2);
                         follower.FK_ShowID_Followie = ret.GetGuid(3);
 
-                        if(ret.GetString(4) == "Follower"){follower.FollowerStatus = Models.FollowerStatus.Follower;}
-                        else if(ret.GetString(4) == "UnFollowed"){follower.FollowerStatus = Models.FollowerStatus.UnFollowed;}
-                        else if(ret.GetString(4) == "NonFollower"){follower.FollowerStatus = Models.FollowerStatus.NonFollower;}
+                        if (ret.GetString(4) == "Follower") { follower.FollowerStatus = Models.FollowerStatus.Follower; }
+                        else if (ret.GetString(4) == "UnFollowed") { follower.FollowerStatus = Models.FollowerStatus.UnFollowed; }
+                        else if (ret.GetString(4) == "NonFollower") { follower.FollowerStatus = Models.FollowerStatus.NonFollower; }
                         else follower.FollowerStatus = Models.FollowerStatus.Follower;
 
                         follower.FollowDate = ret.GetDateTime(5);
@@ -467,15 +483,15 @@ public class GET_AccessLayer
         }
     }//End of Get_myFollowers_by_ViewerID_Follower
 
-    public async Task<Models.Follower?> GET_aFollower_by_ViewerID_Follower(Models.GET_aFollower_with_ViewerID_Follower? getAFollowerDTO)
+    public async Task<Models.Follower?> GET_aFollower_by_ViewerID_Follower(string? Auth0ID, Guid? FollowerID,Guid? ViewerID_Follower)
     {
         Models.Follower follower = new Models.Follower();
-        if(getAFollowerDTO?.ViewerID_Follower != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Followers Where ID = @ID AND FK_ViewerID_Follower = @FK_ViewerID_Follower ", _conn))
             {
-                command.Parameters.AddWithValue("@ID", getAFollowerDTO?.FollowerID);
-                command.Parameters.AddWithValue("@FK_ViewerID_Follower", getAFollowerDTO?.ViewerID_Follower);
+                command.Parameters.AddWithValue("@ID", FollowerID);
+                command.Parameters.AddWithValue("@FK_ViewerID_Follower", ViewerID_Follower);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -487,9 +503,9 @@ public class GET_AccessLayer
                     follower.FK_ViewerID_Followie = ret.GetGuid(2);
                     follower.FK_ShowID_Followie = ret.GetGuid(3);
 
-                    if(ret.GetString(4) == "Follower"){follower.FollowerStatus = Models.FollowerStatus.Follower;}
-                    else if(ret.GetString(4) == "UnFollowed"){follower.FollowerStatus = Models.FollowerStatus.UnFollowed;}
-                    else if(ret.GetString(4) == "NonFollower"){follower.FollowerStatus = Models.FollowerStatus.NonFollower;}
+                    if (ret.GetString(4) == "Follower") { follower.FollowerStatus = Models.FollowerStatus.Follower; }
+                    else if (ret.GetString(4) == "UnFollowed") { follower.FollowerStatus = Models.FollowerStatus.UnFollowed; }
+                    else if (ret.GetString(4) == "NonFollower") { follower.FollowerStatus = Models.FollowerStatus.NonFollower; }
                     else follower.FollowerStatus = Models.FollowerStatus.Follower;
 
                     follower.FollowDate = ret.GetDateTime(5);
@@ -510,11 +526,11 @@ public class GET_AccessLayer
         }
     }//End of GET_aFollower_by_ViewerID_Follower
 
-//-----------------------GET SHOWS SECTION---------------------
-    public async Task<List<Models.Show?>> GET_allShows(Models.GET_with_anAuth0ID_DTO getShowsDTO)
+    //-----------------------GET SHOWS SECTION---------------------
+    public async Task<List<Models.Show?>> GET_allShows(string? Auth0ID)
     {
         List<Models.Show?> createdShowsList = new List<Models.Show?>();
-        if(getShowsDTO.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM Shows Where Order By LastLive DESC", _conn))
             {
@@ -523,7 +539,7 @@ public class GET_AccessLayer
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    while(ret.Read())
+                    while (ret.Read())
                     {
                         Models.Show show = new Models.Show();
 
@@ -531,27 +547,28 @@ public class GET_AccessLayer
                         show.FK_ViewerID_Owner = ret.GetGuid(1);
                         show.ShowName = ret.GetString(2);
                         show.ShowImage = ret.GetString(3);
-                        show.Views = ret.GetInt32(4);
-                        show.Likes = ret.GetInt32(5);
-                        show.Comments = ret.GetInt32(6);
-                        show.Rating = ret.GetDouble(7);
-                        show.Rank = ret.GetInt32(8);
+                        show.SubscribersCount = ret.GetInt32(4);
+                        show.Views = ret.GetInt32(5);
+                        show.Likes = ret.GetInt32(6);
+                        show.Comments = ret.GetInt32(7);
+                        show.Rating = ret.GetDouble(8);
+                        show.Rank = ret.GetInt32(9);
 
-                        if(ret.GetString(9) == "Private"){show.PrivacyLevel = Models.PrivacyLevel.Private;}
-                        else if(ret.GetString(9) == "Exclusive"){show.PrivacyLevel = Models.PrivacyLevel.Exclusive;}
-                        else if(ret.GetString(9) == "Public"){show.PrivacyLevel = Models.PrivacyLevel.Public;}
+                        if (ret.GetString(10) == "Private") { show.PrivacyLevel = Models.PrivacyLevel.Private; }
+                        else if (ret.GetString(10) == "Exclusive") { show.PrivacyLevel = Models.PrivacyLevel.Exclusive; }
+                        else if (ret.GetString(10) == "Public") { show.PrivacyLevel = Models.PrivacyLevel.Public; }
                         else show.PrivacyLevel = Models.PrivacyLevel.Private;
 
-                        if(ret.GetString(10) == "Pending"){show.ShowStatus = Models.ShowStanding.Pending;}
-                        else if(ret.GetString(10) == "Great"){show.ShowStatus = Models.ShowStanding.Great;}
-                        else if(ret.GetString(10) == "Good"){show.ShowStatus = Models.ShowStanding.Good;}
-                        else if(ret.GetString(10) == "Moderate"){show.ShowStatus = Models.ShowStanding.Moderate;}
-                        else if(ret.GetString(10) == "Bad"){show.ShowStatus = Models.ShowStanding.Bad;}
-                        else if(ret.GetString(10) == "Deactivated"){show.ShowStatus = Models.ShowStanding.Deactivated;}
-                        else{show.ShowStatus = Models.ShowStanding.Banned;}
+                        if (ret.GetString(11) == "Pending") { show.ShowStatus = Models.ShowStanding.Pending; }
+                        else if (ret.GetString(11) == "Great") { show.ShowStatus = Models.ShowStanding.Great; }
+                        else if (ret.GetString(11) == "Good") { show.ShowStatus = Models.ShowStanding.Good; }
+                        else if (ret.GetString(11) == "Moderate") { show.ShowStatus = Models.ShowStanding.Moderate; }
+                        else if (ret.GetString(11) == "Bad") { show.ShowStatus = Models.ShowStanding.Bad; }
+                        else if (ret.GetString(11) == "Deactivated") { show.ShowStatus = Models.ShowStanding.Deactivated; }
+                        else { show.ShowStatus = Models.ShowStanding.Banned; }
 
-                        show.DateCreated = ret.GetDateTime(10);
-                        show.LastLive = ret.GetDateTime(11);
+                        show.DateCreated = ret.GetDateTime(12);
+                        show.LastLive = ret.GetDateTime(12);
 
                         createdShowsList.Add(show);
                     }
@@ -571,20 +588,20 @@ public class GET_AccessLayer
         }
     }//End of GET_allShows
 
-    public async Task<List<Models.Show?>> GET_myShows_by_ViewerID_Owner(Models.GET_with_anAuth0ID_DTO? Owner)
+    public async Task<List<Models.Show?>> GET_myShows_by_ViewerID_Owner(string? Auth0ID)
     {
         List<Models.Show?> createdShowsList = new List<Models.Show?>();
-        if(Owner?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM Shows Where FK_ViewerID_Owner = (select ID from Viewers Where Auth0ID = @Auth0ID) Order By LastLive DESC", _conn))
             {
-                command.Parameters.AddWithValue("@Auth0ID", Owner.Auth0ID);
+                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    while(ret.Read())
+                    while (ret.Read())
                     {
                         Models.Show show = new Models.Show();
 
@@ -592,27 +609,28 @@ public class GET_AccessLayer
                         show.FK_ViewerID_Owner = ret.GetGuid(1);
                         show.ShowName = ret.GetString(2);
                         show.ShowImage = ret.GetString(3);
-                        show.Views = ret.GetInt32(4);
-                        show.Likes = ret.GetInt32(5);
-                        show.Comments = ret.GetInt32(6);
-                        show.Rating = ret.GetDouble(7);
-                        show.Rank = ret.GetInt32(8);
+                        show.SubscribersCount = ret.GetInt32(4);
+                        show.Views = ret.GetInt32(5);
+                        show.Likes = ret.GetInt32(6);
+                        show.Comments = ret.GetInt32(7);
+                        show.Rating = ret.GetDouble(8);
+                        show.Rank = ret.GetInt32(9);
 
-                        if(ret.GetString(9) == "Private"){show.PrivacyLevel = Models.PrivacyLevel.Private;}
-                        else if(ret.GetString(9) == "Exclusive"){show.PrivacyLevel = Models.PrivacyLevel.Exclusive;}
-                        else if(ret.GetString(9) == "Public"){show.PrivacyLevel = Models.PrivacyLevel.Public;}
+                        if (ret.GetString(10) == "Private") { show.PrivacyLevel = Models.PrivacyLevel.Private; }
+                        else if (ret.GetString(10) == "Exclusive") { show.PrivacyLevel = Models.PrivacyLevel.Exclusive; }
+                        else if (ret.GetString(10) == "Public") { show.PrivacyLevel = Models.PrivacyLevel.Public; }
                         else show.PrivacyLevel = Models.PrivacyLevel.Private;
 
-                        if(ret.GetString(10) == "Pending"){show.ShowStatus = Models.ShowStanding.Pending;}
-                        else if(ret.GetString(10) == "Great"){show.ShowStatus = Models.ShowStanding.Great;}
-                        else if(ret.GetString(10) == "Good"){show.ShowStatus = Models.ShowStanding.Good;}
-                        else if(ret.GetString(10) == "Moderate"){show.ShowStatus = Models.ShowStanding.Moderate;}
-                        else if(ret.GetString(10) == "Bad"){show.ShowStatus = Models.ShowStanding.Bad;}
-                        else if(ret.GetString(10) == "Deactivated"){show.ShowStatus = Models.ShowStanding.Deactivated;}
-                        else{show.ShowStatus = Models.ShowStanding.Banned;}
+                        if (ret.GetString(11) == "Pending") { show.ShowStatus = Models.ShowStanding.Pending; }
+                        else if (ret.GetString(11) == "Great") { show.ShowStatus = Models.ShowStanding.Great; }
+                        else if (ret.GetString(11) == "Good") { show.ShowStatus = Models.ShowStanding.Good; }
+                        else if (ret.GetString(11) == "Moderate") { show.ShowStatus = Models.ShowStanding.Moderate; }
+                        else if (ret.GetString(11) == "Bad") { show.ShowStatus = Models.ShowStanding.Bad; }
+                        else if (ret.GetString(11) == "Deactivated") { show.ShowStatus = Models.ShowStanding.Deactivated; }
+                        else { show.ShowStatus = Models.ShowStanding.Banned; }
 
-                        show.DateCreated = ret.GetDateTime(10);
-                        show.LastLive = ret.GetDateTime(11);
+                        show.DateCreated = ret.GetDateTime(12);
+                        show.LastLive = ret.GetDateTime(12);
 
                         createdShowsList.Add(show);
                     }
@@ -632,14 +650,14 @@ public class GET_AccessLayer
         }
     }//End of Get_myShows_by_ViewerID_Owner
 
-    public async Task<Models.Show?> GET_aShow_by_ShowID_with_auth0ID(Models.GET_aShow_by_ShowID_with_auth0ID? getAShowDTO)
+    public async Task<Models.Show?> GET_aShow_by_ShowID_with_auth0ID(string? Auth0ID, Guid? showID)
     {
         Models.Show show = new Models.Show();
-        if(getAShowDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Shows Where ID = @ID ", _conn))
             {
-                command.Parameters.AddWithValue("@ID", getAShowDTO?.ShowID);
+                command.Parameters.AddWithValue("@ID", showID);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -649,27 +667,29 @@ public class GET_AccessLayer
                     show.FK_ViewerID_Owner = ret.GetGuid(1);
                     show.ShowName = ret.GetString(2);
                     show.ShowImage = ret.GetString(3);
-                    show.Views = ret.GetInt32(4);
-                    show.Likes = ret.GetInt32(5);
-                    show.Comments = ret.GetInt32(6);
-                    show.Rating = ret.GetDouble(7);
-                    show.Rank = ret.GetInt32(8);
+                    show.SubscribersCount = ret.GetInt32(4);
+                    show.Views = ret.GetInt32(5);
+                    show.Likes = ret.GetInt32(6);
+                    show.Comments = ret.GetInt32(7);
+                    show.Rating = ret.GetDouble(8);
+                    show.Rank = ret.GetInt32(9);
 
-                    if(ret.GetString(9) == "Private"){show.PrivacyLevel = Models.PrivacyLevel.Private;}
-                    else if(ret.GetString(9) == "Exclusive"){show.PrivacyLevel = Models.PrivacyLevel.Exclusive;}
-                    else if(ret.GetString(9) == "Public"){show.PrivacyLevel = Models.PrivacyLevel.Public;}
+                    if (ret.GetString(10) == "Private") { show.PrivacyLevel = Models.PrivacyLevel.Private; }
+                    else if (ret.GetString(10) == "Exclusive") { show.PrivacyLevel = Models.PrivacyLevel.Exclusive; }
+                    else if (ret.GetString(10) == "Public") { show.PrivacyLevel = Models.PrivacyLevel.Public; }
                     else show.PrivacyLevel = Models.PrivacyLevel.Private;
 
-                    if(ret.GetString(10) == "Pending"){show.ShowStatus = Models.ShowStanding.Pending;}
-                    else if(ret.GetString(10) == "Great"){show.ShowStatus = Models.ShowStanding.Great;}
-                    else if(ret.GetString(10) == "Good"){show.ShowStatus = Models.ShowStanding.Good;}
-                    else if(ret.GetString(10) == "Moderate"){show.ShowStatus = Models.ShowStanding.Moderate;}
-                    else if(ret.GetString(10) == "Bad"){show.ShowStatus = Models.ShowStanding.Bad;}
-                    else if(ret.GetString(10) == "Deactivated"){show.ShowStatus = Models.ShowStanding.Deactivated;}
-                    else{show.ShowStatus = Models.ShowStanding.Banned;}
+                    if (ret.GetString(11) == "Pending") { show.ShowStatus = Models.ShowStanding.Pending; }
+                    else if (ret.GetString(11) == "Great") { show.ShowStatus = Models.ShowStanding.Great; }
+                    else if (ret.GetString(11) == "Good") { show.ShowStatus = Models.ShowStanding.Good; }
+                    else if (ret.GetString(11) == "Moderate") { show.ShowStatus = Models.ShowStanding.Moderate; }
+                    else if (ret.GetString(11) == "Bad") { show.ShowStatus = Models.ShowStanding.Bad; }
+                    else if (ret.GetString(11) == "Deactivated") { show.ShowStatus = Models.ShowStanding.Deactivated; }
+                    else { show.ShowStatus = Models.ShowStanding.Banned; }
 
-                    show.DateCreated = ret.GetDateTime(10);
-                    show.LastLive = ret.GetDateTime(11);
+                    show.DateCreated = ret.GetDateTime(12);
+                    show.LastLive = ret.GetDateTime(12);
+
                     _conn.Close();
                     return show;
                 }
@@ -687,11 +707,11 @@ public class GET_AccessLayer
     }//End of GET_aShow_by_ShowID_with_auth0ID
 
 
-//-----------------------GET SHOW SUBSCRIBERS SECTION---------------------
-    public async Task<List<Models.ShowSubscriber?>> GET_allShowSubscriber(Models.GET_with_anAuth0ID_DTO? getShowSubscribersDTO)
+    //-----------------------GET SHOW SUBSCRIBERS SECTION---------------------
+    public async Task<List<Models.ShowSubscriber?>> GET_allShowSubscriber(string? Auth0ID)
     {
         List<Models.ShowSubscriber?> subscribedShowsList = new List<Models.ShowSubscriber?>();
-        if(getShowSubscribersDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM Subscribers Order By LastLive DESC", _conn))
             {
@@ -700,7 +720,7 @@ public class GET_AccessLayer
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    while(ret.Read())
+                    while (ret.Read())
                     {
                         Models.ShowSubscriber subscribedShow = new Models.ShowSubscriber();
 
@@ -709,10 +729,10 @@ public class GET_AccessLayer
                         subscribedShow.FK_ShowID_Subscribie = ret.GetGuid(2);
                         subscribedShow.FK_ShowSessionID = ret.GetGuid(3);
 
-                        if(ret.GetString(4) == "Subscriber"){subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.Subscriber;}
-                        else if(ret.GetString(4) == "UnSubscribed"){subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.UnSubscribed;}
-                        else if(ret.GetString(4) == "PremiumMember"){subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.PremiumMember;}
-                        else if(ret.GetString(4) == "ExclusiveMember"){subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.ExclusiveMember;}
+                        if (ret.GetString(4) == "Subscriber") { subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.Subscriber; }
+                        else if (ret.GetString(4) == "UnSubscribed") { subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.UnSubscribed; }
+                        else if (ret.GetString(4) == "PremiumMember") { subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.PremiumMember; }
+                        else if (ret.GetString(4) == "ExclusiveMember") { subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.ExclusiveMember; }
                         else subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.Subscriber;
 
                         subscribedShow.SubscribeDate = ret.GetDateTime(5);
@@ -736,20 +756,20 @@ public class GET_AccessLayer
         }
     }//End of GET_allShowSubscriber
 
-    public async Task<List<Models.ShowSubscriber?>> GET_myShowSubscriptions_by_ViewerID_Subscriber(Models.GET_with_anAuth0ID_DTO? subscriber)
+    public async Task<List<Models.ShowSubscriber?>> GET_myShowSubscriptions_by_ViewerID_Subscriber(string? Auth0ID)
     {
         List<Models.ShowSubscriber?> subscribedShowsList = new List<Models.ShowSubscriber?>();
-        if(subscriber?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM Subscribers Where FK_ViewerID_Subscriber = (select ID from Viewers Where Auth0ID = @Auth0ID) Order By SubscriptionUpdateDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@Auth0ID", subscriber.Auth0ID);
+                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    while(ret.Read())
+                    while (ret.Read())
                     {
                         Models.ShowSubscriber subscribedShow = new Models.ShowSubscriber();
 
@@ -758,10 +778,10 @@ public class GET_AccessLayer
                         subscribedShow.FK_ShowID_Subscribie = ret.GetGuid(2);
                         subscribedShow.FK_ShowSessionID = ret.GetGuid(3);
 
-                        if(ret.GetString(4) == "Subscriber"){subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.Subscriber;}
-                        else if(ret.GetString(4) == "UnSubscribed"){subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.UnSubscribed;}
-                        else if(ret.GetString(4) == "PremiumMember"){subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.PremiumMember;}
-                        else if(ret.GetString(4) == "ExclusiveMember"){subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.ExclusiveMember;}
+                        if (ret.GetString(4) == "Subscriber") { subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.Subscriber; }
+                        else if (ret.GetString(4) == "UnSubscribed") { subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.UnSubscribed; }
+                        else if (ret.GetString(4) == "PremiumMember") { subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.PremiumMember; }
+                        else if (ret.GetString(4) == "ExclusiveMember") { subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.ExclusiveMember; }
                         else subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.Subscriber;
 
                         subscribedShow.SubscribeDate = ret.GetDateTime(5);
@@ -785,20 +805,20 @@ public class GET_AccessLayer
         }
     }//End of Get_myShowSubscriptions_by_ViewerID_Subscriber
 
-    public async Task<List<Models.ShowSubscriber?>> GET_myShowSubscribers_by_ShowID_Subscriber(Models.GET_anOBJ_by_1GUID_with_auth0ID? subscriber)
+    public async Task<List<Models.ShowSubscriber?>> GET_myShowSubscribers_by_ShowID_Subscriber(string? Auth0ID, Guid? OBJID)
     {
         List<Models.ShowSubscriber?> subscribedShowsList = new List<Models.ShowSubscriber?>();
-        if(subscriber?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM Subscribers Where FK_ShowID_Subscribie = @FK_ShowID_Subscribie Order By SubscriptionUpdateDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@FK_ShowID_Subscribie", subscriber.OBJID);
+                command.Parameters.AddWithValue("@FK_ShowID_Subscribie", OBJID);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    while(ret.Read())
+                    while (ret.Read())
                     {
                         Models.ShowSubscriber subscribedShow = new Models.ShowSubscriber();
 
@@ -807,10 +827,10 @@ public class GET_AccessLayer
                         subscribedShow.FK_ShowID_Subscribie = ret.GetGuid(2);
                         subscribedShow.FK_ShowSessionID = ret.GetGuid(3);
 
-                        if(ret.GetString(4) == "Subscriber"){subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.Subscriber;}
-                        else if(ret.GetString(4) == "UnSubscribed"){subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.UnSubscribed;}
-                        else if(ret.GetString(4) == "PremiumMember"){subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.PremiumMember;}
-                        else if(ret.GetString(4) == "ExclusiveMember"){subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.ExclusiveMember;}
+                        if (ret.GetString(4) == "Subscriber") { subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.Subscriber; }
+                        else if (ret.GetString(4) == "UnSubscribed") { subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.UnSubscribed; }
+                        else if (ret.GetString(4) == "PremiumMember") { subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.PremiumMember; }
+                        else if (ret.GetString(4) == "ExclusiveMember") { subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.ExclusiveMember; }
                         else subscribedShow.MembershipStatus = Models.SubscriberMembershipStatus.Subscriber;
 
                         subscribedShow.SubscribeDate = ret.GetDateTime(5);
@@ -834,14 +854,14 @@ public class GET_AccessLayer
         }
     }//End of GET_myShowSubscribers_by_ShowID_Subscriber
 
-    public async Task<Models.ShowSubscriber?> GET_aSubscriber_by_SubscriberID_with_auth0ID(Models.GET_aSubscriber_by_SubscriberID_with_auth0ID? getASubscriberDTO)
+    public async Task<Models.ShowSubscriber?> GET_aSubscriber_by_SubscriberID_with_auth0ID(string? Auth0ID, Guid? subscriberID)
     {
         Models.ShowSubscriber showSubscriber = new Models.ShowSubscriber();
-        if(getASubscriberDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Subscribers Where ID = @ID ", _conn))
             {
-                command.Parameters.AddWithValue("@ID", getASubscriberDTO?.SubscriberID);
+                command.Parameters.AddWithValue("@ID", subscriberID);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -852,10 +872,10 @@ public class GET_AccessLayer
                     showSubscriber.FK_ShowID_Subscribie = ret.GetGuid(2);
                     showSubscriber.FK_ShowSessionID = ret.GetGuid(3);
 
-                    if(ret.GetString(4) == "Subscriber"){showSubscriber.MembershipStatus = Models.SubscriberMembershipStatus.Subscriber;}
-                    else if(ret.GetString(4) == "UnSubscribed"){showSubscriber.MembershipStatus = Models.SubscriberMembershipStatus.UnSubscribed;}
-                    else if(ret.GetString(4) == "PremiumMember"){showSubscriber.MembershipStatus = Models.SubscriberMembershipStatus.PremiumMember;}
-                    else if(ret.GetString(4) == "ExclusiveMember"){showSubscriber.MembershipStatus = Models.SubscriberMembershipStatus.ExclusiveMember;}
+                    if (ret.GetString(4) == "Subscriber") { showSubscriber.MembershipStatus = Models.SubscriberMembershipStatus.Subscriber; }
+                    else if (ret.GetString(4) == "UnSubscribed") { showSubscriber.MembershipStatus = Models.SubscriberMembershipStatus.UnSubscribed; }
+                    else if (ret.GetString(4) == "PremiumMember") { showSubscriber.MembershipStatus = Models.SubscriberMembershipStatus.PremiumMember; }
+                    else if (ret.GetString(4) == "ExclusiveMember") { showSubscriber.MembershipStatus = Models.SubscriberMembershipStatus.ExclusiveMember; }
                     else showSubscriber.MembershipStatus = Models.SubscriberMembershipStatus.Subscriber;
 
                     showSubscriber.SubscribeDate = ret.GetDateTime(5);
@@ -878,11 +898,11 @@ public class GET_AccessLayer
     }//End of GET_aSubscriber_by_SubscriberID_with_auth0ID
 
 
-//-----------------------GET SHOW LIKES SECTION---------------------
-    public async Task<List<Models.ShowLikes?>> GET_allShowLikes(Models.GET_with_anAuth0ID_DTO? getShowLikes)
+    //-----------------------GET SHOW LIKES SECTION---------------------
+    public async Task<List<Models.ShowLikes?>> GET_allShowLikes(string? Auth0ID)
     {
         List<Models.ShowLikes?> showSessionLikes = new List<Models.ShowLikes?>();
-        if(getShowLikes?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowLikes Order By LikeDate DESC", _conn))
             {
@@ -891,7 +911,7 @@ public class GET_AccessLayer
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    while(ret.Read())
+                    while (ret.Read())
                     {
                         Models.ShowLikes showLike = new Models.ShowLikes();
                         showLike.ID = ret.GetGuid(0);
@@ -916,21 +936,21 @@ public class GET_AccessLayer
         }
     }//End of GET_allShowLikes
 
-    public async Task<List<Models.ShowLikes?>> GET_myShowSessionsLikes_by_ShowSessionID(Models.GET_anOBJ_by_1GUID_with_auth0ID? getMyShowsLikes)
+    public async Task<List<Models.ShowLikes?>> GET_myShowSessionsLikes_by_ShowSessionID(string? Auth0ID, Guid? OBJID)
     {
         List<Models.ShowLikes?> showSessionLikes = new List<Models.ShowLikes?>();
-        if(getMyShowsLikes?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowLikes Where FK_ShowSessionID = @FK_ShowSessionID AND FK_ViewerID_Liker = (select ID From Viewers Where Auth0ID = @Auth0ID) Order By LikeDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@Auth0ID", getMyShowsLikes.Auth0ID);
-                command.Parameters.AddWithValue("@FK_ShowSessionID", getMyShowsLikes.OBJID);
+                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
+                command.Parameters.AddWithValue("@FK_ShowSessionID", OBJID);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    while(ret.Read())
+                    while (ret.Read())
                     {
                         Models.ShowLikes showLike = new Models.ShowLikes();
                         showLike.ID = ret.GetGuid(0);
@@ -955,20 +975,20 @@ public class GET_AccessLayer
         }
     }//End of GET_myShowSessionsLikes_by_ShowSessionID
 
-    public async Task<List<Models.ShowLikes?>> GET_LikesOfShowSession_by_ShowSessionID(Models.GET_anOBJ_by_1GUID_with_auth0ID? getMyShowsLikes)
+    public async Task<List<Models.ShowLikes?>> GET_LikesOfShowSession_by_ShowSessionID(string? Auth0ID, Guid? OBJID)
     {
         List<Models.ShowLikes?> showSessionLikes = new List<Models.ShowLikes?>();
-        if(getMyShowsLikes?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowLikes Where FK_ShowSessionID = @FK_ShowSessionID Order By LikeDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@FK_ShowSessionID", getMyShowsLikes.OBJID);
+                command.Parameters.AddWithValue("@FK_ShowSessionID", OBJID);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    while(ret.Read())
+                    while (ret.Read())
                     {
                         Models.ShowLikes showLike = new Models.ShowLikes();
                         showLike.ID = ret.GetGuid(0);
@@ -993,14 +1013,14 @@ public class GET_AccessLayer
         }
     }//End of GET_LikesOfShowSession_by_ShowSessionID
 
-    public async Task<Models.ShowLikes?> GET_aShowLike_by_ShowLikeID_with_auth0ID(Models.GET_aShowLike_by_ShowLikeID_with_auth0ID? getAShowLike)
+    public async Task<Models.ShowLikes?> GET_aShowLike_by_ShowLikeID_with_auth0ID(string? Auth0ID, Guid? ShowLikeID)
     {
         Models.ShowLikes showLike = new Models.ShowLikes();
-        if(getAShowLike?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM ShowLikes Where ID = @ID ", _conn))
             {
-                command.Parameters.AddWithValue("@ID", getAShowLike?.ShowLikeID);
+                command.Parameters.AddWithValue("@ID", ShowLikeID);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -1028,11 +1048,11 @@ public class GET_AccessLayer
     }//End of GET_aShowLike_by_ShowLikeID_with_auth0ID
 
 
-//-----------------------GET SHOW COMMENTS SECTION---------------------
-    public async Task<List<Models.ShowComment?>> GET_allShowComments(Models.GET_with_anAuth0ID_DTO? getShowCommentsDTO)
+    //-----------------------GET SHOW COMMENTS SECTION---------------------
+    public async Task<List<Models.ShowComment?>> GET_allShowComments(string? Auth0ID)
     {
         List<Models.ShowComment?> showSessionComments = new List<Models.ShowComment?>();
-        if(getShowCommentsDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowComments Order By CommentUpdateDate DESC", _conn))
             {
@@ -1041,7 +1061,7 @@ public class GET_AccessLayer
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    while(ret.Read())
+                    while (ret.Read())
                     {
                         Models.ShowComment showComment = new Models.ShowComment();
                         showComment.ID = ret.GetGuid(0);
@@ -1069,21 +1089,21 @@ public class GET_AccessLayer
         }
     }//End of GET_allShowComments
 
-    public async Task<List<Models.ShowComment?>> GET_myShowComments_by_ViewerID_Commenter(Models.GET_anOBJ_by_1GUID_with_auth0ID getMyShowCommentsDTO)
+    public async Task<List<Models.ShowComment?>> GET_myShowComments_by_ViewerID_Commenter(string? Auth0ID, Guid? OBJID)
     {
         List<Models.ShowComment?> showSessionComments = new List<Models.ShowComment?>();
-        if(getMyShowCommentsDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowComments Where FK_ShowSessionID = @FK_ShowSessionID AND FK_ViewerID_Commenter = (select ID from Viewers where Auth0ID = @Auth0ID) Order By CommentUpdateDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@Auth0ID", getMyShowCommentsDTO.Auth0ID);
-                command.Parameters.AddWithValue("@FK_ShowSessionID", getMyShowCommentsDTO.OBJID);
+                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
+                command.Parameters.AddWithValue("@FK_ShowSessionID", OBJID);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    while(ret.Read())
+                    while (ret.Read())
                     {
                         Models.ShowComment showComment = new Models.ShowComment();
                         showComment.ID = ret.GetGuid(0);
@@ -1111,14 +1131,14 @@ public class GET_AccessLayer
         }
     }//End of Get_myShowComments_by_ViewerID_Commenter
 
-    public async Task<Models.ShowComment?> GET_aShowComment_by_ShowCommentID_with_auth0ID(Models.GET_anOBJ_by_1GUID_with_auth0ID? getanOBJDTO)
+    public async Task<Models.ShowComment?> GET_aShowComment_by_ShowCommentID_with_auth0ID(string? Auth0ID, Guid? OBJID)
     {
         Models.ShowComment showComment = new Models.ShowComment();
-        if(getanOBJDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM ShowComments Where ID = @ID ", _conn))
             {
-                command.Parameters.AddWithValue("@ID", getanOBJDTO?.OBJID);
+                command.Parameters.AddWithValue("@ID", OBJID);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -1148,11 +1168,11 @@ public class GET_AccessLayer
         }
     }//End of GET_aShowComment_by_ShowCommentID_with_auth0ID
 
-//-----------------------GET SHOW DONATIONS SECTION---------------------
-    public async Task<List<Models.ShowDonation?>> GET_allShowDonations(Models.GET_with_anAuth0ID_DTO? getShowDonationsDTO)
+    //-----------------------GET SHOW DONATIONS SECTION---------------------
+    public async Task<List<Models.ShowDonation?>> GET_allShowDonations(string? Auth0ID)
     {
         List<Models.ShowDonation?> showDonationsList = new List<Models.ShowDonation?>();
-        if(getShowDonationsDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowDonations Order By DonationDate DESC", _conn))
             {
@@ -1161,7 +1181,7 @@ public class GET_AccessLayer
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    while(ret.Read())
+                    while (ret.Read())
                     {
                         Models.ShowDonation showDonation = new Models.ShowDonation();
                         showDonation.ID = ret.GetGuid(0);
@@ -1188,20 +1208,20 @@ public class GET_AccessLayer
         }
     }//End of GET_allShowDonations
 
-    public async Task<List<Models.ShowDonation?>> GET_myShowDonations_by_ViewerID_Donater(Models.GET_with_anAuth0ID_DTO? getMYShowDonationsDTO)
+    public async Task<List<Models.ShowDonation?>> GET_myShowDonations_by_ViewerID_Donater(string? Auth0ID)
     {
         List<Models.ShowDonation?> showDonationsList = new List<Models.ShowDonation?>();
-        if(getMYShowDonationsDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowDonations Where FK_ViewerID_Donater = (select ID from Viewers Where Auth0ID = @Auth0ID) Order By DonationDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@Auth0ID", getMYShowDonationsDTO.Auth0ID);
+                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    while(ret.Read())
+                    while (ret.Read())
                     {
                         Models.ShowDonation showDonation = new Models.ShowDonation();
                         showDonation.ID = ret.GetGuid(0);
@@ -1228,14 +1248,14 @@ public class GET_AccessLayer
         }
     }//End of Get_myShowDonations_by_ViewerID_Donater
 
-    public async Task<Models.ShowDonation?> GET_aShowDonation_by_ShowDonationID_with_auth0ID(Models.GET_anOBJ_by_1GUID_with_auth0ID? getanOBJDTO)
+    public async Task<Models.ShowDonation?> GET_aShowDonation_by_ShowDonationID_with_auth0ID(string? Auth0ID, Guid? OBJID)
     {
         Models.ShowDonation objToReturn = new Models.ShowDonation();
-        if(getanOBJDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM ShowDonations Where ID = @ID ", _conn))
             {
-                command.Parameters.AddWithValue("@ID", getanOBJDTO?.OBJID);
+                command.Parameters.AddWithValue("@ID", OBJID);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -1263,11 +1283,11 @@ public class GET_AccessLayer
         }
     }//End of GET_aShowDonation_by_ShowDonationID_with_auth0ID
 
-//-----------------------GET SHOW SESSIONS SECTION---------------------
-    public async Task<List<Models.ShowSession?>> GET_allShowSessions(Models.GET_with_anAuth0ID_DTO? getShowSessionsDTO)
+    //-----------------------GET SHOW SESSIONS SECTION---------------------
+    public async Task<List<Models.ShowSession?>> GET_allShowSessions(string? Auth0ID)
     {
         List<Models.ShowSession?> showSessionsList = new List<Models.ShowSession?>();
-        if(getShowSessionsDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowSessions Order By SessionEndDate DESC", _conn))
             {
@@ -1276,7 +1296,7 @@ public class GET_AccessLayer
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    while(ret.Read())
+                    while (ret.Read())
                     {
                         Models.ShowSession showSession = new Models.ShowSession();
                         showSession.ID = ret.GetGuid(0);
@@ -1303,20 +1323,20 @@ public class GET_AccessLayer
         }
     }//End of GET_allShowSessions
 
-    public async Task<List<Models.ShowSession?>> GET_myShowSessions_by_showID(Models.GET_anOBJ_by_1GUID_with_auth0ID? getMyShowSessions)
+    public async Task<List<Models.ShowSession?>> GET_myShowSessions_by_showID(string? Auth0ID, Guid? OBJID)
     {
         List<Models.ShowSession?> showSessionsList = new List<Models.ShowSession?>();
-        if(getMyShowSessions?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowSessions Where FK_ShowID = @FK_ShowID Order By SessionEndDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@FK_ShowID", getMyShowSessions.OBJID);
+                command.Parameters.AddWithValue("@FK_ShowID", OBJID);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    while(ret.Read())
+                    while (ret.Read())
                     {
                         Models.ShowSession showSession = new Models.ShowSession();
                         showSession.ID = ret.GetGuid(0);
@@ -1343,14 +1363,14 @@ public class GET_AccessLayer
         }
     }//End of Get_myShowDonations_by_ViewerID_Donater
 
-    public async Task<Models.ShowSession?> GET_aShowSession_by_ShowSessionID_with_auth0ID(Models.GET_anOBJ_by_1GUID_with_auth0ID? getanOBJDTO)
+    public async Task<Models.ShowSession?> GET_aShowSession_by_ShowSessionID_with_auth0ID(string? Auth0ID, Guid? OBJID)
     {
         Models.ShowSession objToReturn = new Models.ShowSession();
-        if(getanOBJDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM ShowSessions Where ID = @ID ", _conn))
             {
-                command.Parameters.AddWithValue("@ID", getanOBJDTO?.OBJID);
+                command.Parameters.AddWithValue("@ID", OBJID);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -1379,11 +1399,11 @@ public class GET_AccessLayer
     }//End of GET_aShowSession_by_ShowSessionID_with_auth0ID
 
 
-//-----------------------GET SHOW SESSION JOINS SECTION---------------------
-    public async Task<List<Models.ShowSessionJoins?>> GET_allShowSessionJoins(Models.GET_with_anAuth0ID_DTO? getShowSessionJoinsDTO)
+    //-----------------------GET SHOW SESSION JOINS SECTION---------------------
+    public async Task<List<Models.ShowSessionJoins?>> GET_allShowSessionJoins(string? Auth0ID)
     {
         List<Models.ShowSessionJoins?> showSessionsList = new List<Models.ShowSessionJoins?>();
-        if(getShowSessionJoinsDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowSessionJoins Order By SessionLeaveDate DESC", _conn))
             {
@@ -1392,7 +1412,7 @@ public class GET_AccessLayer
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    while(ret.Read())
+                    while (ret.Read())
                     {
                         Models.ShowSessionJoins showSessionJoin = new Models.ShowSessionJoins();
 
@@ -1421,21 +1441,21 @@ public class GET_AccessLayer
         }
     }//End of GET_allShowSessionJoins
 
-    public async Task<List<Models.ShowSessionJoins?>> GET_Joins_of_ShowSession_by_showSessionID(Models.GET_anOBJ_by_1GUID_with_auth0ID? getJoinDTO)
+    public async Task<List<Models.ShowSessionJoins?>> GET_Joins_of_ShowSession_by_showSessionID(string? Auth0ID, Guid? OBJID)
     {
         List<Models.ShowSessionJoins?> showSessionsList = new List<Models.ShowSessionJoins?>();
-        if(getJoinDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowSessionJoins Where FK_ShowID = @FK_ShowID AND FK_ViewerID_ShowViewer = (select ID from Viewers where Auth0ID = @Auth0ID) Order By SessionLeaveDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@Auth0ID", getJoinDTO.Auth0ID);
-                command.Parameters.AddWithValue("@FK_ShowID", getJoinDTO.OBJID);
+                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
+                command.Parameters.AddWithValue("@FK_ShowID", OBJID);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    while(ret.Read())
+                    while (ret.Read())
                     {
                         Models.ShowSessionJoins showSessionJoin = new Models.ShowSessionJoins();
 
@@ -1464,14 +1484,14 @@ public class GET_AccessLayer
         }
     }//End of Get_myShowDonations_by_ViewerID_Donater
 
-    public async Task<Models.ShowSessionJoins?> GET_aShowSessionJoin_by_ShowSessionJoinID_with_auth0ID(Models.GET_anOBJ_by_1GUID_with_auth0ID? getanOBJDTO)
+    public async Task<Models.ShowSessionJoins?> GET_aShowSessionJoin_by_ShowSessionJoinID_with_auth0ID(string? Auth0ID, Guid? OBJID)
     {
         Models.ShowSessionJoins objToReturn = new Models.ShowSessionJoins();
-        if(getanOBJDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM ShowSessionJoins Where ID = @ID ", _conn))
             {
-                command.Parameters.AddWithValue("@ID", getanOBJDTO?.OBJID);
+                command.Parameters.AddWithValue("@ID", OBJID);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -1501,11 +1521,11 @@ public class GET_AccessLayer
     }//End of GET_aShowSession_by_ShowSessionID_with_auth0ID
 
 
-//-----------------------GET SHOW COMMENT LIKES SECTION---------------------
-    public async Task<List<Models.ShowCommentLike?>> GET_allShowCommentLikes(Models.GET_with_anAuth0ID_DTO? getShowCommentLikesDTO)
+    //-----------------------GET SHOW COMMENT LIKES SECTION---------------------
+    public async Task<List<Models.ShowCommentLike?>> GET_allShowCommentLikes(string? Auth0ID)
     {
         List<Models.ShowCommentLike?> showSessionsList = new List<Models.ShowCommentLike?>();
-        if(getShowCommentLikesDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowCommentLikes Order By LikeDate DESC", _conn))
             {
@@ -1514,7 +1534,7 @@ public class GET_AccessLayer
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    while(ret.Read())
+                    while (ret.Read())
                     {
                         Models.ShowCommentLike showCommentLike = new Models.ShowCommentLike();
 
@@ -1523,7 +1543,7 @@ public class GET_AccessLayer
                         showCommentLike.FK_ShowCommentID_Likie = ret.GetGuid(2);
 
                         showCommentLike.LikeDate = ret.GetDateTime(3);
-                        
+
                         showSessionsList.Add(showCommentLike);
                     }
                     _conn.Close();
@@ -1542,21 +1562,21 @@ public class GET_AccessLayer
         }
     }//End of GET_allShowCommentLikes
 
-    public async Task<List<Models.ShowCommentLike?>> GET_allLikes_of_ShowComment_by_showCommentID(Models.GET_anOBJ_by_1GUID_with_auth0ID? getShowCommentDTO)
+    public async Task<List<Models.ShowCommentLike?>> GET_allLikes_of_ShowComment_by_showCommentID(string? Auth0ID, Guid? OBJID)
     {
         List<Models.ShowCommentLike?> showSessionsList = new List<Models.ShowCommentLike?>();
-        if(getShowCommentDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowCommentLikes Where FK_ShowCommentID = @FK_ShowCommentID Order By LikeDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@Auth0ID", getShowCommentDTO.Auth0ID);
-                command.Parameters.AddWithValue("@FK_ShowCommentID", getShowCommentDTO.OBJID);
+                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
+                command.Parameters.AddWithValue("@FK_ShowCommentID", OBJID);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    while(ret.Read())
+                    while (ret.Read())
                     {
                         Models.ShowCommentLike showCommentLike = new Models.ShowCommentLike();
 
@@ -1565,7 +1585,7 @@ public class GET_AccessLayer
                         showCommentLike.FK_ShowCommentID_Likie = ret.GetGuid(2);
 
                         showCommentLike.LikeDate = ret.GetDateTime(3);
-                        
+
                         showSessionsList.Add(showCommentLike);
                     }
                     _conn.Close();
@@ -1584,15 +1604,15 @@ public class GET_AccessLayer
         }
     }//End of GET_allLikes_of_ShowComment_by_showCommentID
 
-    public async Task<Models.ShowCommentLike?> GET_myLike_of_ShowComment_by_showCommentID(Models.GET_anOBJ_by_1GUID_with_auth0ID? getShowCommentDTO)
+    public async Task<Models.ShowCommentLike?> GET_myLike_of_ShowComment_by_showCommentID(string? Auth0ID, Guid? OBJID)
     {
-        if(getShowCommentDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             Models.ShowCommentLike showCommentLike = new Models.ShowCommentLike();
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM ShowCommentLikes Where FK_ShowCommentID = @FK_ShowCommentID AND FK_ViewerID_Liker = (select ID from Viewers where Auth0ID = @Auth0ID) Order By LikeDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@Auth0ID", getShowCommentDTO.Auth0ID);
-                command.Parameters.AddWithValue("@FK_ShowCommentID", getShowCommentDTO.OBJID);
+                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
+                command.Parameters.AddWithValue("@FK_ShowCommentID", OBJID);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -1620,14 +1640,14 @@ public class GET_AccessLayer
         }
     }//End of Get_myShowDonations_by_ViewerID_Donater
 
-    public async Task<Models.ShowCommentLike?> GET_aShowCommentLike_by_ShowCommentLikeID_with_auth0ID(Models.GET_anOBJ_by_1GUID_with_auth0ID? getanOBJDTO)
+    public async Task<Models.ShowCommentLike?> GET_aShowCommentLike_by_ShowCommentLikeID_with_auth0ID(string? Auth0ID, Guid? OBJID)
     {
         Models.ShowCommentLike objToReturn = new Models.ShowCommentLike();
-        if(getanOBJDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM ShowCommentLikes Where ID = @ID ", _conn))
             {
-                command.Parameters.AddWithValue("@ID", getanOBJDTO?.OBJID);
+                command.Parameters.AddWithValue("@ID", OBJID);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -1655,20 +1675,20 @@ public class GET_AccessLayer
         }
     }//End of GET_aShowCommentLike_by_ShowCommentLikeID_with_auth0ID
 
-//-----------------------GET SHOW COMMENT LIKES SECTION---------------------
-    public async Task<List<Models.Wallet?>> GET_allPersonalWallets(Models.GET_with_anAuth0ID_DTO? getPersonalWalletsLikesDTO)
+    //-----------------------GET SHOW COMMENT LIKES SECTION---------------------
+    public async Task<List<Models.Wallet?>> GET_allPersonalWallets(string? Auth0ID)
     {
         List<Models.Wallet?> allWallets = new List<Models.Wallet?>();
-        if(getPersonalWalletsLikesDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM Wallets_Viewer Where ORDER BY DateUpdated DESC ", _conn))
+            using (SqlCommand command = new SqlCommand($"SELECT * FROM Wallets_Viewer ORDER BY DateUpdated DESC ", _conn))
             {
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    while(ret.Read())
+                    while (ret.Read())
                     {
                         Models.Wallet myWallet = new Models.Wallet();
                         myWallet.ID = ret.GetGuid(0);
@@ -1678,7 +1698,7 @@ public class GET_AccessLayer
                         myWallet.DateUpdated = ret.GetDateTime(4);
                         allWallets.Add(myWallet);
                     }
-                        
+
                     _conn.Close();
                     return allWallets;
                 }
@@ -1695,19 +1715,19 @@ public class GET_AccessLayer
         }
     }//End of GET_allPersonalWallets
 
-    public async Task<List<Models.ShowWallet?>> GET_allShowWallets(Models.GET_with_anAuth0ID_DTO? getShowWalletsLikesDTO)
+    public async Task<List<Models.ShowWallet?>> GET_allShowWallets(string? Auth0ID)
     {
         List<Models.ShowWallet?> allWallets = new List<Models.ShowWallet?>();
-        if(getShowWalletsLikesDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM Wallets_Show Where ORDER BY DateUpdated DESC ", _conn))
+            using (SqlCommand command = new SqlCommand($"SELECT * FROM Wallets_Show ORDER BY DateUpdated DESC ", _conn))
             {
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    while(ret.Read())
+                    while (ret.Read())
                     {
                         Models.ShowWallet myWallet = new Models.ShowWallet();
 
@@ -1721,7 +1741,7 @@ public class GET_AccessLayer
 
                         allWallets.Add(myWallet);
                     }
-                        
+
                     _conn.Close();
                     return allWallets;
                 }
@@ -1739,14 +1759,14 @@ public class GET_AccessLayer
     }//End of GET_allShowWallets
 
 
-    public async Task<Models.Wallet> GET_myPersonalWallet_by_viewerID(Models.GET_personalWalletDTO? getWalletDTO)
+    public async Task<Models.Wallet> GET_myPersonalWallet_by_viewerID(string? Auth0ID)
     {
         Models.Wallet myWallet = new Models.Wallet();
-        if(getWalletDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Wallets_Viewer Where FK_ViewerID_WalletOwner = @FK_ViewerID_WalletOwner ", _conn))
+            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Wallets_Viewer Where FK_ViewerID_WalletOwner = (select ID from Viewers where Auth0ID = @Auth0ID) ", _conn))
             {
-                command.Parameters.AddWithValue("@FK_ViewerID_WalletOwner", getWalletDTO.FK_ViewerID_WalletOwner);
+                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -1757,7 +1777,7 @@ public class GET_AccessLayer
                     myWallet.Balance = ret.GetDecimal(2);
                     myWallet.DateCreated = ret.GetDateTime(3);
                     myWallet.DateUpdated = ret.GetDateTime(4);
-                        
+
                     _conn.Close();
                     return myWallet;
                 }
@@ -1774,15 +1794,15 @@ public class GET_AccessLayer
         }
     }//End of GET_myPersonalWallet_by_viewerID
 
-    public async Task<Models.ShowWallet> GET_myShowWallet_by_viewer_AND_showID(Models.GET_showWalletDTO? getWalletDTO)
+    public async Task<Models.ShowWallet> GET_myShowWallet_by_viewer_AND_showID(string? Auth0ID, Guid? OBJID)
     {
         Models.ShowWallet myShowWallet = new Models.ShowWallet();
-        if(getWalletDTO?.Auth0ID != null)
+        if (Auth0ID != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Wallets_Show Where FK_ViewerID_WalletOwner = @FK_ViewerID_WalletOwner AND FK_ShowID_WalletShow = @FK_ShowID_WalletShow ", _conn))
+            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Wallets_Show WHERE FK_ViewerID_WalletOwner = (select ID from Viewers where Auth0ID = @Auth0ID) AND FK_ShowID_WalletShow = @FK_ShowID_WalletShow ", _conn))
             {
-                command.Parameters.AddWithValue("@FK_ViewerID_WalletOwner", getWalletDTO.FK_ViewerID_WalletOwner);
-                command.Parameters.AddWithValue("@FK_ShowID_WalletShow", getWalletDTO.FK_ShowID_WalletShow);
+                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
+                command.Parameters.AddWithValue("@FK_ShowID_WalletShow", OBJID);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -1795,7 +1815,7 @@ public class GET_AccessLayer
 
                     myShowWallet.DateCreated = ret.GetDateTime(4);
                     myShowWallet.DateUpdated = ret.GetDateTime(5);
-                        
+
                     _conn.Close();
                     return myShowWallet;
                 }

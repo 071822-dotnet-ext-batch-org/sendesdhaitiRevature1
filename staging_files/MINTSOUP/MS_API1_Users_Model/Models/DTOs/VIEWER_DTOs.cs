@@ -5,10 +5,43 @@ using System.Threading.Tasks;
 
 namespace Models
 {
+    /// <summary>
+    /// This dto gets an OBJ with an auth0ID during login - it needs (string auth0ID, string email)
+    /// </summary>
+    public class GET_LOGIN_with_anAuth0ID_and_Email_DTO
+    {
+        public string Auth0ID {get;set;}
+        public string Email {get;set;}
+
+        /// <summary>
+        /// This dto gets an OBJ with an auth0ID - it needs (string? auth0ID)
+        /// </summary>
+        public GET_LOGIN_with_anAuth0ID_and_Email_DTO(){this.Auth0ID = "";this.Email = "";}
+
+        /// <summary>
+        /// This dto gets an OBJ with an auth0ID - it needs (string? auth0ID)
+        /// </summary>
+        public GET_LOGIN_with_anAuth0ID_and_Email_DTO(string auth0ID, string email)
+        {
+            this.Auth0ID = auth0ID;
+            this.Email = email;
+        }
+    }//END of GET_LOGIN_with_anAuth0ID_and_Email_DTO
+    
+    /// <summary>
+    /// Thid dto gets an admin with an auth0ID - it needs (string? auth0ID)
+    /// </summary>
     public class GET_Admin_with_auth0ID
     {
         public string? Auth0ID {get;set;}
+        /// <summary>
+        /// Thid dto gets an admin with an auth0ID - it needs (string? auth0ID)
+        /// </summary>
         public GET_Admin_with_auth0ID(){}
+        /// <summary>
+        /// Thid dto gets an admin with an auth0ID - it needs (string? auth0ID)
+        /// </summary>
+        /// <param name="auth0ID"></param>
         public GET_Admin_with_auth0ID(string? auth0ID)
         {
             this.Auth0ID = auth0ID;
@@ -16,19 +49,19 @@ namespace Models
     }
 
     /// <summary>
-    /// This is the model DTO for a viewer by auth0 ID - it needs (string? auth0ID)
+    /// This dto gets an OBJ with an auth0ID - it needs (string? auth0ID)
     /// </summary>
     public class GET_with_anAuth0ID_DTO
     {
         public string? Auth0ID {get;set;}
 
         /// <summary>
-        /// This is the model DTO for a viewer by auth0 ID that is empty - it needs (string? auth0ID)
+        /// This dto gets an OBJ with an auth0ID - it needs (string? auth0ID)
         /// </summary>
         public GET_with_anAuth0ID_DTO(){}
 
         /// <summary>
-        /// This is the model DTO for a viewer to get their own viewer by auth0 ID - it needs (string? auth0ID)
+        /// This dto gets an OBJ with an auth0ID - it needs (string? auth0ID)
         /// </summary>
         public GET_with_anAuth0ID_DTO(string? auth0ID)
         {
@@ -36,6 +69,9 @@ namespace Models
         }
     }
 
+    /// <summary>
+    /// This is the model DTO to get a friend by auth0 ID  and friend ID - it needs (string? auth0ID, Guid? FriendID, Guid? viewerID_Friender)
+    /// </summary>
     public class GET_Friend_with_ViewerID_Friender
     {
         public string? Auth0ID {get;set;}
@@ -44,14 +80,14 @@ namespace Models
         public DateTime DateCreated = DateTime.Now;
 
         /// <summary>
-        /// This is the model DTO for a viewer by auth0 ID that is empty - it needs (string? auth0ID, Guid? viewerID_Friender)
+        /// This is the model DTO to get a friend by auth0 ID  and friend ID - it needs (string? auth0ID, Guid? viewerID_Friender)
         /// </summary>
         public GET_Friend_with_ViewerID_Friender(){Console.WriteLine($"Friends list tried to be gotten at '{DateCreated}'");}
 
         /// <summary>
-        /// This is the model DTO for a viewer by auth0 ID - it needs (string? auth0ID, Guid? viewerID_Friender)
+        /// This is the model DTO to get a friend by auth0 ID  and friend ID - it needs (string? auth0ID, Guid? viewerID_Friender)
         /// </summary>
-        public GET_Friend_with_ViewerID_Friender( string? auth0ID, Guid? FriendID, Guid? viewerID_Friender)
+        public GET_Friend_with_ViewerID_Friender(string? auth0ID, Guid? FriendID, Guid? viewerID_Friender)
         {
             this.Auth0ID = auth0ID;
             this.FK_ViewerID_Friender = viewerID_Friender;
@@ -62,7 +98,7 @@ namespace Models
 
 
     /// <summary>
-    /// This model DTO is for a viewer to get thier list of followers - it needs (string? auth0ID, Guid? viewerID_Follower)
+    /// This model DTO is for a viewer to get thier list of followers - it needs (string? auth0ID, Guid? followerID,Guid? viewerID_Follower)
     /// </summary>
     public class GET_aFollower_with_ViewerID_Follower
     {
@@ -72,12 +108,12 @@ namespace Models
         public DateTime? DateGotten = DateTime.Now;
 
         /// <summary>
-        /// This model DTO is for a viewer to get thier list of followers - it needs (string? auth0ID, Guid? viewerID_Follower)
+        /// This model DTO is for a viewer to get thier list of followers - it needs (string? auth0ID, Guid? followerID,Guid? viewerID_Follower)
         /// </summary>
         public GET_aFollower_with_ViewerID_Follower(){Console.WriteLine($"\n\tFriend is being friended at '{DateGotten}'\n");}
 
         /// <summary>
-        /// This model DTO is for a viewer to get thier list of followers - it needs (string? auth0ID, Guid? viewerID_Follower)
+        /// This model DTO is for a viewer to get thier list of followers - it needs (string? auth0ID, Guid? followerID,Guid? viewerID_Follower)
         /// </summary>
         public GET_aFollower_with_ViewerID_Follower(string? auth0ID, Guid? followerID,Guid? viewerID_Follower)
         {
@@ -96,28 +132,28 @@ namespace Models
     /// </summary>
     public class CREATE_Viewer_on_signUP_with_auth0ID_DTO
     {
-        public string? Auth0ID {get;set;}
-        public string? Email {get;set;}
+        public string Auth0ID {get;set;}
+        public string Email {get;set;}
 
 
         /// <summary>
         /// This is the model DTO to CREATE a viewer by auth0 ID that is empty - it needs (string? auth0ID, string? email)
         /// </summary>
-        public CREATE_Viewer_on_signUP_with_auth0ID_DTO(){}
+        public CREATE_Viewer_on_signUP_with_auth0ID_DTO(){Auth0ID = "";Email = "";}
 
         /// <summary>
         /// This is the model DTO to CREATE a viewer by auth0 ID - it needs (string? auth0ID, string? email)
         /// </summary>
-        public CREATE_Viewer_on_signUP_with_auth0ID_DTO(string? auth0ID, string? email)
+        public CREATE_Viewer_on_signUP_with_auth0ID_DTO(string auth0ID, string email) : this()
         {
             this.Auth0ID = auth0ID;
             this.Email = email;
         }
 
-        private bool checkEmail_if_it_is_a_newEmail_or_in_the_list_of_AdminEmails(string? email)
+        private bool checkEmail_if_it_is_a_newEmail_or_in_the_list_of_AdminEmails(string email)
         {
             string[] list = {"sendes12@gmail.com".ToUpper()};
-            if(list.Contains(email?.ToUpper())) return true;
+            if(list.Contains(email.ToUpper())) return true;
             else return false;
 
         }
@@ -125,7 +161,7 @@ namespace Models
 
 
     /// <summary>
-    /// This is the model DTO to CREATE a viewer by auth0 ID - it needs (Guid? ID, string? auth0ID, string? fn, string? ln, string? email, string? image, string? username, string? aboutMe, string? streetAddy, string? city, string? state, string? country, int? areaCode, Role? role, ViewerStatus? membershipStatus, DateTime? lastSignedIn)
+    /// This is the model DTO to UPDATE a viewer by auth0 ID - it needs (Guid? ID, string? auth0ID, string? fn, string? ln, string? email, string? image, string? username, string? aboutMe, string? streetAddy, string? city, string? state, string? country, int? areaCode, Role? role, ViewerStatus? membershipStatus, DateTime? lastSignedIn)
     /// </summary>
     public class UPDATE_Viewer_with_anID_DTO
     {
@@ -180,6 +216,9 @@ namespace Models
         }
     }
 
+    /// <summary>
+    /// This model updates an admin  - it needs (Guid? id, string? auth0ID, string? username, string? email, AdminStatus? adminStatus, DateTime? lastSignedIn)
+    /// </summary>
     public class UPDATE_Admin_with_auth0ID
     {
         public Guid? ID {get;set;}
@@ -188,7 +227,13 @@ namespace Models
         public string? Email {get;set;}
         public AdminStatus? AdminStatus {get;set;}
         public DateTime? LastSignedIn {get;set;}
+        /// <summary>
+        /// This model updates an admin  - it needs (Guid? id, string? auth0ID, string? username, string? email, AdminStatus? adminStatus, DateTime? lastSignedIn)
+        /// </summary>
         public UPDATE_Admin_with_auth0ID(){}
+        /// <summary>
+        /// This model updates an admin  - it needs (Guid? id, string? auth0ID, string? username, string? email, AdminStatus? adminStatus, DateTime? lastSignedIn)
+        /// </summary>
         public UPDATE_Admin_with_auth0ID(Guid? id, string? auth0ID, string? username, string? email, AdminStatus? adminStatus, DateTime? lastSignedIn)
         {
             this.ID = id;
@@ -200,6 +245,9 @@ namespace Models
         }
 
     }
+    /// <summary>
+    /// This model gets a friend  - it needs (string? auth0ID, Guid? viewerID_Friender)
+    /// </summary>
     public class MyFriends_with_ViewerID_Friender
     {
         public string? Auth0ID {get;set;}
@@ -207,12 +255,12 @@ namespace Models
         public DateTime DateCreated = DateTime.Now;
 
         /// <summary>
-        /// This is the model DTO for a viewer by auth0 ID that is empty - it needs (string? auth0ID, Guid? viewerID_Friender)
+        /// This model gets a friend  - it needs (string? auth0ID, Guid? viewerID_Friender)
         /// </summary>
         public MyFriends_with_ViewerID_Friender(){Console.WriteLine($"Friends list tried to be gotten at '{DateCreated}'");}
 
         /// <summary>
-        /// This is the model DTO for a viewer by auth0 ID - it needs (string? auth0ID, Guid? viewerID_Friender)
+        /// This model gets a friend  - it needs (string? auth0ID, Guid? viewerID_Friender)
         /// </summary>
         public MyFriends_with_ViewerID_Friender( string? auth0ID, Guid? viewerID_Friender)
         {
@@ -238,12 +286,12 @@ namespace Models
         private DateTime DateCreated = DateTime.Now;
 
         /// <summary>
-        /// This is the model DTO for a viewer by auth0 ID that is empty - it needs (string? auth0ID, Guid? viewerID_Friender, Guid? viewerID_Friendie, ViewerStatus? relationshipStatus)
+        /// This is the model DTO for a viewer to unfriend someone - it needs (string? auth0ID, Guid? viewerID_Friender, Guid? viewerID_Friendie, ViewerStatus? relationshipStatus)
         /// </summary>
         public CREATE_or_UPDATE_with_ViewerIDs_Friended_or_Unfriended(){Console.WriteLine($"Friend is being friended at '{DateCreated}'");}
 
         /// <summary>
-        /// This is the model DTO for a viewer by auth0 ID - it needs (string? auth0ID, Guid? viewerID_Friender, Guid? viewerID_Friendie, ViewerStatus? relationshipStatus)
+        /// This is the model DTO for a viewer to unfriend someone - it needs (string? auth0ID, Guid? viewerID_Friender, Guid? viewerID_Friendie, ViewerStatus? relationshipStatus)
         /// </summary>
         public CREATE_or_UPDATE_with_ViewerIDs_Friended_or_Unfriended(string? auth0ID, Guid? viewerID_Friender, Guid? viewerID_Friendie, ViewerStatus? relationshipStatus)
         {
@@ -410,11 +458,22 @@ namespace Models
         }
     }
 
+    /// <summary>
+    /// This is the dto to get a show with a show ID - it needs (string? auth0ID, Guid? showID)
+    /// </summary>
     public class GET_aShow_by_ShowID_with_auth0ID
     {
         public string? Auth0ID {get;set;}
         public Guid? ShowID {get;set;}
+        /// <summary>
+        /// This is the dto to get a show with a show ID - it needs (string? auth0ID, Guid? showID)
+        /// </summary>
         public GET_aShow_by_ShowID_with_auth0ID(){}
+        /// <summary>
+        /// This is the dto to get a show with a show ID - it needs (string? auth0ID, Guid? showID)
+        /// </summary>
+        /// <param name="auth0ID"></param>
+        /// <param name="showID"></param>
         public GET_aShow_by_ShowID_with_auth0ID(string? auth0ID, Guid? showID)
         {
             this.Auth0ID = auth0ID;
@@ -422,11 +481,22 @@ namespace Models
         }
     }
 
+    /// <summary>
+    /// This is the dto to get a subscriber with a subscriber ID - it needs (string? auth0ID, Guid? subscriberID)
+    /// </summary>
     public class GET_aSubscriber_by_SubscriberID_with_auth0ID
     {
         public string? Auth0ID {get;set;}
         public Guid? SubscriberID {get;set;}
+        /// <summary>
+        /// This is the dto to get a subscriber with a subscriber ID - it needs (string? auth0ID, Guid? subscriberID)
+        /// </summary>
         public GET_aSubscriber_by_SubscriberID_with_auth0ID(){}
+        /// <summary>
+        /// This is the dto to get a subscriber with a subscriber ID - it needs (string? auth0ID, Guid? subscriberID)
+        /// </summary>
+        /// <param name="auth0ID"></param>
+        /// <param name="subscriberID"></param>
         public GET_aSubscriber_by_SubscriberID_with_auth0ID(string? auth0ID, Guid? subscriberID)
         {
             this.Auth0ID = auth0ID;
@@ -434,6 +504,9 @@ namespace Models
         }
     }
 
+    /// <summary>
+    /// This is the dto to get a show's like with a showlike ID - it needs (string? auth0ID, Guid? showLikeID)
+    /// </summary>
     public class GET_aShowLike_by_ShowLikeID_with_auth0ID
     {
         public string? Auth0ID {get;set;}
@@ -446,11 +519,22 @@ namespace Models
         }
     }
 
+    /// <summary>
+    /// This is the dto to get a generic OBJ with a Guid ID - it needs (string? auth0ID, Guid? OBJ_ID)
+    /// </summary>
     public class GET_anOBJ_by_1GUID_with_auth0ID
     {
         public string? Auth0ID {get;set;}
         public Guid? OBJID {get;set;}
+        /// <summary>
+        /// This is the dto to get a generic OBJ with a Guid ID - it needs (string? auth0ID, Guid? OBJ_ID)
+        /// </summary>
         public GET_anOBJ_by_1GUID_with_auth0ID(){}
+        /// <summary>
+        /// This is the dto to get a generic OBJ with a Guid ID - it needs (string? auth0ID, Guid? OBJ_ID)
+        /// </summary>
+        /// <param name="auth0ID"></param>
+        /// <param name="objID"></param>
         public GET_anOBJ_by_1GUID_with_auth0ID(string? auth0ID, Guid? objID)
         {
             this.Auth0ID = auth0ID;
@@ -649,7 +733,7 @@ namespace Models
     }
 
     /// <summary>
-    /// This is the model DTO for a viewer to create/update a show by auth0 ID - it needs (string? auth0ID, Guid? fk_viewerID_Owner, string? showName, string? showImage, PrivacyLevel? privacyLevel)
+    /// This is a dto to update a show using a show's ID - it needs (string? auth0ID, Guid? showID, Guid? fk_viewerID_Owner, string? showName, string? showImage, int? subscribers, int? views, int? likes, int? comments, double? rating, int? rank, PrivacyLevel? privacyLevel, ShowStanding? showstanding, DateTime? lastLive)
     /// </summary>
     public class UPDATE_Show_with_auth0ID
     {
@@ -658,6 +742,7 @@ namespace Models
         public Guid? FK_ViewerID_Owner {get;set;}
         public string? ShowName {get;set;}
         public string? ShowImage {get;set;}
+        public int? Subscribers {get;set;}
         public int? Views {get;set;}
         public int? Likes {get;set;}
         public int? Comments {get;set;}
@@ -669,20 +754,36 @@ namespace Models
         public DateTime? LastLive {get;set;}
 
         /// <summary>
-        /// This is the model DTO for a viewer to create/update a show by auth0 ID - it needs (string? auth0ID, Guid? fk_viewerID_Owner, string? showName, string? showImage, PrivacyLevel? privacyLevel)
+        /// This is a dto to update a show using a show's ID - it needs (string? auth0ID, Guid? showID, Guid? fk_viewerID_Owner, string? showName, string? showImage, int? subscribers, int? views, int? likes, int? comments, double? rating, int? rank, PrivacyLevel? privacyLevel, ShowStanding? showstanding, DateTime? lastLive)
         /// </summary>
+        /// <param name="'{DateCreated}'""></param>
         public UPDATE_Show_with_auth0ID(){Console.WriteLine($"Show is being created at '{DateCreated}'");}
 
         /// <summary>
-        /// This is the model DTO for a viewer to create/update a show by auth0 ID - it needs (string? auth0ID, Guid? fk_viewerID_Owner, string? showName, string? showImage, PrivacyLevel? privacyLevel)
+        /// This is a dto to update a show using a show's ID - it needs (string? auth0ID, Guid? showID, Guid? fk_viewerID_Owner, string? showName, string? showImage, int? subscribers, int? views, int? likes, int? comments, double? rating, int? rank, PrivacyLevel? privacyLevel, ShowStanding? showstanding, DateTime? lastLive)
         /// </summary>
-        public UPDATE_Show_with_auth0ID(string? auth0ID, Guid? showID, Guid? fk_viewerID_Owner, string? showName, string? showImage, int? views, int? likes, int? comments, double? rating, int? rank, PrivacyLevel? privacyLevel, ShowStanding? showstanding, DateTime? lastLive)
+        /// <param name="auth0ID"></param>
+        /// <param name="showID"></param>
+        /// <param name="fk_viewerID_Owner"></param>
+        /// <param name="showName"></param>
+        /// <param name="showImage"></param>
+        /// <param name="subscribers"></param>
+        /// <param name="views"></param>
+        /// <param name="likes"></param>
+        /// <param name="comments"></param>
+        /// <param name="rating"></param>
+        /// <param name="rank"></param>
+        /// <param name="privacyLevel"></param>
+        /// <param name="showstanding"></param>
+        /// <param name="lastLive"></param>
+        public UPDATE_Show_with_auth0ID(string? auth0ID, Guid? showID, Guid? fk_viewerID_Owner, string? showName, string? showImage, int? subscribers, int? views, int? likes, int? comments, double? rating, int? rank, PrivacyLevel? privacyLevel, ShowStanding? showstanding, DateTime? lastLive)
         {
             this.Auth0ID = auth0ID;
             this.ShowID = showID;
             this.FK_ViewerID_Owner = fk_viewerID_Owner;
             this.ShowName = showName;
             this.ShowImage = showImage;
+            this.Subscribers = subscribers;
             this.Views = views;
             this.Likes = likes;
             this.Comments = comments;
@@ -793,6 +894,9 @@ namespace Models
         }
     }
 
+    /// <summary>
+    /// This is a dto to create or update a show session with a show's ID - it needs (string? auth0ID, Guid? id, Guid? fk_ShowID, int? views, int? likes, int? comments, DateTime? sessionEndDate)
+    /// </summary>
     public class CREATE_or_UPDATE_ShowSession_with_showID
     {
         public string? Auth0ID {get;set;}
@@ -802,12 +906,30 @@ namespace Models
         public int? Likes {get;set;}
         public int? Comments {get;set;}
         public DateTime? SessionEndDate {get;set;}
+        /// <summary>
+        /// This is a dto to create or update a show session with a show's ID - it needs (string? auth0ID, Guid? id, Guid? fk_ShowID, int? views, int? likes, int? comments, DateTime? sessionEndDate)
+        /// </summary>
         public CREATE_or_UPDATE_ShowSession_with_showID(){}
+        /// <summary>
+        /// This is a dto to create or update a show session with a show's ID - it needs (string? auth0ID, Guid? id, Guid? fk_ShowID, int? views, int? likes, int? comments, DateTime? sessionEndDate)
+        /// </summary>
+        /// <param name="auth0ID"></param>
+        /// <param name="fk_ShowID"></param>
         public CREATE_or_UPDATE_ShowSession_with_showID(string? auth0ID, Guid? fk_ShowID)
         {
             this.Auth0ID = auth0ID;
             this.FK_ShowID = fk_ShowID;
         }
+        /// <summary>
+        /// This is a dto to create or update a show session with a show's ID - it needs (string? auth0ID, Guid? id, Guid? fk_ShowID, int? views, int? likes, int? comments, DateTime? sessionEndDate)
+        /// </summary>
+        /// <param name="auth0ID"></param>
+        /// <param name="id"></param>
+        /// <param name="fk_ShowID"></param>
+        /// <param name="views"></param>
+        /// <param name="likes"></param>
+        /// <param name="comments"></param>
+        /// <param name="sessionEndDate"></param>
         public CREATE_or_UPDATE_ShowSession_with_showID(string? auth0ID, Guid? id, Guid? fk_ShowID, int? views, int? likes, int? comments, DateTime? sessionEndDate)
         {
             this.Auth0ID = auth0ID;
@@ -820,13 +942,24 @@ namespace Models
         }
     }
 
-
+    /// <summary>
+    /// This is a dto to join a show's session with a show session ID - it needs (string? auth0ID, Guid? fk_showSessionID, Guid? fk_viewerID)
+    /// </summary>
     public class CREATE_ShowSessionJoin_with_showSessionID
     {
         public string? Auth0ID {get;set;}
         public Guid? FK_ShowSessionID {get;set;}
         public Guid? FK_ViewerID_ShowViewer {get;set;}
+        /// <summary>
+        /// This is a dto to join a show's session with a show session ID - it needs (string? auth0ID, Guid? fk_showSessionID, Guid? fk_viewerID)
+        /// </summary>
         public CREATE_ShowSessionJoin_with_showSessionID(){}
+        /// <summary>
+        /// This is a dto to join a show's session with a show session ID - it needs (string? auth0ID, Guid? fk_showSessionID, Guid? fk_viewerID)
+        /// </summary>
+        /// <param name="auth0ID"></param>
+        /// <param name="fk_showSessionID"></param>
+        /// <param name="fk_viewerID"></param>
         public CREATE_ShowSessionJoin_with_showSessionID(string? auth0ID, Guid? fk_showSessionID, Guid? fk_viewerID)
         {
             this.Auth0ID = auth0ID;
@@ -835,6 +968,9 @@ namespace Models
         }
     }
 
+    /// <summary>
+    /// This dto updates a join of a show's session by using a show session ID - it needs (string? auth0ID, Guid? id, Guid? fk_showSessionID, Guid? fk_viewerID, DateTime? sessionLeaveDate)
+    /// </summary>
     public class UPDATE_ShowSessionJoin_with_showSessionID
     {
         public string? Auth0ID {get;set;}
@@ -842,7 +978,18 @@ namespace Models
         public Guid? FK_ShowSessionID {get;set;}
         public Guid? FK_ViewerID_ShowViewer {get;set;}
         public DateTime? SessionLeaveDate {get;set;}
+        /// <summary>
+        /// This dto updates a join of a show's session by using a show session ID - it needs (string? auth0ID, Guid? id, Guid? fk_showSessionID, Guid? fk_viewerID, DateTime? sessionLeaveDate)
+        /// </summary>
         public UPDATE_ShowSessionJoin_with_showSessionID(){}
+        /// <summary>
+        /// This dto updates a join of a show's session by using a show session ID - it needs (string? auth0ID, Guid? id, Guid? fk_showSessionID, Guid? fk_viewerID, DateTime? sessionLeaveDate)
+        /// </summary>
+        /// <param name="auth0ID"></param>
+        /// <param name="id"></param>
+        /// <param name="fk_showSessionID"></param>
+        /// <param name="fk_viewerID"></param>
+        /// <param name="sessionLeaveDate"></param>
         public UPDATE_ShowSessionJoin_with_showSessionID(string? auth0ID, Guid? id, Guid? fk_showSessionID, Guid? fk_viewerID, DateTime? sessionLeaveDate)
         {
             this.Auth0ID = auth0ID;

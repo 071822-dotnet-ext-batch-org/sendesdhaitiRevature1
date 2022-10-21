@@ -5,12 +5,11 @@ using System.Threading.Tasks;
 
 namespace Models
 {
+    /// <summary>
+    /// this is the model for an admin - it needs (Guid? id, string? auth0ID, string? email, string? username, AdminStatus? adminStatus, DateTime? dateCreated, DateTime? lastSignedIn)
+    /// </summary>
     public class Admin
     {
-        //Not included in actual Admin Model
-        private string? adminEmail_to_Verify = "sendes12@gmail.com";
-
-        //Admin Model Properties
         public Guid? ID {get;set;}
         public string? Auth0ID {get;set;}
         public string? Email {get;set;}
@@ -18,8 +17,20 @@ namespace Models
         public AdminStatus? AdminStatus {get;set;}
         public DateTime? DateCreated {get;set;}
         public DateTime? LastSignedIn {get;set;}
-
+        /// <summary>
+        /// this is the model for an admin - it needs (Guid? id, string? auth0ID, string? email, string? username, AdminStatus? adminStatus, DateTime? dateCreated, DateTime? lastSignedIn)
+        /// </summary>
         public Admin(){}
+        /// <summary>
+        /// this is the model for an admin - it needs (Guid? id, string? auth0ID, string? email, string? username, AdminStatus? adminStatus, DateTime? dateCreated, DateTime? lastSignedIn)
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="auth0ID"></param>
+        /// <param name="email"></param>
+        /// <param name="username"></param>
+        /// <param name="adminStatus"></param>
+        /// <param name="dateCreated"></param>
+        /// <param name="lastSignedIn"></param>
         public Admin(Guid? id, string? auth0ID, string? email, string? username, AdminStatus? adminStatus, DateTime? dateCreated, DateTime? lastSignedIn)
         {
             this.ID = id;
