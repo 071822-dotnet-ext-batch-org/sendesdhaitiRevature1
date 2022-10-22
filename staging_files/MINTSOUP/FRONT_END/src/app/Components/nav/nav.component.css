@@ -1,0 +1,26 @@
+
+ @media screen and (max-width: 575px) {
+    /* .card-container { */
+        /* position: absolute; */
+    /* } */
+  
+    img {
+        display: flex;
+    }
+    .card.nav-link{
+        background-color: red;
+        border-radius: 34px;
+        border: 1px solid #eee;
+        /* background-color: #b1b1b1; */
+        /* display: none;
+         */
+         flex-wrap: unset;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        height: 10px;
+        width: auto;
+        margin: 0 8px 1px;
+        padding: 1px;
+    }
+}
