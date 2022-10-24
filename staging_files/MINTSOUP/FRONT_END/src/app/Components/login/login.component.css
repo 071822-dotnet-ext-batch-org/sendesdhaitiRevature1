@@ -1,0 +1,10 @@
+@media screen and (max-width: 575px) {
+    p{
+        background-color: red;
+    }
+    form{
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+}

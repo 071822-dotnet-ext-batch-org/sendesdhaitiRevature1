@@ -1,16 +1,16 @@
-<p>authentication-page works!</p>
-
-<div class="auth-container">
-    <div class="tabs">
-        <button id="tab1" (onclick)="hidetab()">Login</button>
-        <button id="tab2" (onclick)="hidetab()">Sign Up</button>
-    </div>
-    <div class="auth">
-        <div id="auth-component1">
-            <app-login ></app-login>
+<div class="auth-all">
+    <div class="auth-container">
+        <div class="tabs">
+            <button id="tab1" (click)="hideRegister()">Login</button>
+            <button id="tab2" (click)="hideLogin()">Sign Up</button>
         </div>
-        <div id="auth-component2"> 
-            <app-register></app-register>
+        <div class="auth">
+            <div id="login">
+                <app-login ></app-login>
+            </div>
+            <div id="signup"> 
+                <app-register></app-register>
+            </div>
         </div>
     </div>
 </div>

@@ -6,37 +6,61 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./authentication-page.component.css']
 })
 export class AuthenticationPageComponent implements OnInit {
-
+  
   constructor() { }
 
   ngOnInit(): void {
+    this.hideRegister()
   }
 
-  hidetab()
+  hideRegister() :void
   {
-    console.log('running')
-    let id1 = document.getElementById('auth-component1')?.style.display
-    let id2 = document.getElementById('auth-compnent2')?.style.display
-    if(id1 == 'none')
-    {
-      console.log('it works1')
-      id1 = `block`
-      id2 = `none`
-    }
-    else
-    {//id1 is already showing
-      console.log('it works2')
-      id2 = `block`
-      id1 = `none`
-    }
-    // id1?.toUpperCase();// = '<p>hello</p>';
-    // id1 = 'none'
-    // id2 = 'flex'
-  }
-  // hidetab2()
-  // {
+    console.log('login hidden')
+    let id1 = document.getElementById("login");
+    let id2 = document.getElementById("signup");
 
-  // }
+    if((id1 === null) || (id2 === null))
+    {
+      console.log('login is null')
+    }
+    else {
+      if(id1.style.display == "block")
+      {
+        id1.style.display = "block"
+        id2.style.display = "none"
+      }
+      else{
+        id1.style.display = "block"
+        id2.style.display = "none"
+      }
+    }
+  }//END of hideRegister
+
+
+  hideLogin() :void
+  {
+    console.log('login hidden')
+    let id1 = document.getElementById("login");
+    let id2 = document.getElementById("signup");
+
+    if((id1 === null) || (id2 === null))
+    {
+      console.log('login is null')
+    }
+    else {
+      if(id1.style.display == "block")
+      {
+        id1.style.display = "none"
+        id2.style.display = "block"
+      }
+      else{
+        id1.style.display = "none"
+        id2.style.display = "block"
+      }
+    }
+  }//END of hideRegister
+
+
 
 
 }

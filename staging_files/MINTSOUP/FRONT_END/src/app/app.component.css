@@ -1,25 +1,28 @@
 
-
+ @media screen and (min-width: 576px) {
+    h2{
+        text-align: center;
+    }
+   div{
+    background-color: aliceblue;
+    width: auto;
+    height: 100%;
+    display: block flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 20px 10px 20px;
+   }
+}
  @media screen and (max-width: 575px) {
-    /* .topbar {
-        display: flex;
-        position: absolute;
-        top: 0%;
-        left: 0%;
-        right: 0%;
-        width: 100%;
-    } */
-    /* .topbar.mid{
-        display: table-cell;
-        vertical-align:middle;
-    } */
-    .mid > img {
-
+    h2{
+        text-align: center;
     }
-    .mid > p {
-        
-    }
-    .mid > app-nav {
-        
-    }
+   div{
+    background-color: aliceblue;
+    width: auto;
+    height: auto;
+    display: block flex;
+    justify-content: center;
+    align-items: center;
+   }
 }

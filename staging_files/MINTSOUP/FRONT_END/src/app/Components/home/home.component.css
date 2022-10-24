@@ -1,0 +1,132 @@
+@media screen and (min-width: 576px) {
+    img{
+        width: 25px;
+        color: black;
+        background-color: blanchedalmond;
+        margin: 0 10px;
+        border-radius: 15px 15px 15px 15px;
+    }
+    ol{
+        display: block;
+        overflow: scroll;
+    }
+    h3{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .HOME{
+        display: block;
+        width: 100vw;
+        height: auto;
+        overflow: hidden;
+        background-color: rgb(174, 170, 182);
+        border: 2px black dashed;
+        border-radius: 5px 5px 5px 5px;
+    }
+    .HOME>div{
+        background-color: red;
+        /* opacity: 10%; */
+        margin: 10px 5px 10px 5px;
+        border: 2px black dashed;
+        border-radius: 5px 5px 5px 5px;
+        /* z-index: -1; */
+    }
+    .HOME>div>div>.myshowsubs{
+        display: flex;
+        justify-content: space-evenly;
+        flex-wrap: wrap;
+    }
+
+    .HOME>div>div>.myshowsubs>div{
+        border: 1px solid black;
+        border-radius: 15px 15px 15px 15px;
+        /* width: 30%; */
+        padding: 20px 10px 20px 10px;
+        margin: 20px 10px 20px 10px;
+    }
+    .HOME>div>div>.accountsub{
+        display: flex;
+        justify-content: space-evenly;
+        flex-wrap: wrap;
+    }
+    .HOME>div>div>.accountsub>.subList{
+        /* background-color: black; */
+        border: 1px solid black;
+        border-radius: 15px 15px 15px 15px;
+        width: 30%;
+        padding: 20px 10px 20px 10px;
+        margin: 20px 10px 20px 10px;
+    }
+    .HOME>div>div{
+        background-color: antiquewhite;
+        margin: 20px 5px 10px 5px;
+        padding: 20px 5px 10px 5px;
+        border: 2px black solid;
+        border-radius: 5px 5px 5px 5px;
+        display: block;
+        /* text-align: center; */
+    }
+    .HOME>.SHOWS_SECTION{
+        display: block;
+    }
+    button{
+        background-color: rgb(171, 171, 255);
+        border: 1px solid black;
+        border-radius: 5px 5px 5px 5px;
+        padding: 3px 1px 3px 1px;
+        margin: 10px 0 5px 0;
+    }
+}
+
+@media screen and (max-width: 575px) {
+    ol{
+        overflow: scroll;
+    }
+    img{
+        width: 25px;
+        display: flex;
+        color: black;
+        background-color: blanchedalmond;
+        margin: 0 10px;
+        border-radius: 15px 15px 15px 15px;
+    }
+    h3{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .HOME{
+        display: block;
+        width: 100%;
+        height: auto;
+        overflow: hidden;
+        background-color: rgb(174, 170, 182);
+        border: 2px black dashed;
+        border-radius: 5px 5px 5px 5px;
+    }
+    .HOME>div{
+        background-color: red;
+        /* opacity: 10%; */
+        margin: 10px 5px 10px 5px;
+        border: 2px black dashed;
+        border-radius: 5px 5px 5px 5px;
+        /* z-index: -1; */
+    }
+    .HOME>div>div{
+        background-color: antiquewhite;
+        margin: 20px 5px 10px 5px;
+        padding: 20px 5px 10px 5px;
+        border: 2px black solid;
+        border-radius: 5px 5px 5px 5px;
+        display: block;
+        /* text-align: center; */
+    }
+    button{
+        background-color: rgb(171, 171, 255);
+        border: 1px solid black;
+        border-radius: 5px 5px 5px 5px;
+        padding: 3px 1px 3px 1px;
+        margin: 10px 0 5px 0;
+    }
+}

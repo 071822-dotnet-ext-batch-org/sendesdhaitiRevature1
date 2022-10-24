@@ -1,26 +1,114 @@
+*{
+    z-index: 100;
+}
 
- @media screen and (max-width: 575px) {
-    /* .card-container { */
-        /* position: absolute; */
-    /* } */
-  
-    img {
-        display: flex;
+@media screen and (min-width: 576px) {
+    .NAVBAR{
+        width: 100%;
+        background-color: azure;
+        display: block;
+        position: sticky;
+        flex-wrap: wrap;
+        top: 0;
+        left: 0;
+        right: 0;
     }
-    .card.nav-link{
-        background-color: red;
-        border-radius: 34px;
-        border: 1px solid #eee;
-        /* background-color: #b1b1b1; */
-        /* display: none;
-         */
-         flex-wrap: unset;
-        flex-direction: row;
+    .NAVBAR>div{
+        display: flex;
+        justify-content: center;
+        position: relative;
+
+    }
+    #navlinks {
+        display: block flex;
         justify-content: center;
         align-items: center;
-        height: 10px;
-        width: auto;
-        margin: 0 8px 1px;
-        padding: 1px;
+        width: 100%;
+    }
+    .link{
+        display: block;
+    }
+    .link>button{
+        background-color: black;
+        border-radius: 10px 10px 30px 30px;
+        margin: 5px;
+        color: aliceblue;
+        /* margin: 0; */
+        padding: 5px 5px 5px 5px;
+        display: flex;
+        justify-content: space-between 5px;
+    }
+    #navbar_sandwich{
+        display: block;
+    }
+    #MINTSOUP_LOGO
+    {
+        width: 80px;
+        /* position:sticky; */
+        display:block;
+
+        left: 50%;
+        bottom: auto;
+        top: 0%;
+        right: 50%;
+        /* display: flex;
+        justify-self: center;
+        align-self: center; */
+
+    }
+}
+ @media screen and (max-width: 575px) {
+    .NAVBAR{
+        width: 100%;
+        background-color: azure;
+        display: block;
+        position: sticky;
+        flex-wrap: wrap;
+        top: 0;
+        left: 0;
+        right: 0;
+    }
+    .NAVBAR>div{
+        display: flex;
+        justify-content: center;
+        position: relative;
+
+    }
+    #navlinks {
+        display: block flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+    .link{
+        display: block;
+    }
+    .link>button{
+        background-color: black;
+        border-radius: 10px 10px 30px 30px;
+        margin: 5px;
+        color: aliceblue;
+        /* margin: 0; */
+        padding: 5px 5px 5px 5px;
+        display: flex;
+        justify-content: space-between 5px;
+    }
+    #navbar_sandwich{
+        display: block;
+    }
+    #MINTSOUP_LOGO
+    {
+        width: 80px;
+        /* position:sticky; */
+        display:block;
+
+        left: 50%;
+        bottom: auto;
+        top: 0%;
+        right: 50%;
+        /* display: flex;
+        justify-self: center;
+        align-self: center; */
+
     }
 }
