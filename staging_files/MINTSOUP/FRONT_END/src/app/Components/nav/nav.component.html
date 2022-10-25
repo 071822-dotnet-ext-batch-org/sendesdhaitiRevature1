@@ -14,9 +14,10 @@
     <div>
         <ul id="navlinks">
             <li class=" link"><button routerLink="/home" routerLinkActive="active" ariaCurrentWhenActive="page">Home</button></li>
-            <li class=" link"><button routerLink="/sign-in" routerLinkActive="active" ariaCurrentWhenActive="page">Login</button></li>
-            <li class=" link"><button routerLink="/sign-in" routerLinkActive="active" ariaCurrentWhenActive="page">Signup</button></li>
-            <li class=" link"><button routerLink="/logout" routerLinkActive="active" ariaCurrentWhenActive="page">Logout</button></li>
+            <li class=" link"><button routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page" *ngIf="(auth.isAuthenticated$ | async) == false">Login</button></li>
+            <li class=" link"><button routerLink="/signup" routerLinkActive="active" ariaCurrentWhenActive="page" *ngIf="(auth.isAuthenticated$ | async) == false">Register</button></li>
+            <li class=" link"><button routerLink="/logout" routerLinkActive="active" ariaCurrentWhenActive="page" *ngIf="(auth.isAuthenticated$ | async) == true">Logout</button></li>
+            
         </ul>
     </div>
     

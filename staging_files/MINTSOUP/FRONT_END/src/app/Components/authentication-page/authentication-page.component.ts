@@ -13,7 +13,7 @@ export class AuthenticationPageComponent implements OnInit {
     this.hideRegister()
   }
 
-  hideRegister() :void
+  protected hideRegister() :void
   {
     console.log('login hidden')
     let id1 = document.getElementById("login");
@@ -37,7 +37,7 @@ export class AuthenticationPageComponent implements OnInit {
   }//END of hideRegister
 
 
-  hideLogin() :void
+  protected hideLogin() :void
   {
     console.log('login hidden')
     let id1 = document.getElementById("login");

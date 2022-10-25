@@ -1,6 +1,50 @@
 *{
     z-index: 100;
 }
+/*now that I made this animation keyframe, 
+    i can now have an element use the keyframe*/
+@keyframes MINTSOUP_LOGO_rotate {
+   0% {
+        width: 80px;
+        transform: rotate3d(0, 10deg);
+        /* transform: scale(0, .025); */
+    }
+    50% {
+        width: 50px;
+        transform: rotate3d(1, 2, 1, 3600deg);
+        /* transform: scale(1, .025); */
+    }
+}
+
+@keyframes MINTSOUP_LOGO_scale {
+    0% {
+         transform: scale(0, 1);
+     }
+     20% {
+         transform: scale(1, .8);
+     }
+
+     40% {
+        transform: scale(2, .7);
+    }
+
+    90% {
+        transform: rotate3d(12, 2, 11, 170deg);
+    }
+
+    100% {
+        transform: rotate3d(0, 0,20, 0deg);
+    }
+
+
+ }
+@media (prefers-reduced-motion: no-preference) {
+    #MINTSOUP_LOGO{
+        animation-name: MINTSOUP_LOGO_scale;
+        animation-duration: 4s;
+        animation-iteration-count: 1;
+    }
+}
 
 @media screen and (min-width: 576px) {
     .NAVBAR{

@@ -80,6 +80,7 @@
 }
 
 @media screen and (max-width: 575px) {
+
     ol{
         overflow: scroll;
     }
@@ -98,7 +99,7 @@
     }
     .HOME{
         display: block;
-        width: 100%;
+        width: 100vw;
         height: auto;
         overflow: hidden;
         background-color: rgb(174, 170, 182);
@@ -129,4 +130,22 @@
         padding: 3px 1px 3px 1px;
         margin: 10px 0 5px 0;
     }
+
+    /* .HOME>div{
+        display: block;
+        width: 100%;
+        height: 100%;
+    } */
+    /* .HOME>.Welcome{
+        display: block;
+        width: 100%;
+        height: 100%;
+        background-color: red;
+    } */
+}
+
+ng-template{
+    display: block;
+    width: 100%;
+    height: 100%;
 }

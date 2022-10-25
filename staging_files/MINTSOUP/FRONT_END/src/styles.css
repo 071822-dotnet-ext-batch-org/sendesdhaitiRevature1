@@ -1,4 +1,6 @@
 /* ----------------FOR SCREENS greater than 575px*/
+@import "../src/spinner.scss";
+
 @media screen and (min-width: 576px) {
     body{
         background-color: rgb(215, 250, 237);
@@ -8,15 +10,10 @@
         margin: 0%;
         padding: 0%;
     }
-    *{
-        /* all: unset; */
-        margin: 0%;
-        padding: 0%;
-    }
     .GUI {
         background-color: rgb(15, 87, 87);
         width: 100vw;
-        height: 100vh;
+        height: 100%;
         margin: 0%;
         padding: 0%;
         top: 0px;
@@ -42,7 +39,7 @@
     .GUI {
         background-color: rgb(15, 87, 87);
         width: 100vw;
-        height: 100vh;
+        height: 100%;
         margin: 0%;
         padding: 0%;
         top: 0px;
@@ -50,4 +47,12 @@
         left: 0px;
         right: 0px;
     }
+}
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+app-root{
+    display: block;
+    top: 90;
 }

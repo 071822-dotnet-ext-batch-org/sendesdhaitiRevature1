@@ -1,4 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { UserService } from 'src/app/Services/user.service';
+import { Viewer } from 'src/app/Models/UserModels';
+import { AuthService } from '@auth0/auth0-angular';
+
+
+
 
 @Component({
   selector: 'app-home',
@@ -7,11 +13,80 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  constructor(public _userService: UserService, public auth: AuthService) { 
+    this._userService;
+    this.auth;
+  }
+
+  public myData: any;
+
+  public myViewer: Viewer = {
+    ID : "my123ID",
+    Auth0ID : "myID",
+    Fn : "john",
+    Ln : "doe",
+    Email : "example@email.com",
+    Image : "string",
+    Username : "myUsername",
+    AboutMe : "aboutme",
+    StreetAddy : "string",
+    City : "string",
+    State : "string",
+    Country : "string",
+    AreaCode : "string",
+    Role : 0,
+    MembershipStatus : 0,
+    DateSignedUp : new Date(),
+    LastSignedIn : new Date()
+  };
+
 
   ngOnInit(): void {
     this.hideElements()
+    this.getUserAccount_if_haveone()
+    this.auth.user$.subscribe(data => {
+      this.myData = JSON.stringify(data, null ,2) ;
+      if(this.myData == null){
+        this.auth.getAccessTokenSilently({}).subscribe(data =>
+          {
+            this.myData = data
+            console.log(`getAccessTokenSilently - ${this.myData}`)
+          })
+      }
+      console.log(this.myData)
+    })
+
   }
+  // setCurrentUser(input:any): void{
+  //   this._userService.SET_userFromAuth0_IN_UserSERVE(input)
+  //   console.log(`passed in data is '${input.email}' while '${this.userData?.email}' is going to be the user`)
+  // }
+
+
+  getUserAccount_if_haveone(): void
+  {
+    this._userService.getAuthAfterLogin().subscribe(data => {
+      this.myData = data;
+      console.log(`getUserAccount_if_haveone - ${this.myData}`)
+
+    })
+    // this.auth.user$.subscribe(data => {
+    //   return this.myData = data;
+
+    // })
+
+    if(this.myData != null){}
+    else
+    {
+      this.myData = {
+        "sub" : "nullAuth",
+        "email" : "nullEmail",
+        "username" : "null Username"
+      }
+    }
+    
+  }//END of getUserAccount_if_haveone
+  
 
   showMyShows()
   {

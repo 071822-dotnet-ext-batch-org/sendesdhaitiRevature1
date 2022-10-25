@@ -1,47 +1,56 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { LoginDTO, Viewer } from '../Models/User';
 import { AuthService } from '@auth0/auth0-angular';
+import { Viewer } from '../Models/UserModels';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private currentuser: any;
-  private mySET_User: Viewer = {}
-  private getAccount: object = {
-    auth0ID : "",
-    email: ""
-  }
-  private  account: Viewer = {}
+  public mySET_User: any
+  public getAccount?: object 
+  // private  accoun?: Viewer = {}
+
   constructor(private http: HttpClient, private auth: AuthService) { 
     this.http;
+    this.auth;
   }
 
-  private API: string = "https://localhost:7094/";
-  public loginwithRedirect(loginDTO: LoginDTO) : Observable<any>{
+  private API: string = "https://localhost:7094/mint-soup";
+
+
+  public loginwithRedirect() : Observable<any>{
     let res = this.auth.loginWithRedirect()
-    res.subscribe(data => {
-        this.currentuser = data
-    })
-    console.log(this.currentuser.user$)
-    return this.currentuser;
-    // let user = {
-    //   id: this.currentuser.user$
-    // }
-    // this.loginUser()
+    return res;
   }
-  public loginUser(getAccount: object) : Observable<Viewer>
+
+  public createViewer_On_SignUp(auth0ID:string, email:string ) : Observable<Viewer>
   {
-    let res = this.http.post(this.API + "/mint-soup/login", this.getAccount);
+    // this.auth.buildAuthorizeUrl().subscribe(url => {
+    //   return this.API + url;
+    // })
+    let res = this.http.post(this.API + "/register", {"auth0ID": auth0ID, "email": email});
     return res
   }
-  public SET_CurrentUsersID_OnLoad(setUserID:string) :void
+  public getAuthAfterLogin()
   {
-    this.mySET_User.Auth0ID = setUserID;
+    return this.mySET_User = this.auth.getAccessTokenSilently()
   }
-  public GET_CurrentUsersID_OnLoad(): Viewer
+
+
+  public GET_myViewer(auth0ID:string) : Observable<Viewer>
+  {
+    let res = this.http.post(this.API + "/my-viewer", {"auth0ID": auth0ID});
+    return res
+  }
+
+  public SET_userFromAuth0_IN_UserSERVE(userData?:any) :void
+  {
+    this.mySET_User = userData;
+  }
+
+  public GET_userFromAuth0_setIN_UserSERVE() :any
   {
     return this.mySET_User;
   }
