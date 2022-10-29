@@ -1,11 +1,10 @@
+
+router-outlet{
+    height: 100%;
+}
+
+
 @media screen and (min-width: 576px) {
-    img{
-        width: 25px;
-        color: black;
-        background-color: blanchedalmond;
-        margin: 0 10px;
-        border-radius: 15px 15px 15px 15px;
-    }
     ol{
         display: block;
         overflow: scroll;
@@ -16,21 +15,20 @@
         align-items: center;
     }
     .HOME{
-        display: block;
+        display: inline-block;
+        margin: auto;
+        height: 85vh;
         width: 100vw;
-        height: auto;
-        overflow: hidden;
+        overflow: scroll;
         background-color: rgb(174, 170, 182);
-        border: 2px black dashed;
+        /* border: 2px black dashed; */
         border-radius: 5px 5px 5px 5px;
     }
     .HOME>div{
         background-color: red;
-        /* opacity: 10%; */
         margin: 10px 5px 10px 5px;
         border: 2px black dashed;
         border-radius: 5px 5px 5px 5px;
-        /* z-index: -1; */
     }
     .HOME>div>div>.myshowsubs{
         display: flex;
@@ -98,9 +96,10 @@
         align-items: center;
     }
     .HOME{
-        display: block;
+        display: inline-block;
+        margin: auto;
+        height: 85vh;
         width: 100vw;
-        height: auto;
         overflow: hidden;
         background-color: rgb(174, 170, 182);
         border: 2px black dashed;

@@ -1,0 +1,20 @@
+<p>menu works!</p>
+<div class="buttons">
+
+    <app-login *ngIf="(auth.isAuthenticated$ | async) == false"></app-login>
+    <app-logout *ngIf="(auth.isAuthenticated$ | async) == true"></app-logout>
+    <!-- <button routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page" *ngIf="(auth.isAuthenticated$ | async) == false">
+        <img src="../../../assets/ICONS/login-color.svg" alt="">
+    </button> -->
+
+    
+
+    <button routerLink="/profile" routerLinkActive="active" ariaCurrentWhenActive="page" *ngIf="(auth.isAuthenticated$ | async) == true">
+        <img src="../../../assets/ICONS/profile2.svg" alt="">
+    </button>
+
+    <button routerLink="/shows" routerLinkActive="active" ariaCurrentWhenActive="page">
+        <img src="../../../assets/ICONS/show.svg" alt="">
+    </button>
+    
+</div>

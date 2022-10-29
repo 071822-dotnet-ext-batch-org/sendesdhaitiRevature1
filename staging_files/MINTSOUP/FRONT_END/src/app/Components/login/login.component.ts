@@ -17,10 +17,7 @@ export class LoginComponent implements OnInit {
   public myUser: any
 
   ngOnInit(): void {
-    this.auth.getAccessTokenSilently()
-    this.auth.user$.subscribe(data => {
-      this.myUser = data
-    })
+    
   }
 
   login():void

@@ -1,39 +1,43 @@
 
 
 
-<div class="NAVBAR">
-    <div>
+<nav class="NAVBAR">
+    <button class="ICON_CONTAINER_for_GRID " routerLink="/home" routerLinkActive="active" ariaCurrentWhenActive="page">
         <img id="MINTSOUP_LOGO"
         alt="MINT SOUP LOGO"
         src="../../../assets/MINTSOUP_LOGO/MINTSOUP_LOGO.png"
         />
-    </div>
-    <div>
-        <!-- <img  id="navbar_sandwich" src="../../../assets/ICONS/navigation-sandwich.svg" alt=""> -->
-    </div>
-    <div>
+    </button>
+
+    <div class="space space1"></div>
+
+    <button class="ICON_CONTAINER_for_GRID ICON_CONTAINER_for_GRID2"  (click)="showMenu()">
+        <img  id="navbar_sandwich" src="../../../assets/ICONS/navigation-sandwich.svg" alt="">
+    </button>
+
+    <button class="ICON_CONTAINER_for_GRID ICON_CONTAINER_for_GRID3" *ngIf="(auth.isAuthenticated$ | async) == true">
+        <img  id="profile" src="../../../assets/ICONS/profile.svg" alt="">
+    </button>
+
+    <div class="space space2"></div>
+
+    <button class="ICON_CONTAINER_for_GRID ICON_CONTAINER_for_GRID4" (click)="showSearch()">
+        <img  id="search" src="../../../assets/ICONS/search.svg" alt="">
+    </button>
+    <!-- <div>
         <ul id="navlinks">
             <li class=" link"><button routerLink="/home" routerLinkActive="active" ariaCurrentWhenActive="page">Home</button></li>
             <li class=" link"><button routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page" *ngIf="(auth.isAuthenticated$ | async) == false">Login</button></li>
             <li class=" link"><button routerLink="/signup" routerLinkActive="active" ariaCurrentWhenActive="page" *ngIf="(auth.isAuthenticated$ | async) == false">Register</button></li>
             <li class=" link"><button routerLink="/logout" routerLinkActive="active" ariaCurrentWhenActive="page" *ngIf="(auth.isAuthenticated$ | async) == true">Logout</button></li>
-            
         </ul>
-    </div>
+    </div> -->
     
     
-    <hr>
-</div>
-<!-- 
-<table class="toolbar topbar" role="banner">
-    <tr class="mid">
-      <td><p>Welcome username </p></td>
-      <td> 
+</nav>
 
-      </td>
-      
-     
-      
-    </tr>
-    
-  </table> -->
+<div class="menu_n_router">
+    <app-menu id="menu"></app-menu>
+    <router-outlet id="router"></router-outlet>
+    <app-search id="searchmenu"></app-search>
+</div>

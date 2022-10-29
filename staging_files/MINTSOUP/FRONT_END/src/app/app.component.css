@@ -1,51 +1,65 @@
+/* @import url("./menu.scss"); */
 
- @media screen and (min-width: 576px) {
-    h2{
-        text-align: center;
-    }
-   div{
-    background-color: aliceblue;
-    width: 100%;
-    height: 100%;
-    display: block ;
-    justify-content: center;
-    align-items: center;
-    /* padding: 10px 20px 10px 20px; */
-   }
+h2{
+    text-align: center;
 }
- @media screen and (max-width: 575px) {
-    h2{
-        text-align: center;
-    }
-   div{
-    background-color: aliceblue;
-    width: 100%;
-    height: 100%;
-    display: block ;
-    justify-content: center;
-    align-items: center;
-   }
+div{
+background-color: aliceblue;
+width: 100%;
+height: 100%;
+display: block ;
+justify-content: center;
+align-items: center;
 }
+/* @media screen and (min-width: 576px) { */
+    app-nav{
+        position:fixed;
+        /* bottom: 0; */
+        left:0;
+        right: 0;
+        top:0 ;
+        overflow: hidden;
+    }
+    app-footer{
+        position:fixed;
+        left:0;
+        right: 0;
+        bottom: 0;
+        overflow: hidden;
+    }
+    router-outlet{
+        position:fixed;
+        top: 0;
+        left:0;
+        right: 0;
+        bottom: 0;
+        bottom: auto;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+/* } */
 
-/* -------------------for the spinner on load */
-.spinner-wrapper {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    top: 0;
-    left: 0;
-    background-color: rgba(255, 255, 255, 0.5);
-    z-index: 998;
-}
-app-loading{
-    width: 6rem;
-    height: 6rem;
-}
-ng-template{
-    display: block;
-    width: 100%;
-    height: 100%;
-}
+/* 
+@media screen and (max-width: 575px) {
+    app-nav{
+        position:fixed;
+        bottom: 0;
+        left:0;
+        right: 0;
+    }
+    app-footer{
+        position:fixed;
+        bottom: 0;
+        left:0;
+        right: 0;
+        overflow: hidden;
+    }
+    router-outlet{
+        position:fixed;
+        top: 0;
+        left:0;
+        right: 0;
+    }
+} */
+
+

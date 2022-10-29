@@ -1,4 +1,5 @@
 <div class="HOME" *ngIf="(auth.isAuthenticated$ | async) == true; else guest">
+    
     <p>Welcome to MINT SOUP {{myData['email']}}!</p>
     <div>
         <div class="SHOWS_SECTION">
@@ -109,6 +110,7 @@
         </div>
         <div class="call_to_action">
             <h4>Why not try logging in?</h4>
+            <app-guest></app-guest>
             
             
         </div>

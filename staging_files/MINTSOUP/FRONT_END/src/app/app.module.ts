@@ -18,6 +18,9 @@ import { FooterComponent } from './Components/footer/footer.component';
 import { LoadingComponent } from './Components/loading/loading.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SpinnerComponent } from './Components/spinner/spinner.component';
+import { GuestComponent } from './Components/guest/guest.component';
+import { MenuComponent } from './Components/menu/menu.component';
+import { SearchComponent } from './Components/search/search.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +33,10 @@ import { SpinnerComponent } from './Components/spinner/spinner.component';
     AuthenticationPageComponent,
     FooterComponent,
     LoadingComponent,
-    SpinnerComponent
+    SpinnerComponent,
+    GuestComponent,
+    MenuComponent,
+    SearchComponent
   ],
   imports: [
     BrowserModule,
