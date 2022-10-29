@@ -1,114 +1,273 @@
-*{
-    z-index: 100;
+@import url(../../menu.scss);
+
+
+@keyframes MINTSOUP_LOGO_rotate {
+   0% {
+        transform: rotate3d(0, 10deg);
+    }
+    50% {
+        transform: rotate3d(1, 2, 1, 3600deg);
+    }
 }
 
-@media screen and (min-width: 576px) {
-    .NAVBAR{
-        width: 100%;
-        background-color: azure;
-        display: block;
-        position: sticky;
-        flex-wrap: wrap;
-        top: 0;
-        left: 0;
-        right: 0;
-    }
-    .NAVBAR>div{
-        display: flex;
-        justify-content: center;
-        position: relative;
 
-    }
-    #navlinks {
-        display: block flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-    }
-    .link{
-        display: block;
-    }
-    .link>button{
-        background-color: black;
-        border-radius: 10px 10px 30px 30px;
-        margin: 5px;
-        color: aliceblue;
-        /* margin: 0; */
-        padding: 5px 5px 5px 5px;
-        display: flex;
-        justify-content: space-between 5px;
-    }
-    #navbar_sandwich{
-        display: block;
-    }
-    #MINTSOUP_LOGO
-    {
-        width: 80px;
-        /* position:sticky; */
-        display:block;
 
-        left: 50%;
-        bottom: auto;
-        top: 0%;
-        right: 50%;
-        /* display: flex;
-        justify-self: center;
-        align-self: center; */
+@keyframes ICONS_Hover_on {
+    0% {
+         transform:scale(1, 1);
+     }
+     50% {
+         transform: scale(1.5,1.5);
+     }
+}
 
+@keyframes ICONS_Hover_off {
+    0% {
+         transform:scale(1.5, 1.5);
+     }
+     50% {
+         transform: scale(1,1);
+     }
+}
+
+
+
+@keyframes MINTSOUP_LOGO_scale {
+    0% {
+         transform: scale(0, 1);
+     }
+     20% {
+         transform: scale(1, .8);
+     }
+
+     40% {
+        transform: scale(2, .7);
+    }
+
+    90% {
+        transform: rotate3d(12, 2, 11, 170deg);
+    }
+
+    100% {
+        transform: rotate3d(0, 0,20, 0deg);
+    }
+
+
+ }
+@media (prefers-reduced-motion: no-preference) {
+    #MINTSOUP_LOGO{
+        animation-name: MINTSOUP_LOGO_scale;
+        animation-duration: 4s;
+        animation-iteration-count: 1;
     }
 }
- @media screen and (max-width: 575px) {
-    .NAVBAR{
-        width: 100%;
-        background-color: azure;
-        display: block;
-        position: sticky;
-        flex-wrap: wrap;
-        top: 0;
-        left: 0;
-        right: 0;
-    }
-    .NAVBAR>div{
-        display: flex;
-        justify-content: center;
-        position: relative;
 
+
+@media screen and (min-width: 576px){
+    .menu_n_router{
+        display: inline-flex;
+        overflow-x: scroll;
     }
-    #navlinks {
-        display: block flex;
-        justify-content: center;
+    .NAVBAR{
+        padding: 10px 10px 10px 10px;
+        border-bottom: 1px solid black;
+        justify-items: center;
         align-items: center;
         width: 100%;
+        height: 100%;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+        grid-template-rows: 50%;
+        grid-template-areas: 
+        "logo space1 navSandwich profilepic space2 searchIcon";
     }
-    .link{
+    .ICON_CONTAINER_for_GRID{
+        width: 40px;
+        display: grid ;
+        height: 100%;
+        justify-content: center;
+        align-content: center;
+        background-color: white;
+        border: 1px solid black;
+        border-radius: 50%;
+    }
+
+    .ICON_CONTAINER_for_GRID   :hover{
+        animation-name: ICONS_Hover_on;
+        animation-duration: .8s;
+        animation-iteration-count: infinite;
+    }
+
+    .ICON_CONTAINER_for_GRID    ::after:hover{
+        animation-name: ICONS_Hover_off;
+        animation-duration: .8s;
+        animation-iteration-count: infinite;
+    }
+    .ICON_CONTAINER_for_GRID > button   {
+        width: 100%;
+        height: 100%;
+        border: 1px solid black;
+        border-radius: 50% 50% 50% 50%;
+    }
+    .ICON_CONTAINER_for_GRID > .ICON_CONTAINER_for_GRID1{
+        border: none;
+        width: 10%;
+        grid-column-start: 1;
+        grid-column-end: span 2;
+        grid-row-start: 1;
+        grid-row-end: span 1;
+    }
+    
+    .ICON_CONTAINER_for_GRID >.ICON_CONTAINER_for_GRID2{
+        width: 10%;
+        grid-column-start: 3;
+        grid-column-end: span 4;
+        grid-row-start: 1;
+        grid-row-end: span 1;
+    }
+    
+    .ICON_CONTAINER_for_GRID > .ICON_CONTAINER_for_GRID3{
+        width: 10%;
+        
+        grid-column-start: 4;
+        grid-column-end: span 5;
+        grid-row-start: 1;
+        grid-row-end: span 1;
+    }
+    
+    .ICON_CONTAINER_for_GRID >.ICON_CONTAINER_for_GRID4{
+        width: 10%;
+        grid-column-start: 6;
+        grid-column-end: span 6;
+        grid-row-start: 1;
+        grid-row-end: span 1;
+    }
+    
+    #MINTSOUP_LOGO{
         display: block;
+        margin :auto;
+        width:40px;
     }
-    .link>button{
-        background-color: black;
-        border-radius: 10px 10px 30px 30px;
-        margin: 5px;
-        color: aliceblue;
-        /* margin: 0; */
-        padding: 5px 5px 5px 5px;
-        display: flex;
-        justify-content: space-between 5px;
-    }
+
     #navbar_sandwich{
         display: block;
+        margin :auto;
+        width: 20px;
     }
-    #MINTSOUP_LOGO
-    {
-        width: 80px;
-        /* position:sticky; */
-        display:block;
 
-        left: 50%;
-        bottom: auto;
-        top: 0%;
-        right: 50%;
-        /* display: flex;
-        justify-self: center;
-        align-self: center; */
-
+    #profile{
+        display: block;
+        margin: auto;
+        width: 20px;
     }
+
+    #search{
+        display: block;
+        margin: auto;
+        width: 13px;
+    }
+}
+@media screen and (max-width: 575px){
+    .NAVBAR{
+        padding: 10px 10px 10px 10px;
+        border-bottom: 1px solid black;
+        position:relative;
+        background-color: aliceblue;
+        justify-items: center;
+        align-items: center;
+        margin : 0;
+        bottom: 0;
+        width: 100%;
+        height: auto;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+        grid-template-rows: 50%;
+        grid-template-areas: 
+        "logo space1 navSandwich profilepic space2 searchIcon";
+    }
+    .ICON_CONTAINER_for_GRID{
+        width: 40px;
+        display: grid ;
+        height: 100%;
+    }
+
+    .ICON_CONTAINER_for_GRID  :hover{
+        animation-name: ICONS_Hover_on;
+        animation-duration: .8s;
+        animation-iteration-count: infinite;
+    }
+
+    .ICON_CONTAINER_for_GRID   ::after:hover{
+        animation-name: ICONS_Hover_off;
+        animation-duration: .8s;
+        animation-iteration-count: infinite;
+    }
+
+    .ICON_CONTAINER_for_GRID > .ICON_CONTAINER_for_GRID1{
+        border: none;
+        width: 10%;
+        grid-column-start: 1;
+        grid-column-end: span 2;
+        grid-row-start: 1;
+        grid-row-end: span 1;
+    }
+    
+    .ICON_CONTAINER_for_GRID >.ICON_CONTAINER_for_GRID2{
+        width: 10%;
+        grid-column-start: 3;
+        grid-column-end: span 4;
+        grid-row-start: 1;
+        grid-row-end: span 1;
+    }
+    
+    .ICON_CONTAINER_for_GRID > .ICON_CONTAINER_for_GRID3{
+        width: 10%;
+        
+        grid-column-start: 4;
+        grid-column-end: span 5;
+        grid-row-start: 1;
+        grid-row-end: span 1;
+    }
+    
+    .ICON_CONTAINER_for_GRID >.ICON_CONTAINER_for_GRID4{
+        width: 10%;
+        grid-column-start: 5;
+        grid-column-end: span 6;
+        grid-row-start: 1;
+        grid-row-end: span 1;
+    }
+
+
+    #MINTSOUP_LOGO{
+        display: block;
+        margin :auto;
+        width:40px;
+    }
+
+    #navbar_sandwich{
+        display: block;
+        margin :auto;
+        width: 20px;
+    }
+
+    #profile{
+        display: block;
+        margin: auto;
+        width: 20px;
+    }
+
+    #search{
+        display: block;
+        margin: auto;
+        width: 13px;
+        align-items: right;
+    }
+}
+app-menu{
+    display: none;
+}
+app-search{
+    display: none;
 }

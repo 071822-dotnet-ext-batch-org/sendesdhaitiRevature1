@@ -1,0 +1,25 @@
+.buttons{
+    display: flex;
+    flex-wrap: wrap;
+    width: 90%;
+    height: auto;
+    justify-content: center;
+    align-content: center;
+}
+.buttons > *{
+    width: 40px;
+    height: 40px;
+    margin: 5px;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 10px 10px 10px 10px;
+    display: block;
+}
+app-login{
+    display: contents;
+}
+
+app-logout{
+    display: contents;
+}
+

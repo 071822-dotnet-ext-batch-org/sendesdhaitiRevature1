@@ -1,15 +1,12 @@
 /* ----------------FOR SCREENS greater than 575px*/
+@import "../src/spinner.scss";
+
 @media screen and (min-width: 576px) {
     body{
-        background-color: rgb(215, 250, 237);
+        background-color: rgb(255, 255, 255);
         color-scheme: dark;
         transition: .8s;
         font-family:'Courier New', Courier, monospace;
-        margin: 0%;
-        padding: 0%;
-    }
-    *{
-        /* all: unset; */
         margin: 0%;
         padding: 0%;
     }
@@ -20,9 +17,10 @@
         margin: 0%;
         padding: 0%;
         top: 0px;
-        bottom: 0;
+        bottom: 0px;
         left: 0px;
         right: 0px;
+        display:block;
     }
 }
 /* ----------------FOR SCREENS less than 575px*/
@@ -33,7 +31,7 @@
         padding: 0%;
     }
     body{
-        background-color: rgb(250, 232, 215);
+        background-color: rgb(0, 0, 0);
         transition: .8s;
         font-family:'Courier New', Courier, monospace;
         margin: 0%;
@@ -46,8 +44,18 @@
         margin: 0%;
         padding: 0%;
         top: 0px;
-        bottom: 0;
+        bottom: 0px;
         left: 0px;
         right: 0px;
+        display:block;
     }
+}
+html, body { height: 100%; width: 100%; overflow: hidden; white-space: normal;
+    min-width: 200px;}
+body { margin: 0; padding: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+app-root{
+    display: block;
+    /* top: 90; */
 }

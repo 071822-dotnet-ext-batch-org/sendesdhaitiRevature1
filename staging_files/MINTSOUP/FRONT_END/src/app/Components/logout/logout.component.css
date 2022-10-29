@@ -1,0 +1,10 @@
+button{
+    width: 100%;
+    height: 100%;
+    width: inherit;
+    height: inherit;
+    border: inherit;
+    border-radius: inherit;
+    background-color: inherit;
+    display: block;
+}

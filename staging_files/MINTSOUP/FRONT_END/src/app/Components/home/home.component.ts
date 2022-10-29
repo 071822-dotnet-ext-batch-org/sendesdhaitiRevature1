@@ -1,4 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { UserService } from 'src/app/Services/user.service';
+import { Viewer } from 'src/app/Models/UserModels';
+import { AuthService } from '@auth0/auth0-angular';
+import { NavigationBarService } from 'src/app/Services/navigation-bar.service';
+
+
+
 
 @Component({
   selector: 'app-home',
@@ -7,11 +14,30 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  constructor(public _userService: UserService, public auth: AuthService, public nav: NavigationBarService) { 
+    this._userService;
+    this.auth;
+    this.nav;
+  }
+
+  public myData: any;
+  public element = document.getElementById('menu')
+
+  @Input() navSandwichToggle?: Boolean = undefined;
+
+  public myViewer?: Viewer = {};
+
 
   ngOnInit(): void {
     this.hideElements()
-  }
+    // this.getUserAccount_if_haveone()
+    this.auth.user$.subscribe(data => {
+      this.myData = JSON.stringify(data, null ,2) ;
+      console.log(this.myData)
+    })
+
+  }//END NG ON INIT
+
 
   showMyShows()
   {

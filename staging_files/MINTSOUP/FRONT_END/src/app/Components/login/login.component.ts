@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from 'src/app/Services/user.service';
-import { LoginDTO } from 'src/app/Models/User';
+import { AuthService } from '@auth0/auth0-angular';
 
 @Component({
   selector: 'app-login',
@@ -9,50 +9,24 @@ import { LoginDTO } from 'src/app/Models/User';
 })
 export class LoginComponent implements OnInit {
 
-  constructor(public userservice: UserService) { 
+  constructor(public userservice: UserService, public auth: AuthService) { 
     this.userservice;
+    this.auth;
   }
-  // public email: string = "";
-  public loginForm : LoginDTO = {
-    "email" : "",
-    "auth0ID": ""
-  }
-  public myUser : any
+
+  public myUser: any
 
   ngOnInit(): void {
-  }
-
-  login() : void
-  {
-    let _list: string[] = []
-    for (let index = 0; index < sessionStorage.length; index++) {
-      const element = sessionStorage[index];
-      console.log(`${element} was gotten from the storage`)
-      _list.push(element)
-    }
-    if(this.loginForm.email == null){
-      //email is null
-    }
-    else{
-      if(_list.includes(this.loginForm.email))
-      {
-        // email is already saved with a auth0ID in storage 
-        sessionStorage.getItem(this.loginForm.email)
-        this.userservice.SET_CurrentUsersID_OnLoad(this.loginForm.email)
-      }
-      else{
-        let res =  this.userservice.loginwithRedirect(this.loginForm);
-        this.myUser = res;
-        //this email hasnt been saved to the storage with an auth0ID yet
-        sessionStorage.setItem(`${this.loginForm.email}`, this.myUser.user$)
-        console.log(this.myUser.user$)
-      }
-    }
-  }
-  checkIf_auth0ID_is_present(){
     
   }
 
-  
-
+  login():void
+  {
+    var loggedIn_TOKEN = this.userservice.loginwithRedirect();
+    this.auth.getAccessTokenSilently()
+    this.auth.user$.subscribe(data => {
+      this.myUser = data
+    })
+  }
 }
+

@@ -17,7 +17,10 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [
+    //This allows for the screen to start at the top on ruote change
+    RouterModule.forRoot(routes, {scrollPositionRestoration: 'enabled'})
+  ],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

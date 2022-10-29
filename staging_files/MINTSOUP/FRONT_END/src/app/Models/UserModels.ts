@@ -17,7 +17,3 @@ export interface Viewer{
     DateSignedUp? : Date,
     LastSignedIn? : Date
 }
-export interface LoginDTO{
-    email? : string,
-    auth0ID? : string
-}
