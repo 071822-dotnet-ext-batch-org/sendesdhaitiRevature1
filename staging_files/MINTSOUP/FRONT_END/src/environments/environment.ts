@@ -3,11 +3,16 @@
 // The list of file replacements can be found in `angular.json`.
 import clientId from "../../auth0.json"
 import domain from "../../auth0.json"
+import authority from "../../auth0.json"
+import audience from "../../auth0.json"
 export const environment = {
   production: false,
   Auth0 : {
     domain,
     clientId
+  },
+  API: {
+    authority, audience
   }
 };
 

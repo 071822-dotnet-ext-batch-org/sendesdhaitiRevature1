@@ -1,10 +1,16 @@
-using MS_API1_Users_API;
+// using BusinessLayer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
+using System.Security.Claims;
+
+// using MS_API1_Users_API;
 using MS_API1_Users_LogicLayer;
-using MS_API1_Users_Model;
+// using MS_API1_Users_Model;
 using MS_API1_Users_Repo;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddSwaggerGen();
 
 // Add services to the container.
 
@@ -20,8 +26,48 @@ builder.Services.AddScoped<ICREATE_LogicLayer, CREATE_LogicLayer>();
 builder.Services.AddScoped<ICHECK_AccessLayer, CHECK_AccessLayer>();
 builder.Services.AddScoped<IDELETE_AccessLayer, DELETE_AccessLayer>();
 
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    {
+        Description = "Standard Autorization header using the Bearer scheme(\"bearer {token}\")",
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey
+    });
+    options.OperationFilter<SecurityRequirementsOperationFilter>();
+});
 
-builder.Services.AddSwaggerGen();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "MyAllowAllOrigins",
+    builder =>
+    {
+        builder.AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.Authority = builder.Configuration["Auth0:Authority"];
+    options.Audience = builder.Configuration["Auth0:Audience"];
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        NameClaimType = ClaimTypes.NameIdentifier
+    };
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("mintsoup: read-write", p =>
+        p.RequireAuthenticatedUser());
+});
 
 var app = builder.Build();
 
@@ -33,7 +79,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("MyAllowAllOrigins");
 app.UseAuthorization();
 
 app.MapControllers();

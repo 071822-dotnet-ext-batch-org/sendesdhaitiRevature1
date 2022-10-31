@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from '@auth0/auth0-angular';
 
 @Component({
   selector: 'app-register',
@@ -7,9 +8,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class RegisterComponent implements OnInit {
 
-  constructor() { }
+  constructor(public auth: AuthService) { 
+    this.auth;
+  }
 
   ngOnInit(): void {
+  }
+
+  register(){
+    this.auth.loginWithRedirect({ initialScreen: 'SignUp' })
   }
 
 }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+
 
 using MS_API1_Users_LogicLayer;
 using MS_API1_Users_Model;
@@ -13,6 +15,7 @@ namespace MS_API.Controllers
 {
     [ApiController]
     [Route("mint-soup")]
+    [Authorize]
     public class GET_CONTROLLER : ControllerBase
     {
         private readonly IGET_LogicLayer _LogicLayer;
