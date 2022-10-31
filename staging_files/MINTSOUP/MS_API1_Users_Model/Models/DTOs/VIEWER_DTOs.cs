@@ -6,6 +6,72 @@ using System.Threading.Tasks;
 namespace Models
 {
     /// <summary>
+    /// this dto is to check using an auth0 ID - it needs (string authID)
+    /// </summary>
+    public class CHECK_with_auth0
+    {
+        public string Auth0ID {get;set;} = "";
+        /// <summary>
+        /// this dto is to check using an auth0 ID - it needs (string authID)
+        /// </summary>
+        public CHECK_with_auth0(){}
+        /// <summary>
+        /// this dto is to check using an auth0 ID - it needs (string authID)
+        /// </summary>
+        /// <param name="authID"></param>
+        public CHECK_with_auth0(string authID)
+        {
+            this.Auth0ID = authID;
+        }
+    }
+    
+    /// <summary>
+    /// this dto is to check using an auth0 ID and a string property - it needs (string authID, string property)
+    /// </summary>
+    public class CHECK_with_auth0_and_stringPorperty
+    {
+        public string Auth0ID {get;set;} = "";
+        public string Property {get;set;} = "";
+        /// <summary>
+        /// this dto is to check using an auth0 ID and a string property - it needs (string authID, string property)
+        /// </summary>
+        public CHECK_with_auth0_and_stringPorperty(){}
+        /// <summary>
+        /// this dto is to check using an auth0 ID and a string property - it needs (string authID, string property)
+        /// </summary>
+        /// <param name="authID"></param>
+        /// <param name="property"></param>
+        public CHECK_with_auth0_and_stringPorperty(string authID, string property)
+        {
+            this.Auth0ID = authID;
+            this.Property = property;
+        }
+    }
+
+    /// <summary>
+    /// this dto is to check using an auth0 ID and a Guid property - it needs (string authID, Guid property)
+    /// </summary>
+    public class CHECK_with_auth0_and_guidPorperty
+    {
+        public string Auth0ID {get;set;} = "";
+        public Guid Property {get;set;} = new Guid();
+        /// <summary>
+        /// this dto is to check using an auth0 ID and a Guid property - it needs (string authID, Guid property)
+        /// </summary>
+        public CHECK_with_auth0_and_guidPorperty(){}
+        /// <summary>
+        /// this dto is to check using an auth0 ID and a Guid property - it needs (string authID, Guid property)
+        /// </summary>
+        /// <param name="authID"></param>
+        /// <param name="property"></param>
+        public CHECK_with_auth0_and_guidPorperty(string authID, Guid property)
+        {
+            this.Auth0ID = authID;
+            this.Property = property;
+        }
+    }
+    
+    /// <summary>
     /// This dto gets an OBJ with an auth0ID during login - it needs (string auth0ID, string email)
     /// </summary>
     public class GET_LOGIN_with_anAuth0ID_and_Email_DTO

@@ -1,6 +1,6 @@
 <div class="HOME" *ngIf="(auth.isAuthenticated$ | async) == true; else guest">
     
-    <p>Welcome to MINT SOUP {{myData['email']}}!</p>
+    <p *ngIf="myViewer != null">Welcome to MINT SOUP {{myViewer.Email}}!</p>
     <div>
         <div class="SHOWS_SECTION">
                 <div class="lastJoined">

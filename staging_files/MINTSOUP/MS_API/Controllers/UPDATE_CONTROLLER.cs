@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+
 
 using MS_API1_Users_Repo;
 using MS_API1_Users_LogicLayer;
@@ -11,6 +13,7 @@ namespace MS_API.Controllers
 {
     [ApiController]
     [Route("mint-soup")]
+    [Authorize]
     public class UPDATE_CONTROLLER : ControllerBase
     {
         private readonly IUPDATE_AccessLayer _update_Repo;

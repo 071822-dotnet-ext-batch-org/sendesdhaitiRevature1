@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+
 
 using MS_API1_Users_LogicLayer;
 using MS_API1_Users_Repo;
@@ -13,6 +15,7 @@ namespace MS_API.Controllers
 {
     [ApiController]
     [Route("mint-soup")]
+    [Authorize]
     public class CREATE_CONTROLLER : ControllerBase
     {
         private readonly ICREATE_LogicLayer _create_Logic;
@@ -34,7 +37,7 @@ namespace MS_API.Controllers
         /// <param name="auth0ID"></param>
         /// <returns>returns an async action result as a Viewer</returns>
         [HttpPost("register")]
-        public async Task<ActionResult<Models.Viewer?>> CREATE_myViewer_by_auth0ID(Models.CREATE_Viewer_on_signUP_with_auth0ID_DTO CREATE_VIEWER_DTO)
+        public async Task<ActionResult<bool>> CREATE_myViewer_by_auth0ID(Models.CREATE_Viewer_on_signUP_with_auth0ID_DTO CREATE_VIEWER_DTO)
         {
             if(ModelState.IsValid)
             {
@@ -44,19 +47,19 @@ namespace MS_API.Controllers
                 //Check if already an admin
                 if((checkAdmin == CHECK_AccessLayer.CHECKSTATUS.TRUE)){
                     Console.WriteLine($"\n\n\t The user with email {CREATE_VIEWER_DTO?.Email} is already an admin");
-                    return Conflict($"choose another email or sign in with this one with {CREATE_VIEWER_DTO?.Email}");
+                    return Ok($"Welcome back admin {CREATE_VIEWER_DTO?.Email}");
                 }
 
                 //Check if already a viewer
                 if((checkViewer == CHECK_AccessLayer.CHECKSTATUS.TRUE)){
                     Console.WriteLine($"\n\n\t The user with email {CREATE_VIEWER_DTO?.Email} is already a viewer");
-                    return Conflict($"choose another email or sign in with this one with {CREATE_VIEWER_DTO?.Email}");
+                    return Ok($"Welcome back viewer {CREATE_VIEWER_DTO?.Email}");
                 }
 
                 (Models.Viewer?, CHECK_AccessLayer.CHECKSTATUS) viewer = await this._create_Logic.CREATE_myViewer_by_auth0ID(CREATE_VIEWER_DTO);
                 if(viewer.Item2.ToString() == "SAVED")
                 {
-                    return Created("register",viewer);
+                    return Created("register",true);
                 }
                 else
                 {

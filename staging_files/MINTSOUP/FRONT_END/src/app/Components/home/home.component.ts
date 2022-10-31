@@ -22,20 +22,32 @@ export class HomeComponent implements OnInit {
 
   public myData: any;
   public element = document.getElementById('menu')
-
-  @Input() navSandwichToggle?: Boolean = undefined;
-
   public myViewer?: Viewer = {};
+
+  // @Input() navSandwichToggle?: Boolean = undefined;
+
 
 
   ngOnInit(): void {
-    this.hideElements()
-    // this.getUserAccount_if_haveone()
-    this.auth.user$.subscribe(data => {
-      this.myData = JSON.stringify(data, null ,2) ;
-      console.log(this.myData)
-    })
 
+    this.hideElements()
+
+    if(this.auth.isAuthenticated$){
+      this.auth.user$.subscribe(data => {
+  
+        this.myData = data;
+        console.log(`This data email is ${this.myData?.email}`)
+        if(data != null)
+        {
+          this._userService.GET_or_Create_myViewer(data.sub, data.email).subscribe(viewer => {
+            this.myViewer = viewer;
+            console.log(`This viewer is ${this.myViewer.Email}`)
+          })
+        }
+        // console.log(this.myData)
+      })
+
+    }
   }//END NG ON INIT
 
 

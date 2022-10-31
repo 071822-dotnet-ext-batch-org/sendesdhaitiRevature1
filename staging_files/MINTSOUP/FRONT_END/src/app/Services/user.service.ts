@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from '@auth0/auth0-angular';
 import { Viewer } from '../Models/UserModels';
+import { environment as env } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ export class UserService {
     this.auth;
   }
 
-  private API: string = "https://localhost:7094/mint-soup";
+  private API: string = `${env.API.audience.audience}`;
 
 
   public loginwithRedirect() : Observable<any>{
@@ -25,33 +26,22 @@ export class UserService {
     return res;
   }
 
-  public createViewer_On_SignUp(auth0ID:string, email:string ) : Observable<Viewer>
+  public createViewer_On_SignUp(auth0ID?:string, email?:string ) : Observable<any>
   {
-    // this.auth.buildAuthorizeUrl().subscribe(url => {
-    //   return this.API + url;
-    // })
-    let res = this.http.post(this.API + "/register", {"auth0ID": auth0ID, "email": email});
+    return this.http.post(this.API + "/register", JSON.stringify({"auth0ID": auth0ID, "email": email}));
+  }
+ 
+
+
+  public GET_or_Create_myViewer(auth0ID?: string, email?: string) : Observable<Viewer>
+  {
+    let res: any = null;
+    console.log(`checking GET_or_Create_myViewer ${auth0ID} and ${email}`)
+    this.createViewer_On_SignUp(auth0ID, email).subscribe((check: any) => {
+      console.log(`This is the return for the create viewer action ${check}`)
+    });
+    res = this.http.post(this.API + "/my-viewer", JSON.stringify({"auth0ID": auth0ID}));
     return res
   }
-  public getAuthAfterLogin()
-  {
-    return this.mySET_User = this.auth.getAccessTokenSilently()
-  }
 
-
-  public GET_myViewer(auth0ID:string) : Observable<Viewer>
-  {
-    let res = this.http.post(this.API + "/my-viewer", {"auth0ID": auth0ID});
-    return res
-  }
-
-  public SET_userFromAuth0_IN_UserSERVE(userData?:any) :void
-  {
-    this.mySET_User = userData;
-  }
-
-  public GET_userFromAuth0_setIN_UserSERVE() :any
-  {
-    return this.mySET_User;
-  }
 }
