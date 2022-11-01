@@ -13,17 +13,16 @@ export class UserService {
   public getAccount?: object 
   // private  accoun?: Viewer = {}
 
-  constructor(private http: HttpClient, private auth: AuthService) { 
+  constructor(public http: HttpClient, public auth: AuthService) { 
     this.http;
     this.auth;
   }
 
-  private API: string = `${env.API.audience.audience}`;
+  public API: string = env.API.audience.audience;
 
 
   public loginwithRedirect() : Observable<any>{
-    let res = this.auth.loginWithRedirect()
-    return res;
+    return this.auth.loginWithRedirect()
   }
 
   public createViewer_On_SignUp(auth0ID?:string, email?:string ) : Observable<any>

@@ -23,6 +23,8 @@ export class HomeComponent implements OnInit {
   public myData: any;
   public element = document.getElementById('menu')
   public myViewer?: Viewer = {};
+  isAuthenticated$ = this.auth.isAuthenticated$
+  user$ = this.auth.user$
 
   // @Input() navSandwichToggle?: Boolean = undefined;
 
@@ -32,8 +34,8 @@ export class HomeComponent implements OnInit {
 
     this.hideElements()
 
-    if(this.auth.isAuthenticated$){
-      this.auth.user$.subscribe(data => {
+    if(this.isAuthenticated$){
+      this.user$.subscribe(data => {
   
         this.myData = data;
         console.log(`This data email is ${this.myData?.email}`)

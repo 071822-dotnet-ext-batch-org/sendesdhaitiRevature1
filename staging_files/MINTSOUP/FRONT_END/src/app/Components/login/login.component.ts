@@ -22,11 +22,7 @@ export class LoginComponent implements OnInit {
 
   login():void
   {
-    var loggedIn_TOKEN = this.userservice.loginwithRedirect();
-    this.auth.getAccessTokenSilently()
-    this.auth.user$.subscribe(data => {
-      this.myUser = data
-    })
+    this.userservice.loginwithRedirect();
   }
 }
 

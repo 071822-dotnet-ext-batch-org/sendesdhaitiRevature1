@@ -1,5 +1,5 @@
 {   
     "domain" : "https://dev-c76x43rx4zgq7bw2.us.auth0.com",
     "clientId" : "6sEPOfExiIcj1edzC5toCpfK2vyySuzI",
-    "audience": "https://localhost:7094/mint-soup"
+    "audience": "http://localhost:7094/"
 }

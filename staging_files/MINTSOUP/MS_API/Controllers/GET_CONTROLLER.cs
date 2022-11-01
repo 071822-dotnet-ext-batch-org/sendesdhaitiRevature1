@@ -34,6 +34,7 @@ namespace MS_API.Controllers
         /// <param name="auth0ID"></param>
         /// <returns>returns an async action result as a Viewer</returns>
         [HttpPost("my-viewer")]
+        [AllowAnonymous]
         public async Task<ActionResult<Models.Viewer?>> GET_myViewer_by_auth0ID(Models.GET_with_anAuth0ID_DTO getMyViewerDTO)
         {
             if(ModelState.IsValid)
