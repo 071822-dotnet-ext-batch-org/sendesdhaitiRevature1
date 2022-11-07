@@ -1,0 +1,4 @@
+{
+    "DATA_API": "http://localhost:7094/mint-soup/",
+    "AUTHENTICATION_and_AUTHORIZATION_API": "http://localhost:7215/mint-soup.token/"
+}

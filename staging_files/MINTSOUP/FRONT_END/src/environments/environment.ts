@@ -1,19 +1,14 @@
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
-import clientId from "../../auth0.json"
-import domain from "../../auth0.json"
-import authority from "../../auth0.json"
-import audience from "../../auth0.json"
+import DATA_API from "../../MINTSOUP_JWT.json"
+import AUTHENTICATION_and_AUTHORIZATION_API from "../../MINTSOUP_JWT.json"
+// import APIS from "../../MINTSOUP_JWT.json"
+
 export const environment = {
   production: false,
-  Auth0 : {
-    domain,
-    clientId
-  },
-  API: {
-    authority, audience
-  }
+  API1: `${DATA_API}`,
+  API2: `${AUTHENTICATION_and_AUTHORIZATION_API}`
 };
 
 /*

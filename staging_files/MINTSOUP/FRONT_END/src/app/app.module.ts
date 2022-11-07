@@ -47,21 +47,21 @@ import { AccountComponent } from './Components/account/account.component';
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
-    AuthModule.forRoot({
-      // ...env.Auth0.domain,
-      ...env.Auth0.clientId,
-      ...env.API.audience,
-      httpInterceptor: {
-        allowedList: [
-          `${env.API.audience.audience}/del-my-showlike`,
-          `${env.API.audience.audience}/update-my-viewer`,
-          `${env.API.audience.audience}/my-viewer`,
-          `${env.API.audience.audience}/my-admin`,
-          `${env.API.audience.audience}/login`,
-          `${env.API.audience.audience}/register`
-        ]
-      }
-    }),
+    // AuthModule.forRoot({
+    //   // ...env.Auth0.domain,
+    //   ...env.Auth0.clientId,
+    //   ...env.API.audience,
+    //   httpInterceptor: {
+    //     allowedList: [
+    //       `${env.API.DATA_API}/del-my-showlike`,
+    //       `${env.API.audience.audience}/update-my-viewer`,
+    //       `${env.API.audience.audience}/my-viewer`,
+    //       `${env.API.audience.audience}/my-admin`,
+    //       `${env.API.audience.audience}/login`,
+    //       `${env.API.audience.audience}/register`
+    //     ]
+    //   }
+    // }),
     BrowserAnimationsModule,
   ],
   providers: [
