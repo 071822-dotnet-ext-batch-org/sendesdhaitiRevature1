@@ -20,15 +20,26 @@ DROP TABLE IF EXISTS Wallets_Viewer;
 DROP TABLE IF EXISTS Viewers;
 DROP TABLE IF EXISTS Admins;
 
+----------------------USER AUTH Section------------------------
+Create table MintSoupTokens(
+    ID uniqueidentifier not null default(newid()) 
+    Email nvarchar(100) unique not null,
+    Password nvarchar(200) not null,
+    DateSignedUp DateTime not null default(getdate())
+    LastSignedIn DateTime not null default(getdate())
+    Constraint PK_MintSoupToken PRIMARY KEY (ID, Email)
+);
+
+
 ----------------------Viewer Section------------------------
 Create table Viewers(
-ID uniqueidentifier not null default(newid()) primary key, --unique
-Auth0ID nvarchar(1000) not null,
+ID uniqueidentifier not null default(newid()), --unique
+FK_MINTSOUPTOKEN nvarchar(1000) not null,
 Fn nvarchar(100) default('') null,
 Ln nvarchar(100) default('') null,
-Email nvarchar(100) unique not null, --unique
+FK_Email nvarchar(100) unique not null, --unique
 Image nvarchar(150) default('') null,
-Username nvarchar(100) unique null, --unique
+Username nvarchar(100) default('') not null, --unique
 AboutMe nvarchar(200) default('')  null,
 StreetAddy nvarchar(100) default('') null,
 City nvarchar(100) default('') null,
@@ -40,6 +51,8 @@ MembershipStatus nvarchar(30) not null default('Viewer'),
 
 DateSignedUp DateTime not null default(getdate()),
 LastSignedIn DateTime not null default(getdate()),
+Constraint FK_MintSoupToken foreign key MintSoupTokens(ID, Email)
+Constraint PK_Viewer PRIMARY KEY (ID)
 );
 
 Create table Admins(

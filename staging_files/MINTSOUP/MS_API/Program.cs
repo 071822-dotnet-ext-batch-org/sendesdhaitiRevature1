@@ -65,7 +65,7 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("mintsoup: read-write", p =>
+    options.AddPolicy("read: mintsoup", p =>
         p.RequireAuthenticatedUser());
 });
 

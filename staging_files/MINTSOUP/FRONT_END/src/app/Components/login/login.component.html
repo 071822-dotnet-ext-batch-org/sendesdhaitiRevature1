@@ -1,29 +1,4 @@
-<!-- <p>To sign back in, enter your email below!</p> -->
-<!-- <form action="">
-    <table>
-        <tr>
-            <th></th><th>Inputs</th>
-        </tr>
-        <tr>
-            <td>Email: </td><td><input type="text" placeholder="example@email.com" name="email" ></td>
-        </tr>
-        <tr>
-            <td>
-                <label class="container">stay signed in
-                </label>
-            </td>
-            <td>
-                <span class="checkmark"></span>
-                <input type="checkbox">
 
-            </td>
-        </tr>
-        <tr>
-            <td></td>
-            <td><button type="submit" (click)="login()">login</button></td>
-        </tr>
-    </table>
-</form> -->
 
 <button routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page" *ngIf="(auth.isAuthenticated$ | async) == false" (click)="login()">
     <img src="../../../assets/ICONS/login-color.svg" alt="">
