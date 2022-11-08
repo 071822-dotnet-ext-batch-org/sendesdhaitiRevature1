@@ -18,14 +18,71 @@ using System.Data.SqlClient;
 namespace MINTSOUP.TokenAPI.Controllers
 {
     [Route("mint-soup.token")]
-    public class MyToken : Controller, IMyToken
+    public class MyToken : Controller
     {
         private readonly Iuserservice user;
         public MyToken(Iuserservice _user)
         {
             this.user = _user;
         }
+
+        public class Models
+        {
+            public class SignUpDTO
+            {
+                public string email {get;set;}
+                public string username {get;set;}
+                public string password {get;set;}
+                public SignUpDTO(){email = "";username = ""; password = "";}
+                public SignUpDTO(string e, string u, string p)
+                {
+                    this.email = e;
+                    this.username = u;
+                    this.password = p;
+                }
+            }
+
+            public class LoginDTO_w_username
+            {
+                public string username {get;set;}
+                public string password {get;set;}
+                public LoginDTO_w_username(){username = ""; password = "";}
+                public LoginDTO_w_username( string u, string p)
+                {
+                    this.username = u;
+                    this.password = p;
+                }
+            }
+
+            public class LoginDTO_w_email
+            {
+                public string email {get;set;}
+                public string password {get;set;}
+                public LoginDTO_w_email(){email = ""; password = "";}
+                public LoginDTO_w_email( string e, string p)
+                {
+                    this.email = e;
+                    this.password = p;
+                }
+            }
+
+            public class Change_PasswordDTO
+            {
+                public string email {get;set;}
+                public string myMSToken {get;set;}
+                public string newpassword {get;set;}
+                public Change_PasswordDTO(){email = ""; myMSToken = ""; newpassword = "";}
+                public Change_PasswordDTO( string e, string token, string p)
+                {
+                    this.email = e;
+                    this.myMSToken = token;
+                    this.newpassword = p;
+                }
+            }
+            
+        }
         
+
 
 
 
@@ -90,36 +147,181 @@ namespace MINTSOUP.TokenAPI.Controllers
             }
         }
 
-        // GET: api/values
-        [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
-        {
-            var _str = new string[] { "value1", "value2" };
-            return Ok(_str);
-        }
 
         // GET api/values/5
-        [HttpGet("{email}")]
-        public async Task<ActionResult<string?>> Get(string email)
+        [HttpGet("check-email/{email}")]
+        public async Task<ActionResult<bool>> CHECK_IF_EMAIL_EXISTS(string email)
         {
             if ( token.IsValidEmail(email) == true)
             {
                 //this checks if the user exists and returns the user's role if so
-                (userservice.CHECKSTATUS, userservice.USERROLE) res = await this.user.CHECK_IF_Viewer_IS_ADMIN_by_Email(email);
+                bool res = await this.user.CHECK_IF_EMAIL_EXISTS(email);
 
                 //this checks which result the check for the user in the database was and returns the result
-                if ((res.Item1 == userservice.CHECKSTATUS.TRUE) && (res.Item2 == userservice.USERROLE.Viewer))
+                if (res == true)
                 {
-                    return Ok(new MyToken.token().Generate_MINTSOUP_JWTtoken(email, "false"));
+                    return Ok(true);
                 }
-                else if ((res.Item1 == userservice.CHECKSTATUS.TRUE) && (res.Item2 == userservice.USERROLE.Admin))
+                else
                 {
-                    return Ok(new MyToken.token().Generate_MINTSOUP_JWTtoken(email, "true"));
+                    // return Ok(new MyToken.token().Generate_MINTSOUP_JWTtoken(email, "true"));
+                    return NotFound(false);
                 }
-                else return NotFound(null);
             }
-            else return NotFound(null);
+            else return BadRequest($"The email input of '{email}' is not a valid email");
         }
+
+        [HttpGet("check-username/{username}")]
+        public async Task<ActionResult<bool>> CHECK_IF_USERNAME_EXISTS(string username)
+        {
+            //this checks if the user exists and returns the user's role if so
+            bool res = await this.user.CHECK_IF_EMAIL_EXISTS(username);
+
+            //this checks which result the check for the user in the database was and returns the result
+            if (res == true)
+            {
+                return Ok(true);
+            }
+            else
+            {
+                // return Ok(new MyToken.token().Generate_MINTSOUP_JWTtoken(email, "true"));
+                return NotFound(false);
+            }
+        }
+
+        [HttpPost("signup")]
+        public async Task<ActionResult<bool>> CREATE_USER_ON_SIGNUP( Models.SignUpDTO dto)
+        {
+            if(ModelState.IsValid)
+            {
+                //this checks if the user exists and returns the user's role if so
+                bool res = await this.user.CHECK_IF_EMAIL_EXISTS(dto.email);
+
+                //this checks which result the check for the user in the database was and returns the result
+                if (res == true)
+                {
+                    return Conflict($"{res} at {DateTime.Now} - User could not be created because the user with email '{dto.email}' already exists");
+                }
+                else
+                {
+                    // return Ok(new MyToken.token().Generate_MINTSOUP_JWTtoken(email, "true"));
+                    res = await this.user.CREATE_USER_ON_SIGNUP(dto.email, dto.username, dto.password);
+                    if(res == true)
+                    {
+                        return Created("token",false);
+                    }
+                    else
+                    {
+                        return Conflict($"{res} at {DateTime.Now} - User could not be created due to an error with email '{dto.email}' and username '{dto.username}'");
+                    }
+                }
+            }
+            else
+            {
+                return BadRequest("That was a bad request");
+            }
+        }
+
+        [HttpPost("login-username")]
+        public async Task<ActionResult<string?>> LOGIN_w_username( Models.LoginDTO_w_username dto)
+        {
+            if(ModelState.IsValid)
+            {
+                //this checks if the user exists and returns the user's role if so
+                bool res = await this.user.CHECK_IF_USERNAME_EXISTS(dto.username);
+
+                //this checks which result the check for the user in the database was and returns the result
+                if (res != true)
+                {
+                    return NotFound($"{res} at {DateTime.Now} - User could not be found with username '{dto.username}'");
+                }
+                else
+                {
+                    // return Ok(new MyToken.token().Generate_MINTSOUP_JWTtoken(email, "true"));
+                    string? myToken = await this.user.LOGIN_USER_to_get_TOKEN_w_username(dto.username, dto.password);
+                    if(myToken != null)
+                    {
+                        return Ok(myToken);
+                    }
+                    else
+                    {
+                        return Conflict(myToken);
+                    }
+                }
+            }
+            else
+            {
+                return BadRequest("That was a bad request");
+            }
+        }
+
+        [HttpPost("login-email")]
+        public async Task<ActionResult<string?>> LOGIN_w_email( Models.LoginDTO_w_email dto)
+        {
+            if(ModelState.IsValid)
+            {
+                //this checks if the user exists and returns the user's role if so
+                bool res = await this.user.CHECK_IF_EMAIL_EXISTS(dto.email);
+
+                //this checks which result the check for the user in the database was and returns the result
+                if (res != true)
+                {
+                    return NotFound($"{res} at {DateTime.Now} - User could not be found with email '{dto.email}'");
+                }
+                else
+                {
+                    // return Ok(new MyToken.token().Generate_MINTSOUP_JWTtoken(email, "true"));
+                    string? myToken = await this.user.LOGIN_USER_to_get_TOKEN_w_email(dto.email, dto.password);
+                    if(myToken != null)
+                    {
+                        return Ok(myToken);
+                    }
+                    else
+                    {
+                        return Conflict(myToken);
+                    }
+                }
+            }
+            else
+            {
+                return BadRequest("That was a bad request");
+            }
+        }
+
+        // [HttpPost("change-password")]
+        // public async Task<ActionResult<string?>> CHANGE_PASSWORD_w_email_and_token( Models.Change_PasswordDTO dto)
+        // {
+        //     if(ModelState.IsValid)
+        //     {
+        //         //this checks if the user exists and returns the user's role if so
+        //         bool res = await this.user.CHECK_IF_EMAIL_EXISTS(dto.email);
+
+        //         //this checks which result the check for the user in the database was and returns the result
+        //         if (res != true)
+        //         {
+        //             return NotFound($"{res} at {DateTime.Now} - User could not be found with email '{dto.email}'");
+        //         }
+        //         else
+        //         {
+        //             // return Ok(new MyToken.token().Generate_MINTSOUP_JWTtoken(email, "true"));
+        //             string? myToken = await this.user.LOGIN_USER_to_get_TOKEN_w_email(dto.email, dto.password);
+        //             if(myToken != null)
+        //             {
+        //                 return Ok(myToken);
+        //             }
+        //             else
+        //             {
+        //                 return Found(myToken);
+        //             }
+        //         }
+        //     }
+        //     else
+        //     {
+        //         return BadRequest("That was a bad request");
+        //     }
+        // }
+
+
 
         // POST api/values
         [HttpPost]
