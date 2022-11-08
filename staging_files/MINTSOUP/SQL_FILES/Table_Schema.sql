@@ -22,36 +22,37 @@ DROP TABLE IF EXISTS Admins;
 
 ----------------------USER AUTH Section------------------------
 Create table MintSoupTokens(
-    ID uniqueidentifier not null default(newid()) 
+    ID uniqueidentifier not null default(newid()),
+    MSToken nvarchar(1000) unique not null,
     Email nvarchar(100) unique not null,
+    Username nvarchar(100) unique not null,
     Password nvarchar(200) not null,
-    DateSignedUp DateTime not null default(getdate())
-    LastSignedIn DateTime not null default(getdate())
-    Constraint PK_MintSoupToken PRIMARY KEY (ID, Email)
+    DateSignedUp DateTime not null default(getdate()),
+    LastSignedIn DateTime not null default(getdate()),
+    Constraint PK_MintSoupToken PRIMARY KEY (ID, Email, MSToken)
 );
 
 
 ----------------------Viewer Section------------------------
 Create table Viewers(
 ID uniqueidentifier not null default(newid()), --unique
-FK_MINTSOUPTOKEN nvarchar(1000) not null,
-Fn nvarchar(100) default('') null,
-Ln nvarchar(100) default('') null,
-FK_Email nvarchar(100) unique not null, --unique
-Image nvarchar(150) default('') null,
+FK_MSToken nvarchar(1000) not null,
+Fn nvarchar(100) default('') not null,
+Ln nvarchar(100) default('') not null,
+Image nvarchar(150) default('') not null,
 Username nvarchar(100) default('') not null, --unique
-AboutMe nvarchar(200) default('')  null,
-StreetAddy nvarchar(100) default('') null,
-City nvarchar(100) default('') null,
-State nvarchar(100) default('') null,
-Country nvarchar(100) default('') null,
-AreaCode int default('') null,
+AboutMe nvarchar(200) default('')  not null,
+StreetAddy nvarchar(100) default('') not null,
+City nvarchar(100) default('') not null,
+State nvarchar(100) default('') not null,
+Country nvarchar(100) default('') not null,
+AreaCode int default('') not null,
 Role nvarchar(30) not null default('Viewer'),
 MembershipStatus nvarchar(30) not null default('Viewer'),
 
 DateSignedUp DateTime not null default(getdate()),
 LastSignedIn DateTime not null default(getdate()),
-Constraint FK_MintSoupToken foreign key MintSoupTokens(ID, Email)
+Constraint FK_MSToken foreign key MintSoupTokens(ID),
 Constraint PK_Viewer PRIMARY KEY (ID)
 );
 

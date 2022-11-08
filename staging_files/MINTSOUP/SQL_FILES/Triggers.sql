@@ -1,5 +1,12 @@
 ---------------------------VIEWER SECTION-----------------------------
 --The viewer Signs up and has their wallet automatically made for them
+
+CREATE TRIGGER createViewer_when_a_Token_is_created
+ON [dbo].[MintSoupTokens]
+AFTER inserted
+AS
+	INSERT INTO Viewers
+
 CREATE TRIGGER truncate wallet_when_Viewers_is_truncated
 ON [dbo].[Viewers]
 AFTER truncate
