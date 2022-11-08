@@ -1,0 +1,19 @@
+*{
+    display: block;
+}
+form{
+    display: grid;
+    padding: 10px 0px 10px 0px;
+    justify-content: center;
+}
+div {
+    margin: 5px auto 5px auto;
+}
+button{
+    margin: auto;
+    padding: 10px 0 10px 0;
+    width: 50%;
+    border:.5px solid black;
+    border-radius: 20px 20px 20px 20px ;
+    box-shadow: 2px 1px 2px 1px rgba(67, 0, 40, 0.82);
+}

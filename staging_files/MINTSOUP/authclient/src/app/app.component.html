@@ -1,0 +1,18 @@
+<div class="GUI">
+  <app-nav></app-nav>
+  <div class="PAGE">
+    PAGE
+    <div class="auth_section">
+      <div class="TABS ">
+        <button class="TAB TAB1 " name="Shown" (click)="show_or_focus_login_and_hide_signup()">Sign In</button>
+        <button class="TAB TAB2 " name="Hidden" (click)="show_or_focus_signup_and_hide_login()">Sign Up</button>
+      </div>
+      <div id="auth_page-screen">
+        <app-login id="login" ></app-login>
+        <app-register id="signup" ></app-register>
+      </div>
+
+    </div>
+  </div>
+  <app-policies></app-policies>
+</div>
