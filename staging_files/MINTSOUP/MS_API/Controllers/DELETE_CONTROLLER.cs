@@ -33,53 +33,53 @@ namespace MS_API.Controllers
         /// <summary>
         /// This is method lets a viewer delete their viewer account with their aith0ID
         /// </summary>
-        /// <param name="auth0ID"></param>
+        /// <param name="MSToken"></param>
         /// <returns>returns an async action result as a full Viewer if not deleted and an empty viewer if deleted successfully</returns>
         [HttpDelete("del-my-viewer")]
-        public async Task<ActionResult<string>> DELETE_myViewer_by_auth0ID(Models.GET_with_anAuth0ID_DTO delmyViewerDTO)
+        public async Task<ActionResult<string>> DELETE_myViewer_by_MSToken(Models.GET_with_anMSToken_DTO delmyViewerDTO)
         {
             if(ModelState.IsValid)
             {
-                CHECK_AccessLayer.CHECKSTATUS check = await this._CheckRepo.CHECK_Viewer_by_auth0ID(delmyViewerDTO?.Auth0ID);
+                CHECK_AccessLayer.CHECKSTATUS check = await this._CheckRepo.CHECK_Viewer_by_MSToken(delmyViewerDTO?.MSToken);
     
-                if(check.ToString() == "FALSE") { return NotFound($"The user account with '{delmyViewerDTO?.Auth0ID}' was not found"); }
-                else if(check.ToString() == "NO_AUTH0") { return BadRequest($"you did not had an id '{delmyViewerDTO?.Auth0ID}'"); }
+                if(check.ToString() == "FALSE") { return NotFound($"The user account with '{delmyViewerDTO?.MSToken}' was not found"); }
+                else if(check.ToString() == "NO_AUTH0") { return BadRequest($"you did not had an id '{delmyViewerDTO?.MSToken}'"); }
                 
-                Console.WriteLine($"\n\n\t\t An attempt to delete a viewer by  '{delmyViewerDTO?.Auth0ID}' at {DateTime.Now} was '{check.ToString()}'  \n");
-                check = await this._DElREPO.DELETE_myViewer_by_auth0ID(delmyViewerDTO?.Auth0ID);
+                Console.WriteLine($"\n\n\t\t An attempt to delete a viewer by  '{delmyViewerDTO?.MSToken}' at {DateTime.Now} was '{check.ToString()}'  \n");
+                check = await this._DElREPO.DELETE_myViewer_by_MSToken(delmyViewerDTO?.MSToken);
                 return Ok(check.ToString());
             }
             else
             {
                 return BadRequest("That was a bad request");
             }
-        }//End GET_myViewer_by_auth0ID
+        }//End GET_myViewer_by_MSToken
 
 
 //-------------------------------------------------------DEL SHOW'S LIKE SECTION----------------------------------------------------
         /// <summary>
         /// This is method lets a viewer delete their viewer account with their aith0ID
         /// </summary>
-        /// <param name="auth0ID"></param>
+        /// <param name="MSToken"></param>
         /// <returns>returns an async action result as a full Viewer if not deleted and an empty viewer if deleted successfully</returns>
         [HttpDelete("del-my-showlike")]
-        public async Task<ActionResult<string>> DELETE_myLike_on_ShowSession_by_auth0ID(Models.GET_anOBJ_by_1GUID_with_auth0ID delmyLikeDTO)
+        public async Task<ActionResult<string>> DELETE_myLike_on_ShowSession_by_MSToken(Models.GET_anOBJ_by_1GUID_with_MSToken delmyLikeDTO)
         {
             if(ModelState.IsValid)
             {
-                CHECK_AccessLayer.CHECKSTATUS check = await this._CheckRepo.CHECK_Viewer_by_auth0ID(delmyLikeDTO?.Auth0ID);
+                CHECK_AccessLayer.CHECKSTATUS check = await this._CheckRepo.CHECK_Viewer_by_MSToken(delmyLikeDTO?.MSToken);
     
-                if(check.ToString() == "FALSE") { return NotFound($"The user account with '{delmyLikeDTO?.Auth0ID}' was not found"); }
-                else if(check.ToString() == "NO_AUTH0") { return BadRequest($"you do not have an id - '{delmyLikeDTO?.Auth0ID}'"); }
+                if(check.ToString() == "FALSE") { return NotFound($"The user account with '{delmyLikeDTO?.MSToken}' was not found"); }
+                else if(check.ToString() == "NO_AUTH0") { return BadRequest($"you do not have an id - '{delmyLikeDTO?.MSToken}'"); }
 
-                check = await this._CheckRepo.CHECK_if_there_are_ANY_LikesOnShowSession(delmyLikeDTO?.Auth0ID, delmyLikeDTO?.OBJID);
+                check = await this._CheckRepo.CHECK_if_there_are_ANY_LikesOnShowSession(delmyLikeDTO?.MSToken, delmyLikeDTO?.OBJID);
 
-                if(check.ToString() == "FALSE") { return NotFound($"The user's like with '{delmyLikeDTO?.Auth0ID}' was not found"); }
-                else if(check.ToString() == "NO_AUTH0") { return BadRequest($"you do not have an id - '{delmyLikeDTO?.Auth0ID}'"); }
+                if(check.ToString() == "FALSE") { return NotFound($"The user's like with '{delmyLikeDTO?.MSToken}' was not found"); }
+                else if(check.ToString() == "NO_AUTH0") { return BadRequest($"you do not have an id - '{delmyLikeDTO?.MSToken}'"); }
 
 
-                Console.WriteLine($"\n\n\t\t An attempt to delete a viewer's like on the session by  '{delmyLikeDTO?.Auth0ID}' at {DateTime.Now} was '{check.ToString()}'  \n");
-                check = await this._DElREPO.DELETE_myLike_on_ShowSession_by_auth0ID(delmyLikeDTO?.Auth0ID, delmyLikeDTO?.OBJID);
+                Console.WriteLine($"\n\n\t\t An attempt to delete a viewer's like on the session by  '{delmyLikeDTO?.MSToken}' at {DateTime.Now} was '{check.ToString()}'  \n");
+                check = await this._DElREPO.DELETE_myLike_on_ShowSession_by_MSToken(delmyLikeDTO?.MSToken, delmyLikeDTO?.OBJID);
                 Console.WriteLine($"\n\n\t\t The attempt was '{check.ToString()}'  \n");
 
                 return Ok(check.ToString());
@@ -88,7 +88,7 @@ namespace MS_API.Controllers
             {
                 return BadRequest("That was a bad request");
             }
-        }//End DELETE_myLike_on_ShowSession_by_auth0ID
+        }//End DELETE_myLike_on_ShowSession_by_MSToken
 
 
 

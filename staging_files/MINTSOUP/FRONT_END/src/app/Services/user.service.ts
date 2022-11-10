@@ -19,6 +19,9 @@ export class UserService {
     this.auth;
   }
 
+  public static heldChecks:boolean;
+
+
   public API1_main_data: string = env.API1;
   public API2_user_data: string = env.API2;
 
@@ -27,22 +30,38 @@ export class UserService {
     return this.auth.loginWithRedirect()
   }
 
-  public createViewer_On_SignUp(mintsoupID?:string, email?:string ) : Observable<any>
-  {
-    return this.http.post(this.API1_main_data + "/register", JSON.stringify({"mintsoupID": mintsoupID, "email": email}));
-  }
+  // public CHECK_IF_EMAIL_EXISTS(email: string) : boolean
+  // {
+  //   this.http.get<boolean>(this.API2_user_data + `check-email/${email}`).subscribe((data:boolean) => UserService.heldChecks = data)
+  //   return UserService.heldChecks;
+  // }
+
+  // public CHECK_IF_USERNAME_EXISTS(username: string) : boolean
+  // {
+  //   this.http.get<boolean>(this.API2_user_data + `check-username/${username}`).subscribe((data:boolean) => UserService.heldChecks = data)
+  //   return UserService.heldChecks;
+  // }
+
+  // public SignUp(email?:string, username?:string, password?:string ) : Observable<boolean>
+  // {
+  //   return this.http.post<boolean>(this.API1_main_data + "/signup", JSON.stringify({"email": email, "username": username, "password": password}));
+  // }
+
+  // public Login_email(email?:string, password?:string) : Observable<any>
+  // {
+  //   return this.http.post<any>(this.API2_user_data + `login-email`, JSON.stringify({"email":email, "password":password}))
+  // }
+
+  // public Login_username(username?:string, password?:string) : Observable<any>
+  // {
+  //   return this.http.post<any>(this.API2_user_data + `login-username`, JSON.stringify({"username":username, "password":password}))
+  // }
+
+  // public CHANGE_PASSWORD()
+  // {
+    
+  // }
  
 
-
-  public GET_or_Create_myViewer(mintsoupID?: string, email?: string) : Observable<Viewer>
-  {
-    let res: any = null;
-    console.log(`checking GET_or_Create_myViewer ${mintsoupID} and ${email}`)
-    this.createViewer_On_SignUp(mintsoupID, email).subscribe((check: any) => {
-      console.log(`This is the return for the create viewer action ${check}`)
-    });
-    res = this.http.post(this.API1_main_data + "/my-viewer", JSON.stringify({"mintsoupID": mintsoupID}));
-    return res
-  }
 
 }

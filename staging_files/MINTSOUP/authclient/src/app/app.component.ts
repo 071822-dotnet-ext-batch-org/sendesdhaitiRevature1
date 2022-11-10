@@ -6,10 +6,15 @@ import { Component , OnInit} from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'authclient';
+  title = 'MINT SOUP';
+
+
   ngOnInit(): void {
     this.changeElementClass_by_ID_and_CLASSNAME("signup", "Hidden");
   }
+
+
+
   async changeElementClass_by_ID_and_CLASSNAME(element:string, elementclassName:string){
     let ele = document.getElementById(element);
     if(ele != null)

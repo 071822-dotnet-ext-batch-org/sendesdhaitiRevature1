@@ -31,46 +31,7 @@ namespace MS_API.Controllers
         }
 
 //---------------------------------------------------CREATE VIEWER SECTION-----------------------------------------------------------------
-        /// <summary>
-        /// This is the method to test if a viewer successfully gets their account with their aith0ID
-        /// </summary>
-        /// <param name="auth0ID"></param>
-        /// <returns>returns an async action result as a Viewer</returns>
-        [HttpPost("register")]
-        public async Task<ActionResult<bool>> CREATE_myViewer_by_auth0ID(Models.CREATE_Viewer_on_signUP_with_auth0ID_DTO CREATE_VIEWER_DTO)
-        {
-            if(ModelState.IsValid)
-            {
-                CHECK_AccessLayer.CHECKSTATUS checkAdmin = await this._check_Repo.CHECK_Admin_by_Email(CREATE_VIEWER_DTO?.Auth0ID);
-                CHECK_AccessLayer.CHECKSTATUS checkViewer = await this._check_Repo.CHECK_Viewer_by_Email(CREATE_VIEWER_DTO?.Auth0ID);
-                
-                //Check if already an admin
-                if((checkAdmin == CHECK_AccessLayer.CHECKSTATUS.TRUE)){
-                    Console.WriteLine($"\n\n\t The user with email {CREATE_VIEWER_DTO?.Email} is already an admin");
-                    return Ok($"Welcome back admin {CREATE_VIEWER_DTO?.Email}");
-                }
-
-                //Check if already a viewer
-                if((checkViewer == CHECK_AccessLayer.CHECKSTATUS.TRUE)){
-                    Console.WriteLine($"\n\n\t The user with email {CREATE_VIEWER_DTO?.Email} is already a viewer");
-                    return Ok($"Welcome back viewer {CREATE_VIEWER_DTO?.Email}");
-                }
-
-                (Models.Viewer?, CHECK_AccessLayer.CHECKSTATUS) viewer = await this._create_Logic.CREATE_myViewer_by_auth0ID(CREATE_VIEWER_DTO);
-                if(viewer.Item2.ToString() == "SAVED")
-                {
-                    return Created("register",true);
-                }
-                else
-                {
-                    return Conflict(viewer.Item2.ToString());
-                }
-            }
-            else
-            {
-                return BadRequest("That was a bad request");
-            }
-        }//End CREATE_myViewer_by_auth0ID
+    //Viewer is auto-generated when user signs up from the token api
         
         
 

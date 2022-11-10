@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment as env } from 'src/environments/environment';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { LoginDTO } from '../Components/login/login.component';
 import { Observable, from, of, throwError, catchError, retry} from 'rxjs';
 import { map } from 'rxjs';
@@ -14,27 +14,51 @@ export class UserService {
   // private MyToken?:string;
 
   constructor(private http: HttpClient) { }
-
-  check_with_email(email:string): Observable<boolean>{
-    return  this.http.get<boolean>(this.API + email, {
-      observe: 'body',
-      responseType:'json'
+  static heldChecks:boolean;
+  public httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin':'*',
+      'X-Requested-With': 'XMLHttpRequest'
     })
-  }
-  check_with_username(username:string): Observable<boolean>{
-      return this.http.get<boolean>(this.API + username, {
-        observe: 'body',
-        responseType:'json'
-      })
+   };
+
+
+  
+
+  public CHECK_IF_EMAIL_EXISTS(email: string) : any
+  {
+    this.http.get<any>(this.API + "check-email/" + encodeURIComponent(email)).subscribe((data:any) => {UserService.heldChecks = data; console.log(data)})
+    // var xhr = new XMLHttpRequest();
+    // xhr.open('get', this.API + `check-email/${encodeURIComponent(email)}`);
+    // xhr.withCredentials = true;
+    return UserService.heldChecks;
   }
 
-  login_email(login_form_email:string, password:string): Observable<string>
+  public CHECK_IF_USERNAME_EXISTS(username: string) : any
   {
-   return this.http.post<string>(this.API, {"email": login_form_email, "password": password}  )
+    this.http.get<any>(this.API + `check-username/${encodeURIComponent(username)}`).subscribe((data:any) => UserService.heldChecks = data)
+    return UserService.heldChecks;
   }
 
-  login_username(login_form_username:string, password:string): Observable<string>
+  public SignUp(_email?:string, _username?:string, _password?:string ) : Observable<boolean>
   {
-   return this.http.post<string>(this.API, {"username": login_form_username, "password": password}  )
+    return this.http.post<boolean>(this.API + "signup", JSON.stringify({email: _email, username: _username, password: _password}));
   }
+
+  public Login_email(_email?:string, _password?:string) : Observable<any>
+  {
+    return this.http.post<any>(this.API + `login-email`, JSON.stringify({email: _email, password: _password}))
+  } 
+
+  public Login_username(_username?:string, _password?:string) : Observable<any>
+  {
+    return this.http.post<any>(this.API + `login-username`, JSON.stringify({username: _username, password: _password}))
+  }
+
+  public CHANGE_PASSWORD()
+  {
+    
+  }
+
 }

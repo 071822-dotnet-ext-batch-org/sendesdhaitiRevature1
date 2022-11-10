@@ -1,4 +1,4 @@
-<form action="submit">
+<form  [formGroup]="loginform">
     <div>
         <fieldset>
             <legend>Login with your email or username:</legend>
@@ -19,13 +19,13 @@
     </div>
 
     <div id="email">
-        <label class="email" for="email">Email: </label> <input [(ngModel)]="form_input.Email" name="email" class="email email_input" placeholder="Enter you email for updates..." type="email">
+        <label class="email" for="email">Email: </label> <input name="email" formControlName="email" class="email email_input" placeholder="Enter you email for updates..." type="email">
     </div>
     <div id="username">
-        <label class="username" for="username">Username: </label><input [(ngModel)]="form_input.Username" name="username" class="username username_input" placeholder="Enter you username for an identity..."  type="text">
+        <label class="username" for="username">Username: </label><input  name="username"  formControlName="username" class="username username_input" placeholder="Enter you username for an identity..."  type="text">
     </div>
     <div id="password">
-        <label class="password" for="password">Password: </label><input  [(ngModel)]="form_input.Password" name="password" placeholder="Enter you password for security..." class="password password_input" type="password">
+        <label class="password" for="password">Password: </label><input  name="password" formControlName="password" placeholder="Enter you password for security..." class="password password_input" type="password">
     </div>
     <button name="authenticatebtn" (click)="login()">Login</button>
 
