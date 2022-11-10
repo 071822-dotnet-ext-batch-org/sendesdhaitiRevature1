@@ -1,32 +1,39 @@
 ---------------------------VIEWER SECTION-----------------------------
 --The viewer Signs up and has their wallet automatically made for them
-CREATE TRIGGER truncate wallet_when_Viewers_is_truncated
-ON [dbo].[Viewers]
-AFTER truncate
-AS
-	truncate table Wallets_Viewer;
-	truncate table Admins;
-GO
 
+CREATE TRIGGER createViewer_when_a_Token_is_created
+ON [dbo].[MintSoupTokens]
+AFTER INSERT
+AS
+	INSERT INTO Viewers (FK_MSToken, Email, Username) Values( (select ID from inserted), (select Email from inserted), (select Username from inserted))
+Go
+
+
+CREATE TRIGGER updateViewer_when_a_Token_is_changed
+ON [dbo].[MintSoupTokens]
+AFTER UPDATE
+AS
+	UPDATE Viewers SET Email = (select Email from inserted), Username = (select Username from inserted) where Email = (select Email from inserted);
+	UPDATE Admins SET Email = (select Email from inserted), Username = (select Username from inserted) where Email = (select Email from inserted);
+Go
 
 
 CREATE TRIGGER createPersonalWallet_when_viewerIs_Created
 ON [dbo].[Viewers]
 AFTER INSERT
 AS 
-	INSERT INTO Wallets_Viewer(FK_ViewerID_WalletOwner, Balance) VALUES((SELECT ID FROM inserted), 0);
+	INSERT INTO Wallets_Viewer (FK_ViewerID_WalletOwner, Balance) VALUES((SELECT ID FROM inserted), 0);
 GO
 
 CREATE TRIGGER delete_wallets_AND_other_acounts_when_ViewerIs_Deleted
 ON [dbo].[Viewers]
 AFTER DELETE
 AS 
-	
-	DELETE from ShowDonations where FK_Wallets_ViewerID = (SELECT ID FROM inserted);
-	DELETE from Admins where Auth0ID = (SELECT Auth0ID FROM inserted);
-	DELETE from Wallets_Viewer where FK_ViewerID_WalletOwner = (SELECT ID FROM inserted);
-	DELETE from Wallets_Show where FK_ViewerID_WalletOwner = (SELECT ID FROM inserted);
-	DELETE from Shows where FK_ViewerID_Owner = (SELECT ID FROM inserted);
+	DELETE from ShowDonations where FK_Wallets_ViewerID = (SELECT ID FROM deleted);
+	DELETE from Admins where FK_MSToken = (SELECT ID FROM deleted);
+	DELETE from Wallets_Viewer where FK_ViewerID_WalletOwner = (SELECT ID FROM deleted);
+	DELETE from Wallets_Show where FK_ViewerID_WalletOwner = (SELECT ID FROM deleted);
+	DELETE from Shows where FK_ViewerID_Owner = (SELECT ID FROM deleted);
 GO
 
 CREATE TRIGGER updatePersonalWallet_when_donationIS_Created
@@ -50,7 +57,7 @@ CREATE TRIGGER delShowWallet_when_showIs_Deleted
 ON [dbo].[Shows]
 AFTER DELETE
 AS 
-    DELETE FROM Wallets_Show WHERE FK_ShowID_WalletShow = (SELECT ID FROM inserted) ;
+    DELETE FROM Wallets_Show WHERE FK_ShowID_WalletShow = (SELECT ID FROM deleted) ;
 GO
 
 
@@ -108,7 +115,7 @@ AFTER DELETE
 AS 
 	UPDATE [dbo].[ShowSessions]
 	SET Likes = Likes - 1
-	WHERE ID = (SELECT FK_ShowSessionID FROM inserted);
+	WHERE ID = (SELECT FK_ShowSessionID FROM deleted);
 GO
 
 ---------------------------SHOW COMMENT LIKES SECTION-----------------------------
@@ -128,7 +135,7 @@ AFTER DELETE
 AS 
 	UPDATE [dbo].[ShowComments]
 	SET Likes = Likes - 1
-	WHERE ID = (SELECT FK_ShowCommentID FROM inserted);
+	WHERE ID = (SELECT FK_ShowCommentID FROM deleted);
 GO
 
 ---------------------------SHOW COMMENTS SECTION-----------------------------
@@ -149,7 +156,7 @@ AFTER DELETE
 AS 
 	UPDATE [dbo].[ShowSessions]
 	SET Comments = Comments - 1
-	WHERE ID = (SELECT FK_ShowSessionID FROM inserted);
+	WHERE ID = (SELECT FK_ShowSessionID FROM deleted);
 GO
 
 ---------------------------SHOW SUBSCRIBERS SECTION-----------------------------
@@ -171,5 +178,5 @@ AFTER DELETE
 AS
 	UPDATE [dbo].[Shows]
 	SET  Subscribers = Subscribers - 1
-	WHERE ID = (SELECT FK_ShowID_Subscribie from inserted)
+	WHERE ID = (SELECT FK_ShowID_Subscribie from deleted)
 GO

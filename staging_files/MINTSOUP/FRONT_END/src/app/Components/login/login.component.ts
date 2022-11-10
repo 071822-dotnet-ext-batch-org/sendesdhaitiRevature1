@@ -22,7 +22,7 @@ export class LoginComponent implements OnInit {
 
   login():void
   {
-    this.userservice.loginwithRedirect();
+    this.userservice.loginwithRedirect()
   }
 }
 

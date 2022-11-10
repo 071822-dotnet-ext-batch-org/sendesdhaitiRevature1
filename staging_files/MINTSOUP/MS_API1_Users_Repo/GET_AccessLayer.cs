@@ -26,10 +26,10 @@ public class GET_AccessLayer : IGET_AccessLayer
     }
 
     //-----------------------GET VIEWER SECTION---------------------
-    public async Task<List<Models.Viewer?>> GET_allViewers(string? Auth0ID)
+    public async Task<List<Models.Viewer?>> GET_allViewers(string? MSToken)
     {
         List<Models.Viewer?> listOfViewers = new List<Models.Viewer?>();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM Viewers Order By LastSignedIn DESC", _conn))
             {
@@ -42,7 +42,7 @@ public class GET_AccessLayer : IGET_AccessLayer
                     {
                         Models.Viewer viewer = new Models.Viewer();
                         viewer.ID = ret.GetGuid(0);
-                        viewer.Auth0ID = ret.GetString(1);
+                        viewer.MSToken = ret.GetString(1);
                         viewer.Fn = ret.GetString(2);
                         viewer.Ln = ret.GetString(3);
                         viewer.Email = ret.GetString(4);
@@ -87,13 +87,13 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of GET_allViewers
 
-    public async Task<Models.Viewer?> GET_myViewer_by_auth0ID(string? Auth0ID)
+    public async Task<Models.Viewer?> GET_myViewer_by_MSToken(string? MSToken)
     {
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Viewers Where Auth0ID = @Auth0ID", _conn))
+            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Viewers Where MSToken = @MSToken", _conn))
             {
-                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
+                command.Parameters.AddWithValue("@MSToken", MSToken);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -101,7 +101,7 @@ public class GET_AccessLayer : IGET_AccessLayer
                 {
                     Models.Viewer viewer = new Models.Viewer();
                     viewer.ID = ret.GetGuid(0);
-                    viewer.Auth0ID = ret.GetString(1);
+                    viewer.MSToken = ret.GetString(1);
                     viewer.Fn = ret.GetString(2);
                     viewer.Ln = ret.GetString(3);
                     viewer.Email = ret.GetString(4);
@@ -142,11 +142,11 @@ public class GET_AccessLayer : IGET_AccessLayer
         {
             return null;
         }
-    }//End of Get_Viewer_by_auth0ID
+    }//End of Get_Viewer_by_MSToken
 
-    public async Task<Models.Viewer?> GET_aViewer_by_aViewerID(string? Auth0ID, Guid? OBJID)
+    public async Task<Models.Viewer?> GET_aViewer_by_aViewerID(string? MSToken, Guid? OBJID)
     {
-        if ((Auth0ID != null) && (OBJID != null))
+        if ((MSToken != null) && (OBJID != null))
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Viewers Where ID = @ID", _conn))
             {
@@ -158,7 +158,7 @@ public class GET_AccessLayer : IGET_AccessLayer
                 {
                     Models.Viewer viewer = new Models.Viewer();
                     viewer.ID = ret.GetGuid(0);
-                    viewer.Auth0ID = ret.GetString(1);
+                    viewer.MSToken = ret.GetString(1);
                     viewer.Fn = ret.GetString(2);
                     viewer.Ln = ret.GetString(3);
                     viewer.Email = ret.GetString(4);
@@ -203,13 +203,13 @@ public class GET_AccessLayer : IGET_AccessLayer
     }//End of GET_aViewer_by_aViewerID
 
     //-----------------------GET ADMIN SECTION---------------------
-    public async Task<Models.Admin?> GET_myAdmin_by_auth0ID(string? Auth0ID)
+    public async Task<Models.Admin?> GET_myAdmin_by_MSToken(string? MSToken)
     {
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Admins Where Auth0ID = @Auth0ID", _conn))
+            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Admins Where MSToken = @MSToken", _conn))
             {
-                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
+                command.Parameters.AddWithValue("@MSToken", MSToken);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -217,7 +217,7 @@ public class GET_AccessLayer : IGET_AccessLayer
                 {
                     Models.Admin admin = new Models.Admin();
                     admin.ID = ret.GetGuid(0);
-                    admin.Auth0ID = ret.GetString(1);
+                    admin.MSToken = ret.GetString(1);
                     admin.Email = ret.GetString(2);
                     if(!ret.IsDBNull(3))
                     {
@@ -248,13 +248,13 @@ public class GET_AccessLayer : IGET_AccessLayer
         {
             return null;
         }
-    }//End of GET_myAdmin_by_auth0ID
+    }//End of GET_myAdmin_by_MSToken
 
     //-----------------------GET FRIEND SECTION---------------------
-    public async Task<List<Models.Friend?>> GET_allFriends(string? Auth0ID)
+    public async Task<List<Models.Friend?>> GET_allFriends(string? MSToken)
     {
         List<Models.Friend?> friendsList = new List<Models.Friend?>();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM Friends Order By FriendUpdateDate DESC", _conn))
             {
@@ -297,14 +297,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of GET_allFriends
 
-    public async Task<List<Models.Friend?>> GET_myFriends_by_ViewerID_Freinder(string? Auth0ID)
+    public async Task<List<Models.Friend?>> GET_myFriends_by_ViewerID_Freinder(string? MSToken)
     {
         List<Models.Friend?> friendsList = new List<Models.Friend?>();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM Friends Where FK_ViewerID_Friender = (select ID from Viewers Where Auth0ID = @Auth0ID) Order By FriendUpdateDate DESC", _conn))
+            using (SqlCommand command = new SqlCommand($"SELECT * FROM Friends Where FK_ViewerID_Friender = (select ID from Viewers Where MSToken = @MSToken) Order By FriendUpdateDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
+                command.Parameters.AddWithValue("@MSToken", MSToken);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -344,9 +344,9 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of Get_myFriends_by_ViewerID_Freinder
 
-    public async Task<Models.Friend?> GET_aFriend_by_ViewerID_Freinder(string? Auth0ID, Guid? FriendID, Guid? viewerID_Friender)
+    public async Task<Models.Friend?> GET_aFriend_by_ViewerID_Freinder(string? MSToken, Guid? FriendID, Guid? viewerID_Friender)
     {
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Friends Where ID = @ID AND FK_ViewerID_Friender = @FK_ViewerID_Friender ", _conn))
             {
@@ -390,10 +390,10 @@ public class GET_AccessLayer : IGET_AccessLayer
 
 
     //-----------------------GET FOLLOWER SECTION---------------------
-    public async Task<List<Models.Follower?>> GET_allFollowers(string? Auth0ID)
+    public async Task<List<Models.Follower?>> GET_allFollowers(string? MSToken)
     {
         List<Models.Follower?> followerList = new List<Models.Follower?>();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM Followers Order By StatusUpdateDate DESC", _conn))
             {
@@ -436,14 +436,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of GET_allFollowers
 
-    public async Task<List<Models.Follower?>> GET_myFollowers_by_ViewerID_Follower(string? Auth0ID)
+    public async Task<List<Models.Follower?>> GET_myFollowers_by_ViewerID_Follower(string? MSToken)
     {
         List<Models.Follower?> followerList = new List<Models.Follower?>();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM Followers Where FK_ViewerID_Follower = (select ID from Viewers Where Auth0ID = @Auth0ID) Order By FollowDate DESC", _conn))
+            using (SqlCommand command = new SqlCommand($"SELECT * FROM Followers Where FK_ViewerID_Follower = (select ID from Viewers Where MSToken = @MSToken) Order By FollowDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
+                command.Parameters.AddWithValue("@MSToken", MSToken);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -483,10 +483,10 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of Get_myFollowers_by_ViewerID_Follower
 
-    public async Task<Models.Follower?> GET_aFollower_by_ViewerID_Follower(string? Auth0ID, Guid? FollowerID,Guid? ViewerID_Follower)
+    public async Task<Models.Follower?> GET_aFollower_by_ViewerID_Follower(string? MSToken, Guid? FollowerID,Guid? ViewerID_Follower)
     {
         Models.Follower follower = new Models.Follower();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Followers Where ID = @ID AND FK_ViewerID_Follower = @FK_ViewerID_Follower ", _conn))
             {
@@ -527,10 +527,10 @@ public class GET_AccessLayer : IGET_AccessLayer
     }//End of GET_aFollower_by_ViewerID_Follower
 
     //-----------------------GET SHOWS SECTION---------------------
-    public async Task<List<Models.Show?>> GET_allShows(string? Auth0ID)
+    public async Task<List<Models.Show?>> GET_allShows(string? MSToken)
     {
         List<Models.Show?> createdShowsList = new List<Models.Show?>();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM Shows Where Order By LastLive DESC", _conn))
             {
@@ -588,14 +588,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of GET_allShows
 
-    public async Task<List<Models.Show?>> GET_myShows_by_ViewerID_Owner(string? Auth0ID)
+    public async Task<List<Models.Show?>> GET_myShows_by_ViewerID_Owner(string? MSToken)
     {
         List<Models.Show?> createdShowsList = new List<Models.Show?>();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM Shows Where FK_ViewerID_Owner = (select ID from Viewers Where Auth0ID = @Auth0ID) Order By LastLive DESC", _conn))
+            using (SqlCommand command = new SqlCommand($"SELECT * FROM Shows Where FK_ViewerID_Owner = (select ID from Viewers Where MSToken = @MSToken) Order By LastLive DESC", _conn))
             {
-                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
+                command.Parameters.AddWithValue("@MSToken", MSToken);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -650,10 +650,10 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of Get_myShows_by_ViewerID_Owner
 
-    public async Task<Models.Show?> GET_aShow_by_ShowID_with_auth0ID(string? Auth0ID, Guid? showID)
+    public async Task<Models.Show?> GET_aShow_by_ShowID_with_MSToken(string? MSToken, Guid? showID)
     {
         Models.Show show = new Models.Show();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Shows Where ID = @ID ", _conn))
             {
@@ -704,14 +704,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         {
             return null;
         }
-    }//End of GET_aShow_by_ShowID_with_auth0ID
+    }//End of GET_aShow_by_ShowID_with_MSToken
 
 
     //-----------------------GET SHOW SUBSCRIBERS SECTION---------------------
-    public async Task<List<Models.ShowSubscriber?>> GET_allShowSubscriber(string? Auth0ID)
+    public async Task<List<Models.ShowSubscriber?>> GET_allShowSubscriber(string? MSToken)
     {
         List<Models.ShowSubscriber?> subscribedShowsList = new List<Models.ShowSubscriber?>();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM Subscribers Order By LastLive DESC", _conn))
             {
@@ -756,14 +756,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of GET_allShowSubscriber
 
-    public async Task<List<Models.ShowSubscriber?>> GET_myShowSubscriptions_by_ViewerID_Subscriber(string? Auth0ID)
+    public async Task<List<Models.ShowSubscriber?>> GET_myShowSubscriptions_by_ViewerID_Subscriber(string? MSToken)
     {
         List<Models.ShowSubscriber?> subscribedShowsList = new List<Models.ShowSubscriber?>();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM Subscribers Where FK_ViewerID_Subscriber = (select ID from Viewers Where Auth0ID = @Auth0ID) Order By SubscriptionUpdateDate DESC", _conn))
+            using (SqlCommand command = new SqlCommand($"SELECT * FROM Subscribers Where FK_ViewerID_Subscriber = (select ID from Viewers Where MSToken = @MSToken) Order By SubscriptionUpdateDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
+                command.Parameters.AddWithValue("@MSToken", MSToken);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -805,10 +805,10 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of Get_myShowSubscriptions_by_ViewerID_Subscriber
 
-    public async Task<List<Models.ShowSubscriber?>> GET_myShowSubscribers_by_ShowID_Subscriber(string? Auth0ID, Guid? OBJID)
+    public async Task<List<Models.ShowSubscriber?>> GET_myShowSubscribers_by_ShowID_Subscriber(string? MSToken, Guid? OBJID)
     {
         List<Models.ShowSubscriber?> subscribedShowsList = new List<Models.ShowSubscriber?>();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM Subscribers Where FK_ShowID_Subscribie = @FK_ShowID_Subscribie Order By SubscriptionUpdateDate DESC", _conn))
             {
@@ -854,10 +854,10 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of GET_myShowSubscribers_by_ShowID_Subscriber
 
-    public async Task<Models.ShowSubscriber?> GET_aSubscriber_by_SubscriberID_with_auth0ID(string? Auth0ID, Guid? subscriberID)
+    public async Task<Models.ShowSubscriber?> GET_aSubscriber_by_SubscriberID_with_MSToken(string? MSToken, Guid? subscriberID)
     {
         Models.ShowSubscriber showSubscriber = new Models.ShowSubscriber();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Subscribers Where ID = @ID ", _conn))
             {
@@ -895,14 +895,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         {
             return null;
         }
-    }//End of GET_aSubscriber_by_SubscriberID_with_auth0ID
+    }//End of GET_aSubscriber_by_SubscriberID_with_MSToken
 
 
     //-----------------------GET SHOW LIKES SECTION---------------------
-    public async Task<List<Models.ShowLikes?>> GET_allShowLikes(string? Auth0ID)
+    public async Task<List<Models.ShowLikes?>> GET_allShowLikes(string? MSToken)
     {
         List<Models.ShowLikes?> showSessionLikes = new List<Models.ShowLikes?>();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowLikes Order By LikeDate DESC", _conn))
             {
@@ -936,14 +936,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of GET_allShowLikes
 
-    public async Task<List<Models.ShowLikes?>> GET_myShowSessionsLikes_by_ShowSessionID(string? Auth0ID, Guid? OBJID)
+    public async Task<List<Models.ShowLikes?>> GET_myShowSessionsLikes_by_ShowSessionID(string? MSToken, Guid? OBJID)
     {
         List<Models.ShowLikes?> showSessionLikes = new List<Models.ShowLikes?>();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowLikes Where FK_ShowSessionID = @FK_ShowSessionID AND FK_ViewerID_Liker = (select ID From Viewers Where Auth0ID = @Auth0ID) Order By LikeDate DESC", _conn))
+            using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowLikes Where FK_ShowSessionID = @FK_ShowSessionID AND FK_ViewerID_Liker = (select ID From Viewers Where MSToken = @MSToken) Order By LikeDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
+                command.Parameters.AddWithValue("@MSToken", MSToken);
                 command.Parameters.AddWithValue("@FK_ShowSessionID", OBJID);
                 _conn.Open();
 
@@ -975,10 +975,10 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of GET_myShowSessionsLikes_by_ShowSessionID
 
-    public async Task<List<Models.ShowLikes?>> GET_LikesOfShowSession_by_ShowSessionID(string? Auth0ID, Guid? OBJID)
+    public async Task<List<Models.ShowLikes?>> GET_LikesOfShowSession_by_ShowSessionID(string? MSToken, Guid? OBJID)
     {
         List<Models.ShowLikes?> showSessionLikes = new List<Models.ShowLikes?>();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowLikes Where FK_ShowSessionID = @FK_ShowSessionID Order By LikeDate DESC", _conn))
             {
@@ -1013,10 +1013,10 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of GET_LikesOfShowSession_by_ShowSessionID
 
-    public async Task<Models.ShowLikes?> GET_aShowLike_by_ShowLikeID_with_auth0ID(string? Auth0ID, Guid? ShowLikeID)
+    public async Task<Models.ShowLikes?> GET_aShowLike_by_ShowLikeID_with_MSToken(string? MSToken, Guid? ShowLikeID)
     {
         Models.ShowLikes showLike = new Models.ShowLikes();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM ShowLikes Where ID = @ID ", _conn))
             {
@@ -1045,14 +1045,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         {
             return null;
         }
-    }//End of GET_aShowLike_by_ShowLikeID_with_auth0ID
+    }//End of GET_aShowLike_by_ShowLikeID_with_MSToken
 
 
     //-----------------------GET SHOW COMMENTS SECTION---------------------
-    public async Task<List<Models.ShowComment?>> GET_allShowComments(string? Auth0ID)
+    public async Task<List<Models.ShowComment?>> GET_allShowComments(string? MSToken)
     {
         List<Models.ShowComment?> showSessionComments = new List<Models.ShowComment?>();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowComments Order By CommentUpdateDate DESC", _conn))
             {
@@ -1089,14 +1089,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of GET_allShowComments
 
-    public async Task<List<Models.ShowComment?>> GET_myShowComments_by_ViewerID_Commenter(string? Auth0ID, Guid? OBJID)
+    public async Task<List<Models.ShowComment?>> GET_myShowComments_by_ViewerID_Commenter(string? MSToken, Guid? OBJID)
     {
         List<Models.ShowComment?> showSessionComments = new List<Models.ShowComment?>();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowComments Where FK_ShowSessionID = @FK_ShowSessionID AND FK_ViewerID_Commenter = (select ID from Viewers where Auth0ID = @Auth0ID) Order By CommentUpdateDate DESC", _conn))
+            using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowComments Where FK_ShowSessionID = @FK_ShowSessionID AND FK_ViewerID_Commenter = (select ID from Viewers where MSToken = @MSToken) Order By CommentUpdateDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
+                command.Parameters.AddWithValue("@MSToken", MSToken);
                 command.Parameters.AddWithValue("@FK_ShowSessionID", OBJID);
                 _conn.Open();
 
@@ -1131,10 +1131,10 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of Get_myShowComments_by_ViewerID_Commenter
 
-    public async Task<Models.ShowComment?> GET_aShowComment_by_ShowCommentID_with_auth0ID(string? Auth0ID, Guid? OBJID)
+    public async Task<Models.ShowComment?> GET_aShowComment_by_ShowCommentID_with_MSToken(string? MSToken, Guid? OBJID)
     {
         Models.ShowComment showComment = new Models.ShowComment();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM ShowComments Where ID = @ID ", _conn))
             {
@@ -1166,13 +1166,13 @@ public class GET_AccessLayer : IGET_AccessLayer
         {
             return null;
         }
-    }//End of GET_aShowComment_by_ShowCommentID_with_auth0ID
+    }//End of GET_aShowComment_by_ShowCommentID_with_MSToken
 
     //-----------------------GET SHOW DONATIONS SECTION---------------------
-    public async Task<List<Models.ShowDonation?>> GET_allShowDonations(string? Auth0ID)
+    public async Task<List<Models.ShowDonation?>> GET_allShowDonations(string? MSToken)
     {
         List<Models.ShowDonation?> showDonationsList = new List<Models.ShowDonation?>();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowDonations Order By DonationDate DESC", _conn))
             {
@@ -1208,14 +1208,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of GET_allShowDonations
 
-    public async Task<List<Models.ShowDonation?>> GET_myShowDonations_by_ViewerID_Donater(string? Auth0ID)
+    public async Task<List<Models.ShowDonation?>> GET_myShowDonations_by_ViewerID_Donater(string? MSToken)
     {
         List<Models.ShowDonation?> showDonationsList = new List<Models.ShowDonation?>();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowDonations Where FK_ViewerID_Donater = (select ID from Viewers Where Auth0ID = @Auth0ID) Order By DonationDate DESC", _conn))
+            using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowDonations Where FK_ViewerID_Donater = (select ID from Viewers Where MSToken = @MSToken) Order By DonationDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
+                command.Parameters.AddWithValue("@MSToken", MSToken);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -1248,10 +1248,10 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of Get_myShowDonations_by_ViewerID_Donater
 
-    public async Task<Models.ShowDonation?> GET_aShowDonation_by_ShowDonationID_with_auth0ID(string? Auth0ID, Guid? OBJID)
+    public async Task<Models.ShowDonation?> GET_aShowDonation_by_ShowDonationID_with_MSToken(string? MSToken, Guid? OBJID)
     {
         Models.ShowDonation objToReturn = new Models.ShowDonation();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM ShowDonations Where ID = @ID ", _conn))
             {
@@ -1281,13 +1281,13 @@ public class GET_AccessLayer : IGET_AccessLayer
         {
             return null;
         }
-    }//End of GET_aShowDonation_by_ShowDonationID_with_auth0ID
+    }//End of GET_aShowDonation_by_ShowDonationID_with_MSToken
 
     //-----------------------GET SHOW SESSIONS SECTION---------------------
-    public async Task<List<Models.ShowSession?>> GET_allShowSessions(string? Auth0ID)
+    public async Task<List<Models.ShowSession?>> GET_allShowSessions(string? MSToken)
     {
         List<Models.ShowSession?> showSessionsList = new List<Models.ShowSession?>();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowSessions Order By SessionEndDate DESC", _conn))
             {
@@ -1323,10 +1323,10 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of GET_allShowSessions
 
-    public async Task<List<Models.ShowSession?>> GET_myShowSessions_by_showID(string? Auth0ID, Guid? OBJID)
+    public async Task<List<Models.ShowSession?>> GET_myShowSessions_by_showID(string? MSToken, Guid? OBJID)
     {
         List<Models.ShowSession?> showSessionsList = new List<Models.ShowSession?>();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowSessions Where FK_ShowID = @FK_ShowID Order By SessionEndDate DESC", _conn))
             {
@@ -1363,10 +1363,10 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of Get_myShowDonations_by_ViewerID_Donater
 
-    public async Task<Models.ShowSession?> GET_aShowSession_by_ShowSessionID_with_auth0ID(string? Auth0ID, Guid? OBJID)
+    public async Task<Models.ShowSession?> GET_aShowSession_by_ShowSessionID_with_MSToken(string? MSToken, Guid? OBJID)
     {
         Models.ShowSession objToReturn = new Models.ShowSession();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM ShowSessions Where ID = @ID ", _conn))
             {
@@ -1396,14 +1396,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         {
             return null;
         }
-    }//End of GET_aShowSession_by_ShowSessionID_with_auth0ID
+    }//End of GET_aShowSession_by_ShowSessionID_with_MSToken
 
 
     //-----------------------GET SHOW SESSION JOINS SECTION---------------------
-    public async Task<List<Models.ShowSessionJoins?>> GET_allShowSessionJoins(string? Auth0ID)
+    public async Task<List<Models.ShowSessionJoins?>> GET_allShowSessionJoins(string? MSToken)
     {
         List<Models.ShowSessionJoins?> showSessionsList = new List<Models.ShowSessionJoins?>();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowSessionJoins Order By SessionLeaveDate DESC", _conn))
             {
@@ -1441,14 +1441,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of GET_allShowSessionJoins
 
-    public async Task<List<Models.ShowSessionJoins?>> GET_Joins_of_ShowSession_by_showSessionID(string? Auth0ID, Guid? OBJID)
+    public async Task<List<Models.ShowSessionJoins?>> GET_Joins_of_ShowSession_by_showSessionID(string? MSToken, Guid? OBJID)
     {
         List<Models.ShowSessionJoins?> showSessionsList = new List<Models.ShowSessionJoins?>();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowSessionJoins Where FK_ShowID = @FK_ShowID AND FK_ViewerID_ShowViewer = (select ID from Viewers where Auth0ID = @Auth0ID) Order By SessionLeaveDate DESC", _conn))
+            using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowSessionJoins Where FK_ShowID = @FK_ShowID AND FK_ViewerID_ShowViewer = (select ID from Viewers where MSToken = @MSToken) Order By SessionLeaveDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
+                command.Parameters.AddWithValue("@MSToken", MSToken);
                 command.Parameters.AddWithValue("@FK_ShowID", OBJID);
                 _conn.Open();
 
@@ -1484,10 +1484,10 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of Get_myShowDonations_by_ViewerID_Donater
 
-    public async Task<Models.ShowSessionJoins?> GET_aShowSessionJoin_by_ShowSessionJoinID_with_auth0ID(string? Auth0ID, Guid? OBJID)
+    public async Task<Models.ShowSessionJoins?> GET_aShowSessionJoin_by_ShowSessionJoinID_with_MSToken(string? MSToken, Guid? OBJID)
     {
         Models.ShowSessionJoins objToReturn = new Models.ShowSessionJoins();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM ShowSessionJoins Where ID = @ID ", _conn))
             {
@@ -1518,14 +1518,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         {
             return null;
         }
-    }//End of GET_aShowSession_by_ShowSessionID_with_auth0ID
+    }//End of GET_aShowSession_by_ShowSessionID_with_MSToken
 
 
     //-----------------------GET SHOW COMMENT LIKES SECTION---------------------
-    public async Task<List<Models.ShowCommentLike?>> GET_allShowCommentLikes(string? Auth0ID)
+    public async Task<List<Models.ShowCommentLike?>> GET_allShowCommentLikes(string? MSToken)
     {
         List<Models.ShowCommentLike?> showSessionsList = new List<Models.ShowCommentLike?>();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowCommentLikes Order By LikeDate DESC", _conn))
             {
@@ -1562,14 +1562,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of GET_allShowCommentLikes
 
-    public async Task<List<Models.ShowCommentLike?>> GET_allLikes_of_ShowComment_by_showCommentID(string? Auth0ID, Guid? OBJID)
+    public async Task<List<Models.ShowCommentLike?>> GET_allLikes_of_ShowComment_by_showCommentID(string? MSToken, Guid? OBJID)
     {
         List<Models.ShowCommentLike?> showSessionsList = new List<Models.ShowCommentLike?>();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowCommentLikes Where FK_ShowCommentID = @FK_ShowCommentID Order By LikeDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
+                command.Parameters.AddWithValue("@MSToken", MSToken);
                 command.Parameters.AddWithValue("@FK_ShowCommentID", OBJID);
                 _conn.Open();
 
@@ -1604,14 +1604,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of GET_allLikes_of_ShowComment_by_showCommentID
 
-    public async Task<Models.ShowCommentLike?> GET_myLike_of_ShowComment_by_showCommentID(string? Auth0ID, Guid? OBJID)
+    public async Task<Models.ShowCommentLike?> GET_myLike_of_ShowComment_by_showCommentID(string? MSToken, Guid? OBJID)
     {
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             Models.ShowCommentLike showCommentLike = new Models.ShowCommentLike();
-            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM ShowCommentLikes Where FK_ShowCommentID = @FK_ShowCommentID AND FK_ViewerID_Liker = (select ID from Viewers where Auth0ID = @Auth0ID) Order By LikeDate DESC", _conn))
+            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM ShowCommentLikes Where FK_ShowCommentID = @FK_ShowCommentID AND FK_ViewerID_Liker = (select ID from Viewers where MSToken = @MSToken) Order By LikeDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
+                command.Parameters.AddWithValue("@MSToken", MSToken);
                 command.Parameters.AddWithValue("@FK_ShowCommentID", OBJID);
                 _conn.Open();
 
@@ -1640,10 +1640,10 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of Get_myShowDonations_by_ViewerID_Donater
 
-    public async Task<Models.ShowCommentLike?> GET_aShowCommentLike_by_ShowCommentLikeID_with_auth0ID(string? Auth0ID, Guid? OBJID)
+    public async Task<Models.ShowCommentLike?> GET_aShowCommentLike_by_ShowCommentLikeID_with_MSToken(string? MSToken, Guid? OBJID)
     {
         Models.ShowCommentLike objToReturn = new Models.ShowCommentLike();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM ShowCommentLikes Where ID = @ID ", _conn))
             {
@@ -1673,13 +1673,13 @@ public class GET_AccessLayer : IGET_AccessLayer
         {
             return null;
         }
-    }//End of GET_aShowCommentLike_by_ShowCommentLikeID_with_auth0ID
+    }//End of GET_aShowCommentLike_by_ShowCommentLikeID_with_MSToken
 
     //-----------------------GET SHOW COMMENT LIKES SECTION---------------------
-    public async Task<List<Models.Wallet?>> GET_allPersonalWallets(string? Auth0ID)
+    public async Task<List<Models.Wallet?>> GET_allPersonalWallets(string? MSToken)
     {
         List<Models.Wallet?> allWallets = new List<Models.Wallet?>();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM Wallets_Viewer ORDER BY DateUpdated DESC ", _conn))
             {
@@ -1715,10 +1715,10 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of GET_allPersonalWallets
 
-    public async Task<List<Models.ShowWallet?>> GET_allShowWallets(string? Auth0ID)
+    public async Task<List<Models.ShowWallet?>> GET_allShowWallets(string? MSToken)
     {
         List<Models.ShowWallet?> allWallets = new List<Models.ShowWallet?>();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
             using (SqlCommand command = new SqlCommand($"SELECT * FROM Wallets_Show ORDER BY DateUpdated DESC ", _conn))
             {
@@ -1759,14 +1759,14 @@ public class GET_AccessLayer : IGET_AccessLayer
     }//End of GET_allShowWallets
 
 
-    public async Task<Models.Wallet> GET_myPersonalWallet_by_viewerID(string? Auth0ID)
+    public async Task<Models.Wallet> GET_myPersonalWallet_by_viewerID(string? MSToken)
     {
         Models.Wallet myWallet = new Models.Wallet();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Wallets_Viewer Where FK_ViewerID_WalletOwner = (select ID from Viewers where Auth0ID = @Auth0ID) ", _conn))
+            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Wallets_Viewer Where FK_ViewerID_WalletOwner = (select ID from Viewers where MSToken = @MSToken) ", _conn))
             {
-                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
+                command.Parameters.AddWithValue("@MSToken", MSToken);
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -1794,14 +1794,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of GET_myPersonalWallet_by_viewerID
 
-    public async Task<Models.ShowWallet> GET_myShowWallet_by_viewer_AND_showID(string? Auth0ID, Guid? OBJID)
+    public async Task<Models.ShowWallet> GET_myShowWallet_by_viewer_AND_showID(string? MSToken, Guid? OBJID)
     {
         Models.ShowWallet myShowWallet = new Models.ShowWallet();
-        if (Auth0ID != null)
+        if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Wallets_Show WHERE FK_ViewerID_WalletOwner = (select ID from Viewers where Auth0ID = @Auth0ID) AND FK_ShowID_WalletShow = @FK_ShowID_WalletShow ", _conn))
+            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Wallets_Show WHERE FK_ViewerID_WalletOwner = (select ID from Viewers where MSToken = @MSToken) AND FK_ShowID_WalletShow = @FK_ShowID_WalletShow ", _conn))
             {
-                command.Parameters.AddWithValue("@Auth0ID", Auth0ID);
+                command.Parameters.AddWithValue("@MSToken", MSToken);
                 command.Parameters.AddWithValue("@FK_ShowID_WalletShow", OBJID);
                 _conn.Open();
 

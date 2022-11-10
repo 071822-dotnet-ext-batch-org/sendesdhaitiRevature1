@@ -7,8 +7,8 @@ namespace MS_API1_Users_Repo
 {
     public interface IDELETE_AccessLayer
     {
-        Task<CHECK_AccessLayer.CHECKSTATUS> DELETE_myViewer_by_auth0ID(string? Auth0ID);
-        Task<CHECK_AccessLayer.CHECKSTATUS> DELETE_myLike_on_ShowSession_by_auth0ID(string? Auth0ID, Guid? sessionID);
+        Task<CHECK_AccessLayer.CHECKSTATUS> DELETE_myViewer_by_MSToken(string? MSToken);
+        Task<CHECK_AccessLayer.CHECKSTATUS> DELETE_myLike_on_ShowSession_by_MSToken(string? MSToken, Guid? sessionID);
     }
 
     public class DELETE_AccessLayer : IDELETE_AccessLayer
@@ -31,13 +31,13 @@ namespace MS_API1_Users_Repo
             }
 
         }
-        public async Task<CHECK_AccessLayer.CHECKSTATUS> DELETE_myViewer_by_auth0ID(string? Auth0ID)
+        public async Task<CHECK_AccessLayer.CHECKSTATUS> DELETE_myViewer_by_MSToken(string? MSToken)
         {
-            if ((Auth0ID?.GetType() == typeof(string)))
+            if ((MSToken?.GetType() == typeof(string)))
             {
-                using (SqlCommand command = new SqlCommand($"DELETE FROM Viewers Where Auth0ID = @Auth0ID", _conn))
+                using (SqlCommand command = new SqlCommand($"DELETE FROM Viewers Where MSToken = @MSToken", _conn))
                 {
-                    command.Parameters.AddWithValue("Auth0ID", Auth0ID);
+                    command.Parameters.AddWithValue("MSToken", MSToken);
                     _conn.Open();
 
                     int ret = await command.ExecuteNonQueryAsync();
@@ -57,17 +57,17 @@ namespace MS_API1_Users_Repo
             {
                 return CHECK_AccessLayer.CHECKSTATUS.NO_AUTH0;
             }
-        }//End of DELETE_myViewer_by_auth0ID
+        }//End of DELETE_myViewer_by_MSToken
 
-        public async Task<CHECK_AccessLayer.CHECKSTATUS> DELETE_myLike_on_ShowSession_by_auth0ID(string? Auth0ID, Guid? sessionID)
+        public async Task<CHECK_AccessLayer.CHECKSTATUS> DELETE_myLike_on_ShowSession_by_MSToken(string? MSToken, Guid? sessionID)
         {
-            if ((Auth0ID?.GetType() == typeof(string)))
+            if ((MSToken?.GetType() == typeof(string)))
             {
                 using (SqlCommand command = new SqlCommand($"DELETE FROM ShowLikes " + 
-                                " Where FK_ViewerID_Liker = ( select ID from Viewers where Auth0ID = @Auth0ID ) " + 
+                                " Where FK_ViewerID_Liker = ( select ID from Viewers where MSToken = @MSToken ) " + 
                                 " AND FK_ShowSessionID = @FK_ShowSessionID ", _conn))
                 {
-                    command.Parameters.AddWithValue("Auth0ID", Auth0ID);
+                    command.Parameters.AddWithValue("MSToken", MSToken);
                     command.Parameters.AddWithValue("FK_ShowSessionID", sessionID);
                     _conn.Open();
 
@@ -88,7 +88,7 @@ namespace MS_API1_Users_Repo
             {
                 return CHECK_AccessLayer.CHECKSTATUS.NO_AUTH0;
             }
-        }//END of DELETE_myLike_on_ShowSession_by_auth0ID
+        }//END of DELETE_myLike_on_ShowSession_by_MSToken
 
 
 

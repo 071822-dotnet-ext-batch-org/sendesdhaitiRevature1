@@ -83,7 +83,7 @@ namespace MINTSOUP.TokenAPI
 
         public async Task<bool> CREATE_USER_ON_SIGNUP(string Email, string Username, string Password)
         {
-            using (SqlCommand command = new SqlCommand($"INSERT INTO MintSoupTokens (Email, Username, Password) VALUES(@Email, @Username, @Password)", _conn))
+            using (SqlCommand command = new SqlCommand($"INSERT INTO MintSoupTokens ( Email, Username, Password) VALUES( @Email, @Username, @Password)", _conn))
             {
                 command.Parameters.AddWithValue("@Email", Email);
                 command.Parameters.AddWithValue("@Username", Username);
@@ -104,11 +104,11 @@ namespace MINTSOUP.TokenAPI
             }
         }//End of CREATE_USER_ON_SIGNUP
 
-        public async Task<string?> LOGIN_USER_to_get_TOKEN_w_email(string Email, string Password)
+        public async Task<Guid?> LOGIN_USER_to_get_TOKEN_w_email(string Email, string Password)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT MSToken FROM MintSoupTokens Where Email = @Email AND Password = @Password ", _conn))
+            using (SqlCommand command = new SqlCommand($"SELECT ID FROM Viewers Where MSToken = (select ID from MintSoupTokens where Email = @Email AND Password = @Password) ", _conn))
             {
-                string? myToken = null;
+                Guid? myToken = null;
                 command.Parameters.AddWithValue("@Email", Email);
                 command.Parameters.AddWithValue("@Password", Password);
                 _conn.Open();
@@ -116,7 +116,7 @@ namespace MINTSOUP.TokenAPI
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    myToken = ret.GetString(0);
+                    myToken = ret.GetGuid(0);
                     _conn.Close();
                     return myToken;
                 }
@@ -128,11 +128,11 @@ namespace MINTSOUP.TokenAPI
             }
         }//End of LOGIN_USER_to_get_TOKEN_w_email
 
-        public async Task<string?> LOGIN_USER_to_get_TOKEN_w_username(string Username, string Password)
+        public async Task<Guid?> LOGIN_USER_to_get_TOKEN_w_username(string Username, string Password)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT MSToken FROM MintSoupTokens Where Username = @Username AND Password = @Password ", _conn))
+            using (SqlCommand command = new SqlCommand($"SELECT ID FROM Viewers Where MSToken = (select ID from MintSoupTokens where Username = @Username AND Password = @Password) ", _conn))
             {
-                string? myToken = null;
+                Guid? myToken = null;
                 command.Parameters.AddWithValue("@Username", Username);
                 command.Parameters.AddWithValue("@Password", Password);
                 _conn.Open();
@@ -140,7 +140,7 @@ namespace MINTSOUP.TokenAPI
                 SqlDataReader ret = await command.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    myToken = ret.GetString(0);
+                    myToken = ret.GetGuid(0);
                     _conn.Close();
                     return myToken;
                 }
@@ -153,12 +153,11 @@ namespace MINTSOUP.TokenAPI
         }//End of LOGIN_USER_to_get_TOKEN_w_username
 
 
-        public async Task<bool> CHANGE_PASSWORD_w_email_and_token(string Email, string MSToken, string Password)
+        public async Task<bool> CHANGE_PASSWORD_w_email_and_token(string Email, string Password)
         {
-            using (SqlCommand command = new SqlCommand($"UPDATE MintSoupTokens SET Password = @Password Where Email = @Email AND MSToken = @MSToken ", _conn))
+            using (SqlCommand command = new SqlCommand($"UPDATE MintSoupTokens SET Password = @Password Where Email = @Email ", _conn))
             {
                 command.Parameters.AddWithValue("@Email", Email);
-                command.Parameters.AddWithValue("@MSToken", MSToken);
                 command.Parameters.AddWithValue("@Password", Password);
                 _conn.Open();
 

@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 namespace Models
 {
     /// <summary>
-    /// This is the model to create a new Viewer - A viewer must have (Guid? ID, string? auth0ID, string? fn, string? ln, string? email, string? image,  string? username, string? aboutMe, string? streetAddy, string? city, string? state, string? country, int? areaCode, Role? role, ViewerStatus? status, List<Friend?>? listOfFriends, List<Follower?>? listOfFollowers, List<Show?>? listOfCreatedShows, List<ShowSubscriber?>? listOfSubsrcibedShows, List<ShowLikes?>? listOfShowLikes, List<ShowComment?>? listOfShowComments, List<ShowDonation?>? listOfShowDonations)
+    /// This is the model to create a new Viewer - A viewer must have (Guid? ID, string? MSToken, string? fn, string? ln, string? email, string? image,  string? username, string? aboutMe, string? streetAddy, string? city, string? state, string? country, int? areaCode, Role? role, ViewerStatus? status, List<Friend?>? listOfFriends, List<Follower?>? listOfFollowers, List<Show?>? listOfCreatedShows, List<ShowSubscriber?>? listOfSubsrcibedShows, List<ShowLikes?>? listOfShowLikes, List<ShowComment?>? listOfShowComments, List<ShowDonation?>? listOfShowDonations)
     /// </summary>
     public class Viewer
     {
         //What the User Needs
         public Guid? ID {get;set;}
-        public string? Auth0ID {get;set;}
+        public string? MSToken {get;set;}
         public string? Fn {get;set;}
         public string? Ln {get;set;}
         public string? Email {get;set;}
@@ -32,48 +32,53 @@ namespace Models
         public DateTime? DateSignedUp {get;set;}
         public DateTime? LastSignedIn {get;set;}
 
-        List<Friend?> ListOfFriends {get;set;}
-        List<Follower?> ListOfFollowers {get;set;}
-        List<Show?> ListOfCreatedShows {get;set;}
-        List<ShowSubscriber?> ListOfSubsrcibedShows {get;set;}
-        List<ShowLikes?> ListOfShowLikes {get;set;}
-        List<ShowComment?> ListOfShowComments {get;set;}
-        List<ShowDonation?> ListOfShowDonations {get;set;}
+        //List<Friend?> ListOfFriends {get;set;}
+        //List<Follower?> ListOfFollowers {get;set;}
+        //List<Show?> ListOfCreatedShows {get;set;}
+        //List<ShowSubscriber?> ListOfSubsrcibedShows {get;set;}
+        //List<ShowLikes?> ListOfShowLikes {get;set;}
+        //List<ShowComment?> ListOfShowComments {get;set;}
+        //List<ShowDonation?> ListOfShowDonations {get;set;}
 
         //Constructors
         /// <summary>
-        /// This is the model to create a new Viewer that is empty - A viewer must have (Guid? ID, string? auth0ID, string? fn, string? ln, string? email, string? image,  string? username, string? aboutMe, string? streetAddy, string? city, string? state, string? country, int? areaCode, Role? role, ViewerStatus? status, List<Friend?>? listOfFriends, List<Follower?>? listOfFollowers, List<Show?>? listOfCreatedShows, List<ShowSubscriber?>? listOfSubsrcibedShows, List<ShowLikes?>? listOfShowLikes, List<ShowComment?>? listOfShowComments, List<ShowDonation?>? listOfShowDonations)
+        /// This is the model to create a new Viewer that is empty - A viewer must have (Guid? ID, string? MSToken, string? fn, string? ln, string? email, string? image,  string? username, string? aboutMe, string? streetAddy, string? city, string? state, string? country, int? areaCode, Role? role, ViewerStatus? status, List<Friend?>? listOfFriends, List<Follower?>? listOfFollowers, List<Show?>? listOfCreatedShows, List<ShowSubscriber?>? listOfSubsrcibedShows, List<ShowLikes?>? listOfShowLikes, List<ShowComment?>? listOfShowComments, List<ShowDonation?>? listOfShowDonations)
         /// </summary>
         public Viewer()
         {
             Role = Role.Viewer;
             MembershipStatus = ViewerStatus.Guest;
-            ListOfFriends = new List<Friend?>();
-            ListOfFollowers = new List<Follower?>();
-            ListOfCreatedShows = new List<Show?>();
-            ListOfSubsrcibedShows = new List<ShowSubscriber?>();
-            ListOfShowLikes = new List<ShowLikes?>();
-            ListOfShowComments = new List<ShowComment?>();
-            ListOfShowDonations = new List<ShowDonation?>();
         }
+        //public Viewer()
+        //{
+        //    Role = Role.Viewer;
+        //    MembershipStatus = ViewerStatus.Guest;
+        //    ListOfFriends = new List<Friend?>();
+        //    ListOfFollowers = new List<Follower?>();
+        //    ListOfCreatedShows = new List<Show?>();
+        //    ListOfSubsrcibedShows = new List<ShowSubscriber?>();
+        //    ListOfShowLikes = new List<ShowLikes?>();
+        //    ListOfShowComments = new List<ShowComment?>();
+        //    ListOfShowDonations = new List<ShowDonation?>();
+        //}
 
         public Viewer(Guid? id) :this()
         {
             this.ID = id;
         }
 
-        public Viewer(string? auth0id) :this()
+        public Viewer(string? MSToken) :this()
         {
-            this.Auth0ID = auth0id;
+            this.MSToken = MSToken;
         }
 
         /// <summary>
-        /// This is the model to create a new Viewer - A viewer must have (Guid? ID, string? auth0ID, string? fn, string? ln, string? email, string? image,  string? username, string? aboutMe, string? streetAddy, string? city, string? state, string? country, int? areaCode, Role? role, ViewerStatus? status, List<Friend?>? listOfFriends, List<Follower?>? listOfFollowers, List<Show?>? listOfCreatedShows, List<ShowSubscriber?>? listOfSubsrcibedShows, List<ShowLikes?>? listOfShowLikes, List<ShowComment?>? listOfShowComments, List<ShowDonation?>? listOfShowDonations)
+        /// This is the model to create a new Viewer - A viewer must have (Guid? ID, string? MSToken, string? fn, string? ln, string? email, string? image,  string? username, string? aboutMe, string? streetAddy, string? city, string? state, string? country, int? areaCode, Role? role, ViewerStatus? status, List<Friend?>? listOfFriends, List<Follower?>? listOfFollowers, List<Show?>? listOfCreatedShows, List<ShowSubscriber?>? listOfSubsrcibedShows, List<ShowLikes?>? listOfShowLikes, List<ShowComment?>? listOfShowComments, List<ShowDonation?>? listOfShowDonations)
         /// </summary>
-        public Viewer(Guid? ID, string? auth0ID, string? fn, string? ln, string? email, string? image,  string? username, string? aboutMe, string? streetAddy, string? city, string? state, string? country, int? areaCode, Role role, ViewerStatus status, List<Friend?> listOfFriends, List<Follower?> listOfFollowers, List<Show?> listOfCreatedShows, List<ShowSubscriber?> listOfSubsrcibedShows, List<ShowLikes?> listOfShowLikes, List<ShowComment?> listOfShowComments, List<ShowDonation?> listOfShowDonations)
+        public Viewer(Guid? ID, string? MSToken, string? fn, string? ln, string? email, string? image, string? username, string? aboutMe, string? streetAddy, string? city, string? state, string? country, int? areaCode, Role role, ViewerStatus status, DateTime dateRegistered, DateTime lastsignedin)
         {
             this.ID = ID;
-            this.Auth0ID = auth0ID;
+            this.MSToken = MSToken;
             this.Fn = fn;
             this.Ln = ln;
             this.Email = email;
@@ -87,49 +92,36 @@ namespace Models
             this.AreaCode = areaCode;
             this.Role = role;
             this.MembershipStatus = status;
-            this.ListOfFriends = listOfFriends;
-            this.ListOfFollowers = listOfFollowers;
-            this.ListOfCreatedShows = listOfCreatedShows;
-            this.ListOfSubsrcibedShows = listOfSubsrcibedShows;
-            this.ListOfShowLikes = listOfShowLikes;
-            this.ListOfShowComments = listOfShowComments;
-            this.ListOfShowDonations = listOfShowDonations;
+            this.DateSignedUp = dateRegistered;
+            this.LastSignedIn = lastsignedin;
         }
 
 
-        /// <summary>
-        /// To check if the object passed into the method is a Viewer Object
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public new bool Equals(object? obj)
-        {
-            return obj is Viewer viewer &&
-                   EqualityComparer<Guid?>.Default.Equals(ID, viewer.ID) &&
-                   Auth0ID == viewer.Auth0ID &&
-                   Fn == viewer.Fn &&
-                   Ln == viewer.Ln &&
-                   Email == viewer.Email &&
-                   Image == viewer.Image &&
-                   Username == viewer.Username &&
-                   AboutMe == viewer.AboutMe &&
-                   StreetAddy == viewer.StreetAddy &&
-                   City == viewer.City &&
-                   State == viewer.State &&
-                   Country == viewer.Country &&
-                   AreaCode == viewer.AreaCode &&
-                   Role == viewer.Role &&
-                   MembershipStatus == viewer.MembershipStatus &&
-                   DateSignedUp == viewer.DateSignedUp &&
-                   LastSignedIn == viewer.LastSignedIn &&
-                   EqualityComparer<List<Friend?>>.Default.Equals(ListOfFriends, viewer.ListOfFriends) &&
-                   EqualityComparer<List<Follower?>>.Default.Equals(ListOfFollowers, viewer.ListOfFollowers) &&
-                   EqualityComparer<List<Show?>>.Default.Equals(ListOfCreatedShows, viewer.ListOfCreatedShows) &&
-                   EqualityComparer<List<ShowSubscriber?>>.Default.Equals(ListOfSubsrcibedShows, viewer.ListOfSubsrcibedShows) &&
-                   EqualityComparer<List<ShowLikes?>>.Default.Equals(ListOfShowLikes, viewer.ListOfShowLikes) &&
-                   EqualityComparer<List<ShowComment?>>.Default.Equals(ListOfShowComments, viewer.ListOfShowComments) &&
-                   EqualityComparer<List<ShowDonation?>>.Default.Equals(ListOfShowDonations, viewer.ListOfShowDonations);
-        }
+        //public Viewer(Guid? ID, string? MSToken, string? fn, string? ln, string? email, string? image,  string? username, string? aboutMe, string? streetAddy, string? city, string? state, string? country, int? areaCode, Role role, ViewerStatus status, List<Friend?> listOfFriends, List<Follower?> listOfFollowers, List<Show?> listOfCreatedShows, List<ShowSubscriber?> listOfSubsrcibedShows, List<ShowLikes?> listOfShowLikes, List<ShowComment?> listOfShowComments, List<ShowDonation?> listOfShowDonations)
+        //{
+        //    this.ID = ID;
+        //    this.MSToken = MSToken;
+        //    this.Fn = fn;
+        //    this.Ln = ln;
+        //    this.Email = email;
+        //    this.Image = image;
+        //    this.Username = username;
+        //    this.AboutMe = aboutMe;
+        //    this.StreetAddy = streetAddy;
+        //    this.City = city;
+        //    this.State = state;
+        //    this.Country = country;
+        //    this.AreaCode = areaCode;
+        //    this.Role = role;
+        //    this.MembershipStatus = status;
+        //    this.ListOfFriends = listOfFriends;
+        //    this.ListOfFollowers = listOfFollowers;
+        //    this.ListOfCreatedShows = listOfCreatedShows;
+        //    this.ListOfSubsrcibedShows = listOfSubsrcibedShows;
+        //    this.ListOfShowLikes = listOfShowLikes;
+        //    this.ListOfShowComments = listOfShowComments;
+        //    this.ListOfShowDonations = listOfShowDonations;
+        //}
     }
 
     /// <summary>
