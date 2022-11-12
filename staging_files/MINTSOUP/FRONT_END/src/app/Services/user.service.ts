@@ -24,11 +24,11 @@ export class UserService {
 
   public API1_main_data: string = env.API1;
   public API2_user_data: string = env.API2;
+  
 
-
-  public loginwithRedirect() : Observable<any>{
-    return this.auth.loginWithRedirect()
-  }
+  // public loginwithRedirect() : Observable<any>{
+  //   return this.auth.loginWithRedirect()
+  // }
 
   // public CHECK_IF_EMAIL_EXISTS(email: string) : boolean
   // {

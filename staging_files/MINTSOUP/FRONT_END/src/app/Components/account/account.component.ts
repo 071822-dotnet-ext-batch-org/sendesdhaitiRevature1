@@ -26,9 +26,9 @@ export class AccountComponent implements OnInit {
 
   getmyViewerAccount()
   {
-    this.userservice.GET_or_Create_myViewer(this.myData.sub, this.myData.email).subscribe((viewer :Viewer) => {
-      this.myViewer = viewer;
-    })
+    // this.userservice.GET_or_Create_myViewer(this.myData.sub, this.myData.email).subscribe((viewer :Viewer) => {
+    //   this.myViewer = viewer;
+    // })
   }
 
 }

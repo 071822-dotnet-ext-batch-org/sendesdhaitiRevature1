@@ -5,7 +5,8 @@
 export const environment = {
   production: false,
   API: {
-    auth_api: "http://localhost:4200/mint-soup.token/"
+    auth_api: "http://localhost:4200/mint-soup.token/",
+    main_api: "http://localhost:52812/"
   }
 };
 

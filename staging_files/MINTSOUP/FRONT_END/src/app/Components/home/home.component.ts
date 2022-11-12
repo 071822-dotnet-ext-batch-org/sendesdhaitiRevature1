@@ -41,10 +41,10 @@ export class HomeComponent implements OnInit {
         console.log(`This data email is ${this.myData?.email}`)
         if(data != null)
         {
-          this._userService.GET_or_Create_myViewer(data.sub, data.email).subscribe(viewer => {
-            this.myViewer = viewer;
-            console.log(`This viewer is ${this.myViewer.Email}`)
-          })
+          // this._userService.GET_or_Create_myViewer(data.sub, data.email).subscribe(viewer => {
+          //   this.myViewer = viewer;
+          //   console.log(`This viewer is ${this.myViewer.Email}`)
+          // })
         }
         // console.log(this.myData)
       })

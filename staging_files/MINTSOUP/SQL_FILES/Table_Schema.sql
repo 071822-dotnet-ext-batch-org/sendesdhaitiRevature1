@@ -26,7 +26,8 @@ Create table MintSoupTokens(
     ID uniqueidentifier not null default(newid()),
     Email nvarchar(100) unique not null,
     Username nvarchar(100) unique not null,
-    Password nvarchar(200) not null,
+    Password_Hash nvarchar(1000) not null,
+    Password_Salt nvarchar(500) not null,
     DateSignedUp DateTime not null default(getdate()),
     LastSignedIn DateTime not null default(getdate()),
     PRIMARY KEY (ID)
