@@ -3,7 +3,7 @@ import { environment as env } from 'src/environments/environment';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { LoginDTO } from '../Components/login/login.component';
 import { Observable, from, of, throwError, catchError, retry} from 'rxjs';
-import { map } from 'rxjs';
+import { map , interval, take } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -26,39 +26,47 @@ export class UserService {
 
   
 
-  public CHECK_IF_EMAIL_EXISTS(email: string) : any
+  public CHECK_IF_EMAIL_EXISTS(email: string) : Observable<boolean>
   {
-    this.http.get<any>(this.API + "check-email/" + encodeURIComponent(email)).subscribe((data:any) => {UserService.heldChecks = data; console.log(data)})
-    // var xhr = new XMLHttpRequest();
-    // xhr.open('get', this.API + `check-email/${encodeURIComponent(email)}`);
-    // xhr.withCredentials = true;
-    return UserService.heldChecks;
+    return this.http.get<boolean>(this.API + "check-email/" + encodeURIComponent(email) )
   }
 
-  public CHECK_IF_USERNAME_EXISTS(username: string) : any
+  public CHECK_IF_USERNAME_EXISTS(username: string) : Observable<boolean>
   {
-    this.http.get<any>(this.API + `check-username/${encodeURIComponent(username)}`).subscribe((data:any) => UserService.heldChecks = data)
-    return UserService.heldChecks;
+    return this.http.get<boolean>(this.API + "check-username/" + encodeURIComponent(username) )
   }
 
   public SignUp(_email?:string, _username?:string, _password?:string ) : Observable<boolean>
   {
-    return this.http.post<boolean>(this.API + "signup", JSON.stringify({email: _email, username: _username, password: _password}));
+    return this.http.post<boolean>(this.API + "signup", {email: _email, username: _username, password: _password});
   }
 
-  public Login_email(_email?:string, _password?:string) : Observable<any>
+  public Login_email(_email?:string, _password?:string) : Observable<string>
   {
-    return this.http.post<any>(this.API + `login-email`, JSON.stringify({email: _email, password: _password}))
+    return this.http.post(this.API + `login-email`, {email: _email, password: _password}, {responseType: 'text'})
   } 
 
-  public Login_username(_username?:string, _password?:string) : Observable<any>
+  public Login_username(_username?:string, _password?:string) : Observable<string>
   {
-    return this.http.post<any>(this.API + `login-username`, JSON.stringify({username: _username, password: _password}))
+    return this.http.post(this.API + `login-username`, {username: _username, password: _password}, {responseType: 'text'})
   }
 
   public CHANGE_PASSWORD()
   {
     
   }
+
+
+  // public source$ = interval(1000).pipe(take(4));
+
+  // async function getTotal() {
+  //   let total = 0;
+
+  //   await source$.forEach(value => {
+  //     total += value;
+  //     console.log('observable -> ' + value);
+  //   });
+  // }
+
 
 }

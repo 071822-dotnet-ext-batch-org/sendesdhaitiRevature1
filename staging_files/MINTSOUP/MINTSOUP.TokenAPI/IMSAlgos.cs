@@ -2,6 +2,7 @@
 {
     public interface IMSAlgos
     {
-        string HashPassword(string password);
+        (string, string) HashPassword(string password);
+        bool VerifyPassword(string enteredPassword, string storedHash, string storedSalt);
     }
 }
