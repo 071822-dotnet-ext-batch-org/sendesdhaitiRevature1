@@ -5,7 +5,7 @@ import {NgModel} from '@angular/forms'
 import { Type } from '@angular/compiler';
 import { JsonPipe } from '@angular/common';
 import { environment } from 'src/environments/environment';
-
+import { Router } from '@angular/router';
 export interface LoginDTO{
   Email?:string,
   Username?:string,
@@ -19,23 +19,24 @@ export interface LoginDTO{
 })
 export class LoginComponent implements OnInit {
 
-  constructor(public userservice: UserService, private formbuilder:FormBuilder) { 
-
+  constructor(public userservice: UserService, private formbuilder:FormBuilder, private router: Router) { 
+    
     this.loginform = this.formbuilder.group({
       email: [null,Validators.required],
       username: [null, Validators.required],
       password: [null,Validators.required]
-  });
+    });
   }
-
+  
   ngOnInit(): void {
     this.changeElementClass_by_ID_and_CLASSNAME("username", "Hide");
   }
-
+  
   public loginform: FormGroup;
-  public static username_check:boolean;
-  public static email_check:boolean;
-
+  public  username_check?:boolean;
+  public  email_check?:boolean;
+  public invalidLogin?: boolean;
+  
   async changeElementClass_by_ID_and_CLASSNAME(element:string, elementclassName:string){
     let ele = document.getElementById(element);
     if(ele != null)
@@ -43,108 +44,66 @@ export class LoginComponent implements OnInit {
       ele.className = elementclassName;
     }
   }
-
-  add_mstoken_to_session_storage(email?:string, token?:string):void
+  
+  async check_email()
   {
-    if(email && token)
-    {
-      let mystorage =  sessionStorage.getItem(email)
-      if(mystorage)
-      {
-        sessionStorage.removeItem(email)
-        sessionStorage.setItem(email, token)
-      }
-      else
-      {
-        sessionStorage.setItem(email, token)
-      }
-    }
+    this.userservice.check_email(this.loginform.value.email)
   }
 
-  check_email(email?:string):boolean{
-    if(email)
-    {
-      var check = this.userservice.CHECK_IF_EMAIL_EXISTS(email).subscribe((data:boolean) => {LoginComponent.email_check = data; console.log(`The login data: ${data}`)})
-      let s = LoginComponent.email_check
-      if(s)
-      {
-        // check.add
-        return s;
-      }
-      else
-      {
-        // check.unsubscribe()
-        return s;
-      }
-    }
-    else return false;
+  async check_username()
+  {
+    this.userservice.check_username(this.loginform.value.username)
   }
-
-
-
-
-
-
-
-
-  check_username(username?:string):boolean{
-    // let check:boolean = false;
-    if(username)
-    {
-      var check = this.userservice.CHECK_IF_USERNAME_EXISTS(username).subscribe(data => {LoginComponent.username_check = data;console.log(`The login data: ${data}`)})
-      if(LoginComponent.username_check)
-      {
-        check.unsubscribe()
-        return LoginComponent.username_check;
-      }
-      else
-      {
-        check.unsubscribe()
-        return false;
-      }
-    }
-    else return false;
-  }
-
-
-
-
-
-
-  login(){
+  
+  
+  
+  
+  async login(){
     const val = this.loginform.value
     if(val.email && val.password )
     {
-      this.check_email(val.email)
+      this.userservice.check_email(val.email)
+      let em_ch = await this.userservice.get_email_check()
+      this.email_check = em_ch;
       let check = this.userservice.Login_email(val.email, val.password)
-      if(LoginComponent.email_check)
+      if( em_ch )
       {
         check.subscribe(data => {
-          this.add_mstoken_to_session_storage(val.email, data);
-
+          this.userservice.add_mstoken_to_session_storage(val.email, data);
+          
           // //Add authentication headers as params
           // var params = {
-          //   access_token: data,
-          // };
-
-          // //Add authentication headers in URL
-          // var url = [ environment.API.main_api, $.param(params)].join('?');
-
-          // //Open window
-          // window.open(url);
-
-
-          // window.location.href = 'http://localhost:52812/';
+            //   access_token: data,
+            // };
+            
+            // //Add authentication headers in URL
+            // var url = [ environment.API.main_api, $.param(params)].join('?');
+            
+            // //Open window
+            // window.open(url);
+            
+            
+            // window.location.port = '59650';
+            // this.router.navigate()
+        },
+        err => {
+          this.email_check = true;
+          this.username_check = false;
         })//End of Subscribe
       }
     }
     else if(val.username && val.password )
     {
-      this.check_username(val.username)
+      this.userservice.check_username(val.username)
+      let us_ch =  await this.userservice.get_username_check()
+      this.username_check = us_ch
       let check = this.userservice.Login_username(val.username, val.password)
-      if(LoginComponent.username_check)
+      if(us_ch)
       {
-        check.subscribe(data => {this.add_mstoken_to_session_storage(val.email, data);window.location.href = 'http://localhost:52812/'})
+        check.subscribe(data => {this.userservice.add_mstoken_to_session_storage(val.email, data);window.location.href = 'http://localhost:52812/'}, err => {
+          this.email_check = false;
+          this.username_check = true;
+        })
       }
     }
   }

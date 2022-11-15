@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
+using MINTSOUP.TokenAPI.Controllers;
+using static MINTSOUP.TokenAPI.Controllers.MyToken;
 
 
 namespace MINTSOUP.TokenAPI
@@ -60,9 +62,19 @@ namespace MINTSOUP.TokenAPI
             public  string? Password_Salt { get => password_Salt; set => password_Salt = value; }
             public  DateTime DateSignedUp { get => dateSignedUp; set => dateSignedUp = value; }
             public  DateTime LastSignedIn { get => lastSignedIn; set => lastSignedIn = value; }
+            public MyMintSoupToken() { }
+            public MyMintSoupToken(Guid _id, string _em, string _us, DateTime _ds, DateTime _ls)
+            {
+                //Console.WriteLine($"This is the token constructor for {_em}");
+                id = _id;
+                email = _em;
+                username = _us;
+                dateSignedUp = _ds;
+                lastSignedIn = DateTime.Now;
+            }
             public MyMintSoupToken(Guid _id, string _em, string _us, string _ph, string _ps, DateTime _ds, DateTime _ls)
             {
-                Console.WriteLine($"This is the token constructor {email}");
+                //Console.WriteLine($"This is the token constructor for {_em}");
                 id = _id;
                 email = _em;
                 username = _us;
@@ -78,7 +90,7 @@ namespace MINTSOUP.TokenAPI
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM MintSoupTokens Where Email = @Email", _conn))
             {
-                command.Parameters.AddWithValue("@Email", Email);
+                command.Parameters.AddWithValue("@Email", Email.ToLowerInvariant());
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -99,7 +111,7 @@ namespace MINTSOUP.TokenAPI
         {
             using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM MintSoupTokens Where Username = @Username", _conn))
             {
-                command.Parameters.AddWithValue("@Username", Username);
+                command.Parameters.AddWithValue("@Username", Username.ToLowerInvariant());
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -121,8 +133,8 @@ namespace MINTSOUP.TokenAPI
         {
             using (SqlCommand command = new SqlCommand($"INSERT INTO MintSoupTokens ( Email, Username, Password_Hash, Password_Salt) VALUES( @Email, @Username, @Password_Hash, @Password_Salt)", _conn))
             {
-                command.Parameters.AddWithValue("@Email", Email);
-                command.Parameters.AddWithValue("@Username", Username);
+                command.Parameters.AddWithValue("@Email", Email.ToLowerInvariant());
+                command.Parameters.AddWithValue("@Username", Username.ToLowerInvariant());
                 command.Parameters.AddWithValue("@Password_Hash", Password_Hash);
                 command.Parameters.AddWithValue("@Password_Salt", Password_Salt);
                 _conn.Open();
@@ -145,7 +157,7 @@ namespace MINTSOUP.TokenAPI
         {
             using (SqlCommand command = new SqlCommand($"SELECT Password_Hash , Password_Salt FROM MintSoupTokens where Email = @Email ", _conn))
             {
-                command.Parameters.AddWithValue("@Email", Email);
+                command.Parameters.AddWithValue("@Email", Email.ToLowerInvariant());
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -175,7 +187,7 @@ namespace MINTSOUP.TokenAPI
         {
             using (SqlCommand command = new SqlCommand($"SELECT Password_Hash , Password_Salt FROM MintSoupTokens where Username = @Username", _conn))
             {
-                command.Parameters.AddWithValue("@Username", Username);
+                command.Parameters.AddWithValue("@Username", Username.ToLowerInvariant());
                 _conn.Open();
 
                 SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -203,40 +215,41 @@ namespace MINTSOUP.TokenAPI
 
         public async Task<MyMintSoupToken?> GET_MY_TOKEN_w_email_or_username(string? Email, string? Username)
         {
-            if ((Email != null) && (Username == null))
+            if ((Email != null) || (Username == null))
             {
-                using (SqlCommand command = new SqlCommand($"SELECT * FROM MintSoupTokens where Email = @Email", _conn))
+                using (SqlCommand command = new SqlCommand($"SELECT ID, Email, Username, DateSignedUp, LastSignedIn FROM MintSoupTokens WHERE Email = @Email ", _conn))
                 {
-                    command.Parameters.AddWithValue("@Email", Email);
+                    command.Parameters.AddWithValue("@Email", Email?.ToLowerInvariant());
                     _conn.Open();
 
                     SqlDataReader ret = await command.ExecuteReaderAsync();
                     if (ret.Read())
                     {
                         MyMintSoupToken myToken = new MyMintSoupToken(
-                            ret.GetGuid(0),
-                            ret.GetString(1),
-                            ret.GetString(2),
-                            ret.GetString(3),
-                            ret.GetString(4),
-                            ret.GetDateTime(5),
-                            ret.GetDateTime(6)
+                        ret.GetGuid(0),
+                        ret.GetString(1),
+                        ret.GetString(2),
+                        ret.GetDateTime(3),
+                        ret.GetDateTime(4)
                             );
+                        //Console.WriteLine($"{myToken?.Id}, {myToken?.Email}, {myToken?.Username} was gotten from token at {DateTime.Now} to LOGIN with '{Email}'");
+                        _conn.Close();
                         return myToken;
                     }
                     else
                     {
                         _conn.Close();
+                        Console.WriteLine($"No token was found - {Email}");
                         return null;
                     }
                 }
 
             }
-            else if ((Email == null) && (Username != null))
+            else if ((Email == null) || (Username != null))
             {
-                using (SqlCommand command = new SqlCommand($"SELECT * FROM MintSoupTokens where Username = @Username", _conn))
+                using (SqlCommand command = new SqlCommand($"SELECT ID, Email, Username, DateSignedUp, LastSignedIn FROM MintSoupTokens where Username=@Username ", _conn))
                 {
-                    command.Parameters.AddWithValue("@Username", Username);
+                    command.Parameters.AddWithValue("@Username", Username.ToLowerInvariant());
                     _conn.Open();
 
                     SqlDataReader ret = await command.ExecuteReaderAsync();
@@ -246,16 +259,17 @@ namespace MINTSOUP.TokenAPI
                             ret.GetGuid(0),
                             ret.GetString(1),
                             ret.GetString(2),
-                            ret.GetString(3),
-                            ret.GetString(4),
-                            ret.GetDateTime(5),
-                            ret.GetDateTime(6)
+                            ret.GetDateTime(3),
+                            ret.GetDateTime(4)
                             );
+                        //Console.WriteLine($"{myToken?.Id}, {myToken?.Email}, {myToken?.Username} was gotten from token at {DateTime.Now} to LOGIN with '{Username}'");
+                        _conn.Close();
                         return myToken;
                     }
                     else
                     {
                         _conn.Close();
+                        Console.WriteLine($"No token was found - {Username}");
                         return null;
                     }
                 }
@@ -272,7 +286,7 @@ namespace MINTSOUP.TokenAPI
         {
             using (SqlCommand command = new SqlCommand($"UPDATE MintSoupTokens SET Password = @Password Where Email = @Email ", _conn))
             {
-                command.Parameters.AddWithValue("@Email", Email);
+                command.Parameters.AddWithValue("@Email", Email.ToLowerInvariant());
                 command.Parameters.AddWithValue("@Password", Password);
                 _conn.Open();
 

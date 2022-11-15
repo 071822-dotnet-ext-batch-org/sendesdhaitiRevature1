@@ -1,0 +1,7 @@
+div{
+    margin: auto;
+    padding: 10px 10px 10px 10px;
+    display: flex block;
+    width: 100%;
+    height: 100%;
+}

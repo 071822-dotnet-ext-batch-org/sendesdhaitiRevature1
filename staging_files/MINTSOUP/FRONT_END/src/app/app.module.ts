@@ -5,6 +5,10 @@ import { environment as env } from 'src/environments/environment';
 import { AuthModule , AuthHttpInterceptor} from '@auth0/auth0-angular';
 import { FormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { RouterModule, Routes } from '@angular/router';
+import { LoadChildrenCallback } from '@angular/router';
+// import { LoadChildren } from '@angular/router';
+import { MintSoupAuthModule } from 'projects/authapp/src/app/app.module';//the mint soup authentication sub application
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -23,7 +27,10 @@ import { MenuComponent } from './Components/menu/menu.component';
 import { SearchComponent } from './Components/search/search.component';
 import { ShowsComponent } from './Components/shows/shows.component';
 import { AccountComponent } from './Components/account/account.component';
-
+const routes: Routes = [
+  {path: 'mint', loadChildren:  () => MintSoupAuthModule}
+  // { path: '**', redirectTo: ''}
+]
 @NgModule({
   declarations: [
     AppComponent,
@@ -47,6 +54,9 @@ import { AccountComponent } from './Components/account/account.component';
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
+    BrowserAnimationsModule,
+    RouterModule.forRoot(routes),
+    MintSoupAuthModule.forRoot(),
     // AuthModule.forRoot({
     //   // ...env.Auth0.domain,
     //   ...env.Auth0.clientId,
@@ -62,7 +72,6 @@ import { AccountComponent } from './Components/account/account.component';
     //     ]
     //   }
     // }),
-    BrowserAnimationsModule,
   ],
   providers: [
     {
