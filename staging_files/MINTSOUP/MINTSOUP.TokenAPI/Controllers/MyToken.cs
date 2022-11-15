@@ -11,6 +11,7 @@ using System.Security.Claims;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;//To hash the password
+using Microsoft.AspNetCore.Authorization;//to authorize with jwt token
 
 using System.Data.SqlClient;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
@@ -23,6 +24,7 @@ namespace MINTSOUP.TokenAPI.Controllers
 {
     [EnableCors("MyAllowAllOrigins")]
     [Route("mint-soup.token")]
+    [Authorize]
     public class MyToken : Controller
     {
         private readonly Iuserservice user;
@@ -116,9 +118,9 @@ namespace MINTSOUP.TokenAPI.Controllers
             /// <returns></returns>
             public string Generate_MINTSOUP_JWTtoken(userservice.MyMintSoupToken token)
             {
-                var MINTSOUP_securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes($"MINTSOUP|SEN{Guid.NewGuid()}"));
+                var MINTSOUP_securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes($"MINTSOUP|BY|SENDES"));
                 var token_credentials = new SigningCredentials(MINTSOUP_securityKey, SecurityAlgorithms.HmacSha256);
-                var claims = new[]
+                var myclaims = new[]
                 {
                     new Claim(JwtRegisteredClaimNames.Iss, "MINTSOUP"),
                     new Claim(JwtRegisteredClaimNames.Sid, token.Id.ToString() ?? "NotSignedIn"),//TODO - we should check if the user's credentials say they are admin/viewer/guest/or none
@@ -129,8 +131,14 @@ namespace MINTSOUP.TokenAPI.Controllers
 
                 };
 
-                var _token = new JwtSecurityToken("MINTSOUP", "MINTSOUP", claims, expires: DateTime.Now.AddMinutes(10), signingCredentials: token_credentials);
-                return new JwtSecurityTokenHandler().WriteToken(_token);
+                var tokenOptions = new JwtSecurityToken(
+                    issuer: "http://localhost:7215",
+                    audience: "http://localhost:7215",
+                    claims: myclaims,
+                    expires: DateTime.Now.AddMinutes(10),
+                    signingCredentials: token_credentials
+                );
+                return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
             }
 
             public JwtSecurityToken? Extract_JWT_claims(string MSToken)
@@ -167,6 +175,7 @@ namespace MINTSOUP.TokenAPI.Controllers
 
 
         // GET api/values/5
+        [AllowAnonymous]
         [HttpGet("check-email/{email}")]
         public async Task<ActionResult<bool>> CHECK_IF_EMAIL_EXISTS([FromRoute] string email)
         {
@@ -190,13 +199,14 @@ namespace MINTSOUP.TokenAPI.Controllers
             else return BadRequest($"The email input of '{email}' is not a valid email");
         }
 
+        [AllowAnonymous]
         [HttpGet("check-username/{username}")]
-        public async Task<ActionResult<bool>> CHECK_IF_USERNAME_EXISTS([FromRoute] string username)
+        public async Task<ActionResult<bool>> CHECK_IF_USERNAME_EXISTS( [FromRoute] string username)
         {
-            //this checks if the user exists and returns the user's role if so
+            //this checks if the user exists 
             bool res = await this.user.CHECK_IF_EMAIL_EXISTS(username);
 
-            //this checks which result the check for the user in the database was and returns the result
+            //this checks which result the check for the user in the database was
             if (res)
             {
                 Console.WriteLine($"{res} at {DateTime.Now} to CHECK for username '{username}'");
@@ -209,23 +219,24 @@ namespace MINTSOUP.TokenAPI.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpPost("signup")]
         public async Task<ActionResult<bool>> CREATE_USER_ON_SIGNUP( [FromBody] Models.SignUpDTO dto)
         {
             if(ModelState.IsValid)
             {
                 //this checks if the user exists and returns the user's role if so
-                bool res = await this.user.CHECK_IF_EMAIL_EXISTS(dto.email);
+                bool check_email = await this.user.CHECK_IF_EMAIL_EXISTS(dto.email);
                 bool check_username = await this.user.CHECK_IF_USERNAME_EXISTS(dto.username);
                 //this checks which result the check for the user in the database was and returns the result
 
                 //Check if the username exists
                 if(check_username == true) { return Conflict($"{check_username} at {DateTime.Now} - The username '{dto.username}' exists already"); }
 
-                if (res)
+                if (check_email  == false)
                 {
                     (string, string) hashedPassword = this.msALGOS.HashPassword(dto.password);
-                    res = await this.user.CREATE_USER_ON_SIGNUP(dto.email, dto.username, hashedPassword.Item1, hashedPassword.Item2);
+                    bool res = await this.user.CREATE_USER_ON_SIGNUP(dto.email, dto.username, hashedPassword.Item1, hashedPassword.Item2);
                     if(res)
                     {
                         userservice.MyMintSoupToken? myMSToken = await this.user.GET_MY_TOKEN_w_email_or_username(dto.email, null);
@@ -235,7 +246,7 @@ namespace MINTSOUP.TokenAPI.Controllers
                             string newToken  = new MyToken.token().Generate_MINTSOUP_JWTtoken(myMSToken);
                             var handler = new JwtSecurityTokenHandler();
                             var token = handler.ReadJwtToken(newToken);
-                            return Created($"{dto.username}",token);
+                            return Created($"{dto.username}", new {Token = token});
                         }
                         Console.WriteLine($"{res} at {DateTime.Now} to SIGNUP with '{dto.email}' - 'could not get token'");
                         return Created($"{dto.username}", "your account could not be retrieved");
@@ -248,8 +259,8 @@ namespace MINTSOUP.TokenAPI.Controllers
                 }
                 else
                 {
-                    Console.WriteLine($"{res} at {DateTime.Now} to SIGNUP with '{dto.email}'");
-                    return Conflict($"{res} at {DateTime.Now} - User could not be created because the user with email '{dto.email}' already exists");
+                    Console.WriteLine($"{check_email} at {DateTime.Now} to SIGNUP with '{dto.email}'");
+                    return Conflict($"{check_email} at {DateTime.Now} - User could not be created because the user with email '{dto.email}' already exists");
                 }
             }
             else
@@ -259,6 +270,7 @@ namespace MINTSOUP.TokenAPI.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpPost("login-username")]
         public async Task<ActionResult<JwtSecurityToken?>> LOGIN_w_username([FromBody] Models.LoginDTO_w_username dto)
         {
@@ -274,13 +286,14 @@ namespace MINTSOUP.TokenAPI.Controllers
                     if(login_check)
                     {
                         userservice.MyMintSoupToken? myMSToken = await this.user.GET_MY_TOKEN_w_email_or_username(null, dto.username);
+                        //Console.WriteLine($"{myMSToken?.Id}, {myMSToken?.Email}, {myMSToken?.Username} was gotten from token at {DateTime.Now} to LOGIN with '{dto.username}'");
                         if (myMSToken?.Username == dto.username)
                         {
                             Console.WriteLine($"{login_check} at {DateTime.Now} to LOGIN with '{dto.username}' - 'got token'");
                             string newToken = new MyToken.token().Generate_MINTSOUP_JWTtoken(myMSToken);
                             var handler = new JwtSecurityTokenHandler();
                             var token = handler.ReadJwtToken(newToken);
-                            return Ok(token);
+                            return Ok(new { Token = token });
                         }
                         Console.WriteLine($"{login_check} at {DateTime.Now} to LOGIN with '{dto.username}' - 'could not get token'");
                         return Ok($"At {DateTime.Now} - '{dto.username}' your account could not be retrieved");
@@ -302,6 +315,7 @@ namespace MINTSOUP.TokenAPI.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpPost("login-email")]
         public async Task<ActionResult<JwtSecurityToken?>> LOGIN_w_email([FromBody] Models.LoginDTO_w_email dto)
         {
@@ -316,15 +330,15 @@ namespace MINTSOUP.TokenAPI.Controllers
                     bool login_check = await this.user.LOGIN_USER_to_get_TOKEN_w_email(dto.email, dto.password);
                     if(login_check == true)
                     {
-                        userservice.MyMintSoupToken? myMSToken = await this.user.GET_MY_TOKEN_w_email_or_username(null, dto.email);
-                        Console.WriteLine(myMSToken?.Email);
+                        userservice.MyMintSoupToken? myMSToken = await this.user.GET_MY_TOKEN_w_email_or_username( dto.email, null);
+                        //Console.WriteLine($"{myMSToken?.Id}, {myMSToken?.Email}, {myMSToken?.Username} was gotten from token at {DateTime.Now} to LOGIN with '{dto.email}'");
                         if (myMSToken?.Email == dto.email)
                         {
                             Console.WriteLine($"{login_check} at {DateTime.Now} to LOGIN with '{dto.email}' - 'got token'");
                             string newToken = new MyToken.token().Generate_MINTSOUP_JWTtoken(myMSToken);
                             var handler = new JwtSecurityTokenHandler();
                             var token = handler.ReadJwtToken(newToken);
-                            return Ok(token);
+                            return Ok(new { Token = token });
                         }
                         Console.WriteLine($"{login_check} at {DateTime.Now} to LOGIN with '{dto.email}' - 'could not get token'");
                         return Ok($"At {DateTime.Now} - '{dto.email}' your account could not be retrieved");

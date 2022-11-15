@@ -1,16 +1,16 @@
 ﻿using System.Text.Encodings.Web;
 using MINTSOUP.TokenAPI;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddScoped<Iuserservice, userservice>();
 builder.Services.AddScoped<IMSAlgos, MSAlgos>();
-//builder.Services.AddSingleton<JavaScriptEncoder>();
-//builder.Services.AddSingleton<UrlEncoder>();
-//builder.Services.AddCors();
-            //.WithOrigins("http://127.0.0.1:7215/", "http://127.0.0.1:4200/")
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: "MyAllowAllOrigins",
@@ -23,18 +23,25 @@ builder.Services.AddCors(options =>
     });
 });
 
-//builder.Services.AddCors(options => options.AddDefaultPolicy(
-//    builder =>
-//    builder.SetIsOriginAllowedToAllowWildcardSubdomains()
-//    //.AllowAnyOrigin()
-//    .WithOrigins("https://*mint-soup.token", "https://*.token", "https://localhost:4200/*" , "https://localhost:4200/mint-soup.token/*")
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,//valid if the issuer is the action server that created the token
+            ValidateAudience = true,//the reciever of the token is a valid recipient
+            ValidateLifetime = true,//the token is not expired
+            ValidateIssuerSigningKey = true,//the signing key is valide and translated by the server
 
-//      .AllowAnyMethod()
-//      .AllowCredentials()
-//      .AllowAnyHeader()
-//    )
-//);
-
+            ValidIssuer = "http://localhost:7215",
+            ValidAudience = "http://localhost:7215",
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes($"MINTSOUP|BY|SENDES"))
+        };
+    });
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -54,14 +61,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseCors();
 
-//app.UseCors("MyAllowAllOrigins");
-//app.UseCors(_builder =>
-//{
-//    _builder
-//    .AllowCredentials()
-//    .AllowAnyMethod()
-//    .AllowAnyHeader();
-//});
 app.UseAuthorization();
 
 app.MapControllers();

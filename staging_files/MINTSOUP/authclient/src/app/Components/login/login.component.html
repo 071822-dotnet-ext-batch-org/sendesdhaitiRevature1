@@ -17,12 +17,16 @@
         </fieldset>
 
     </div>
+    <!-- <div *ngIf="invalidLogin">Invalid username or email</div> -->
+    <div *ngIf="username_check == false">Invalid username</div>
+    <div *ngIf="email_check == false">Invalid email</div>
+    
 
     <div id="email">
-        <label class="email" for="email">Email: </label> <input name="email" formControlName="email" class="email email_input" placeholder="Enter you email for updates..." type="email">
+        <label class="email" for="email">Email: </label> <input name="email" formControlName="email" class="email email_input" placeholder="Enter you email for updates..." type="email" (change)="check_email()">
     </div>
     <div id="username">
-        <label class="username" for="username">Username: </label><input  name="username"  formControlName="username" class="username username_input" placeholder="Enter you username for an identity..."  type="text">
+        <label class="username" for="username">Username: </label><input  name="username"  formControlName="username" class="username username_input" placeholder="Enter you username for an identity..."  type="text" (change)="check_username()">
     </div>
     <div id="password">
         <label class="password" for="password">Password: </label><input  name="password" formControlName="password" placeholder="Enter you password for security..." class="password password_input" type="password">

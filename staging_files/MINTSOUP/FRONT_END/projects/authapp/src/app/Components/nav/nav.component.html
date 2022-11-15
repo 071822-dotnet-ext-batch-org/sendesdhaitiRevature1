@@ -1,0 +1,9 @@
+<nav>
+    <div>
+        <button routerLink="" routerLinkActive="active" ariaCurrentWhenActive="page">Home</button>
+        <button *ngIf="isAuthenticated == false" routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page">Login</button>
+        <button *ngIf="isAuthenticated == false" routerLink="/register" routerLinkActive="active" ariaCurrentWhenActive="page">Register</button>
+        <button *ngIf="isAuthenticated == true" (click)="logout()">Logout</button>
+        <button *ngIf="isAuthenticated == true" routerLink="/account" routerLinkActive="active" ariaCurrentWhenActive="page">Account</button>
+    </div>
+</nav>

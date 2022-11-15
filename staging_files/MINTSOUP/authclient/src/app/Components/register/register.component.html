@@ -1,12 +1,15 @@
 <form [formGroup]="registerform">
+    <div *ngIf="invalidSignUp == true">Your email "{{registerform.value.email}}" or username "{{registerform.value.username}}" are already taken</div>
+    <div *ngIf="email_check == true">This email {{registerform.value.email}} is registered</div>
     <div>
-        <label class="email" for="email">Email: </label> <input name="email" formControlName="email" class="email email_input" placeholder="Enter you email for updates..." type="email">
+        <label class="email" for="email">Email: </label> <input name="email" formControlName="email" class="email email_input" placeholder="Enter you email for updates..." type="email" (change)="check_email()">
+    </div>
+    <div *ngIf="username_check == true">This username {{registerform.value.username}} is registered</div>
+    <div>
+        <label class="username" for="username">Username: </label><input name="username" formControlName="username" class="username username_input" placeholder="Enter you username for an identity..." type="text" (change)="check_username()">
     </div>
     <div>
-        <label class="username" for="email">Username: </label><input name="username" formControlName="username" class="username username_input" placeholder="Enter you username for an identity..." type="text">
-    </div>
-    <div>
-        <label class="password" for="email">Password: </label><input name="password"  formControlName="password" placeholder="Enter you password for security..." class="password password_input" type="password">
+        <label class="password" for="password">Password: </label><input name="password"  formControlName="password" placeholder="Enter you password for security..." class="password password_input" type="password">
     </div>
     <button name="authenticatebtn" (click)="register()">Register</button>
 </form>

@@ -6,18 +6,20 @@ import {FormBuilder, FormGroup, FormsModule, NgForm, Validators} from '@angular/
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
+
 export class RegisterComponent implements OnInit {
 
   public registerform: FormGroup;
-  public static register_check1:boolean
-  public static register_check2:boolean
+  public email_check?:boolean
+  public username_check?:boolean
+  public invalidSignUp?:boolean
 
   constructor(public userservice: UserService, private formbuilder:FormBuilder) {
 
     this.registerform = this.formbuilder.group({
-      email: ['',Validators.required],
-      username: ['', Validators.required],
-      password: ['',Validators.required]
+      email: [null,Validators.required],
+      username: [null, Validators.required],
+      password: [null,Validators.required]
      });
 
    }
@@ -25,20 +27,57 @@ export class RegisterComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  register(){
+  async register(){
     let val = this.registerform.value;
     if(val.email && val.username && val.password)
     {
-      this.userservice.CHECK_IF_EMAIL_EXISTS(val.email).subscribe(data => RegisterComponent.register_check1 = data);
-      this.userservice.CHECK_IF_USERNAME_EXISTS(val.username).subscribe(data => RegisterComponent.register_check2 = data);
-      if((RegisterComponent.register_check1 && RegisterComponent.register_check2) === false)
+      let em_ch = await this.userservice.get_email_check()
+      this.email_check = em_ch;
+
+      let us_ch =  await this.userservice.get_username_check()
+      this.username_check = us_ch;
+
+      console.log(`The signup checks were ${this.email_check} for email and ${this.username_check} for username`)
+      
+      if((em_ch && us_ch) != undefined || null  )
       {
-        this.userservice.SignUp(val.email, val.username, val.password).subscribe(saved => console.log(`${saved} at ${Date.now} - checked if signed up with ${val.email}`))
-      }
-      else{
-        console.log(`The user with '${val.email} is registered already`)
+        if((em_ch === false) && (us_ch === false))
+        {
+          this.userservice.SignUp(val.email, val.username, val.password).subscribe(saved => console.log(`${saved} at ${Date.now} - checked if signed up with ${val.email}`))
+        }
+        else if((em_ch === true) && (us_ch === false))
+        {
+          console.log(`The email '${val.email}' is registered already`)
+        }
+        else if((em_ch === false) && (us_ch === true))
+        {
+          console.log(`The username '${val.username}' is registered already`)
+        }
+        else{
+          this.invalidSignUp = true;
+          console.log(`The email '${val.email}' and username '${val.username}' are registered already`)
+        }
       }
     }
   }
 
+  
+
+
+
+
+
+
+
+
+
+  async check_email()
+  {
+    this.userservice.check_email(this.registerform.value.email)
+  }
+
+  async check_username()
+  {
+    this.userservice.check_username(this.registerform.value.username)
+  }
 }
