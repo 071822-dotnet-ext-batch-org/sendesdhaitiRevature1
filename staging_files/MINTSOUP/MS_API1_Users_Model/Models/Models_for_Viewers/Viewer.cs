@@ -7,30 +7,30 @@ using System.Threading.Tasks;
 namespace Models
 {
     /// <summary>
-    /// This is the model to create a new Viewer - A viewer must have (Guid? ID, string? MSToken, string? fn, string? ln, string? email, string? image,  string? username, string? aboutMe, string? streetAddy, string? city, string? state, string? country, int? areaCode, Role? role, ViewerStatus? status, List<Friend?>? listOfFriends, List<Follower?>? listOfFollowers, List<Show?>? listOfCreatedShows, List<ShowSubscriber?>? listOfSubsrcibedShows, List<ShowLikes?>? listOfShowLikes, List<ShowComment?>? listOfShowComments, List<ShowDonation?>? listOfShowDonations)
+    /// This is the model to create a new Viewer - A viewer must have (Guid? ID, string MSToken, string fn, string ln, string email, string image,  string username, string aboutMe, string streetAddy, string city, string state, string country, int? areaCode, Role? role, ViewerStatus? status, List<Friend?>? listOfFriends, List<Follower?>? listOfFollowers, List<Show?>? listOfCreatedShows, List<ShowSubscriber?>? listOfSubsrcibedShows, List<ShowLikes?>? listOfShowLikes, List<ShowComment?>? listOfShowComments, List<ShowDonation?>? listOfShowDonations)
     /// </summary>
     public class Viewer
     {
         //What the User Needs
-        public Guid? ID {get;set;}
-        public string? MSToken {get;set;}
-        public string? Fn {get;set;}
-        public string? Ln {get;set;}
-        public string? Email {get;set;}
-        public string? Image {get;set;}
-        public string? Username {get;set;}
-        public string? AboutMe {get;set;}
-        public string? StreetAddy {get;set;}
-        public string? City {get;set;}
-        public string? State {get;set;}
-        public string? Country {get;set;}
-        public int? AreaCode {get;set;}
-        
+        public Guid ID { get; set; }
+        public Guid MSToken { get; set; }
+        public string Fn { get; set; } = "";
+        public string Ln { get; set; } = "";
+        public string Email { get; set; } = "";
+        public string Image { get; set; } = "";
+        public string Username { get; set; } = "";
+        public string AboutMe { get; set; } = "";
+        public string StreetAddy { get; set; } = "";
+        public string City { get; set; } = "";
+        public string State { get; set; } = "";
+        public string Country { get; set; } = "";
+        public int? AreaCode { get; set; }
+
         public Role Role {get;set;}
         public ViewerStatus MembershipStatus {get;set;}
-        
-        public DateTime? DateSignedUp {get;set;}
-        public DateTime? LastSignedIn {get;set;}
+
+        public DateTime DateSignedUp { get; set; } = DateTime.Now;
+        public DateTime LastSignedIn {get;set;} =  DateTime.Now;
 
         //List<Friend?> ListOfFriends {get;set;}
         //List<Follower?> ListOfFollowers {get;set;}
@@ -42,40 +42,28 @@ namespace Models
 
         //Constructors
         /// <summary>
-        /// This is the model to create a new Viewer that is empty - A viewer must have (Guid? ID, string? MSToken, string? fn, string? ln, string? email, string? image,  string? username, string? aboutMe, string? streetAddy, string? city, string? state, string? country, int? areaCode, Role? role, ViewerStatus? status, List<Friend?>? listOfFriends, List<Follower?>? listOfFollowers, List<Show?>? listOfCreatedShows, List<ShowSubscriber?>? listOfSubsrcibedShows, List<ShowLikes?>? listOfShowLikes, List<ShowComment?>? listOfShowComments, List<ShowDonation?>? listOfShowDonations)
+        /// This is the model to create a new Viewer that is empty - A viewer must have (Guid? ID, string MSToken, string fn, string ln, string email, string image,  string username, string aboutMe, string streetAddy, string city, string state, string country, int? areaCode, Role? role, ViewerStatus? status, List<Friend?>? listOfFriends, List<Follower?>? listOfFollowers, List<Show?>? listOfCreatedShows, List<ShowSubscriber?>? listOfSubsrcibedShows, List<ShowLikes?>? listOfShowLikes, List<ShowComment?>? listOfShowComments, List<ShowDonation?>? listOfShowDonations)
         /// </summary>
         public Viewer()
         {
             Role = Role.Viewer;
             MembershipStatus = ViewerStatus.Guest;
         }
-        //public Viewer()
-        //{
-        //    Role = Role.Viewer;
-        //    MembershipStatus = ViewerStatus.Guest;
-        //    ListOfFriends = new List<Friend?>();
-        //    ListOfFollowers = new List<Follower?>();
-        //    ListOfCreatedShows = new List<Show?>();
-        //    ListOfSubsrcibedShows = new List<ShowSubscriber?>();
-        //    ListOfShowLikes = new List<ShowLikes?>();
-        //    ListOfShowComments = new List<ShowComment?>();
-        //    ListOfShowDonations = new List<ShowDonation?>();
-        //}
 
-        public Viewer(Guid? id) :this()
+        public Viewer(Guid id) :this()
         {
             this.ID = id;
         }
 
-        public Viewer(string? MSToken) :this()
+        public Viewer(string MSToken_to_convert_to_guid) :this()
         {
-            this.MSToken = MSToken;
+            this.MSToken = new Guid(MSToken_to_convert_to_guid);
         }
 
         /// <summary>
-        /// This is the model to create a new Viewer - A viewer must have (Guid? ID, string? MSToken, string? fn, string? ln, string? email, string? image,  string? username, string? aboutMe, string? streetAddy, string? city, string? state, string? country, int? areaCode, Role? role, ViewerStatus? status, List<Friend?>? listOfFriends, List<Follower?>? listOfFollowers, List<Show?>? listOfCreatedShows, List<ShowSubscriber?>? listOfSubsrcibedShows, List<ShowLikes?>? listOfShowLikes, List<ShowComment?>? listOfShowComments, List<ShowDonation?>? listOfShowDonations)
+        /// This is the model to create a new Viewer - A viewer must have (Guid? ID, string MSToken, string fn, string ln, string email, string image,  string username, string aboutMe, string streetAddy, string city, string state, string country, int? areaCode, Role? role, ViewerStatus? status, List<Friend?>? listOfFriends, List<Follower?>? listOfFollowers, List<Show?>? listOfCreatedShows, List<ShowSubscriber?>? listOfSubsrcibedShows, List<ShowLikes?>? listOfShowLikes, List<ShowComment?>? listOfShowComments, List<ShowDonation?>? listOfShowDonations)
         /// </summary>
-        public Viewer(Guid? ID, string? MSToken, string? fn, string? ln, string? email, string? image, string? username, string? aboutMe, string? streetAddy, string? city, string? state, string? country, int? areaCode, Role role, ViewerStatus status, DateTime dateRegistered, DateTime lastsignedin)
+        public Viewer(Guid ID, Guid MSToken, string fn, string ln, string email, string image, string username, string aboutMe, string streetAddy, string city, string state, string country, int? areaCode, Role role, ViewerStatus status, DateTime dateRegistered, DateTime lastsignedin)
         {
             this.ID = ID;
             this.MSToken = MSToken;
@@ -95,33 +83,6 @@ namespace Models
             this.DateSignedUp = dateRegistered;
             this.LastSignedIn = lastsignedin;
         }
-
-
-        //public Viewer(Guid? ID, string? MSToken, string? fn, string? ln, string? email, string? image,  string? username, string? aboutMe, string? streetAddy, string? city, string? state, string? country, int? areaCode, Role role, ViewerStatus status, List<Friend?> listOfFriends, List<Follower?> listOfFollowers, List<Show?> listOfCreatedShows, List<ShowSubscriber?> listOfSubsrcibedShows, List<ShowLikes?> listOfShowLikes, List<ShowComment?> listOfShowComments, List<ShowDonation?> listOfShowDonations)
-        //{
-        //    this.ID = ID;
-        //    this.MSToken = MSToken;
-        //    this.Fn = fn;
-        //    this.Ln = ln;
-        //    this.Email = email;
-        //    this.Image = image;
-        //    this.Username = username;
-        //    this.AboutMe = aboutMe;
-        //    this.StreetAddy = streetAddy;
-        //    this.City = city;
-        //    this.State = state;
-        //    this.Country = country;
-        //    this.AreaCode = areaCode;
-        //    this.Role = role;
-        //    this.MembershipStatus = status;
-        //    this.ListOfFriends = listOfFriends;
-        //    this.ListOfFollowers = listOfFollowers;
-        //    this.ListOfCreatedShows = listOfCreatedShows;
-        //    this.ListOfSubsrcibedShows = listOfSubsrcibedShows;
-        //    this.ListOfShowLikes = listOfShowLikes;
-        //    this.ListOfShowComments = listOfShowComments;
-        //    this.ListOfShowDonations = listOfShowDonations;
-        //}
     }
 
     /// <summary>

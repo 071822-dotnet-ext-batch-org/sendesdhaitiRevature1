@@ -127,7 +127,7 @@ namespace MINTSOUP.TokenAPI.Controllers
                     new Claim(JwtRegisteredClaimNames.Email, token.Email ?? ""),
                     new Claim(JwtRegisteredClaimNames.UniqueName, token.Username ?? ""),
                     new Claim(JwtRegisteredClaimNames.AuthTime, token.LastSignedIn.ToString()),
-                    new Claim(JwtRegisteredClaimNames.Exp, DateTime.Now.AddMinutes(10).ToString())
+                    new Claim(JwtRegisteredClaimNames.Exp, DateTime.Now.AddHours(12).ToString())
 
                 };
 
@@ -244,9 +244,9 @@ namespace MINTSOUP.TokenAPI.Controllers
                         {
                             Console.WriteLine($"{res} at {DateTime.Now} to SIGNUP with '{dto.email}' - 'got token'");
                             string newToken  = new MyToken.token().Generate_MINTSOUP_JWTtoken(myMSToken);
-                            var handler = new JwtSecurityTokenHandler();
-                            var token = handler.ReadJwtToken(newToken);
-                            return Created($"{dto.username}", new {Token = token});
+                            //var handler = new JwtSecurityTokenHandler();
+                            //var token = handler.ReadJwtToken(newToken);
+                            return Created($"{dto.username}", new {Token = newToken});
                         }
                         Console.WriteLine($"{res} at {DateTime.Now} to SIGNUP with '{dto.email}' - 'could not get token'");
                         return Created($"{dto.username}", "your account could not be retrieved");
@@ -291,9 +291,9 @@ namespace MINTSOUP.TokenAPI.Controllers
                         {
                             Console.WriteLine($"{login_check} at {DateTime.Now} to LOGIN with '{dto.username}' - 'got token'");
                             string newToken = new MyToken.token().Generate_MINTSOUP_JWTtoken(myMSToken);
-                            var handler = new JwtSecurityTokenHandler();
-                            var token = handler.ReadJwtToken(newToken);
-                            return Ok(new { Token = token });
+                            //var handler = new JwtSecurityTokenHandler();
+                            //var token = handler.ReadJwtToken(newToken);
+                            return Ok(new { Token = newToken });
                         }
                         Console.WriteLine($"{login_check} at {DateTime.Now} to LOGIN with '{dto.username}' - 'could not get token'");
                         return Ok($"At {DateTime.Now} - '{dto.username}' your account could not be retrieved");
@@ -336,9 +336,9 @@ namespace MINTSOUP.TokenAPI.Controllers
                         {
                             Console.WriteLine($"{login_check} at {DateTime.Now} to LOGIN with '{dto.email}' - 'got token'");
                             string newToken = new MyToken.token().Generate_MINTSOUP_JWTtoken(myMSToken);
-                            var handler = new JwtSecurityTokenHandler();
-                            var token = handler.ReadJwtToken(newToken);
-                            return Ok(new { Token = token });
+                            //var handler = new JwtSecurityTokenHandler();
+                            //var token = handler.ReadJwtToken(newToken);
+                            return Ok(new { Token = newToken });
                         }
                         Console.WriteLine($"{login_check} at {DateTime.Now} to LOGIN with '{dto.email}' - 'could not get token'");
                         return Ok($"At {DateTime.Now} - '{dto.email}' your account could not be retrieved");

@@ -9,6 +9,8 @@ using System.Security.Claims;
 using MS_API1_Users_LogicLayer;
 // using MS_API1_Users_Model;
 using MS_API1_Users_Repo;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,20 +55,31 @@ builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-    options.Authority = builder.Configuration["Auth0:Authority"];
-    options.Audience = builder.Configuration["Auth0:Audience"];
-    options.TokenValidationParameters = new TokenValidationParameters
+})
+    .AddJwtBearer(options =>
     {
-        NameClaimType = ClaimTypes.NameIdentifier
-    };
-});
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,//valid if the issuer is the action server that created the token
+            ValidateAudience = true,//the reciever of the token is a valid recipient
+            ValidateLifetime = true,//the token is not expired
+            ValidateIssuerSigningKey = true,//the signing key is valide and translated by the server
+
+            ValidIssuer = "http://localhost:7215",
+            ValidAudience = "http://localhost:7215",
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes($"MINTSOUP|BY|SENDES"))
+        };
+    });
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("read: mintsoup", p =>
-        p.RequireAuthenticatedUser());
+    var defaultAuthorizationPolicyBuilder = new AuthorizationPolicyBuilder(
+        JwtBearerDefaults.AuthenticationScheme);
+
+    defaultAuthorizationPolicyBuilder =
+        defaultAuthorizationPolicyBuilder.RequireAuthenticatedUser();
+
+    options.DefaultPolicy = defaultAuthorizationPolicyBuilder.Build();
 });
 
 var app = builder.Build();

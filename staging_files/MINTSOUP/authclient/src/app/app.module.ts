@@ -7,7 +7,7 @@ import { JwtModule } from '@auth0/angular-jwt';
 import {MSGuard} from './Services/ms.guard';
 import { Router, RouterModule } from '@angular/router';
 import { AuthSoupToken } from './Services/user.service';
-import { JwtHelperService } from '@auth0/angular-jwt';
+import { JwtHelperService , JWT_OPTIONS} from '@auth0/angular-jwt';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './Components/login/login.component';
@@ -66,7 +66,9 @@ export function getMSTOKEN(){
     }),
     
   ],
-  providers: [ MSGuard, JwtHelperService, ],
+  providers: [ {
+    provide:JWT_OPTIONS, useValue: JWT_OPTIONS
+  }, MSGuard, JwtHelperService, ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,0 +1,65 @@
+.Show {
+	-webkit-animation: Show 0.5s linear;
+    animation: Show 0.5s linear;
+    opacity: 100%;
+    display: block;
+    animation-direction: alternate;
+}
+
+.Hidding {
+	-webkit-animation: Hide 0.5s linear;
+    animation: Hide 1.5s linear;
+    opacity: 0%;
+    display: block;
+    animation-direction: alternate;
+}
+
+.Hide {
+    display: none;
+}
+
+@keyframes Show {
+    0% {
+        -webkit-transform: translateX(0%) rotateX(0deg);
+                transform: translateX(0%) rotateX(0deg);
+      }
+      100% {
+        -webkit-transform: translateX(100%);
+                transform: translateX(100%);
+      }
+  }
+
+
+ @-webkit-keyframes Show {
+    0% {
+      -webkit-transform: translateX(0%);
+              transform: translateX(0%);
+    }
+    100% {
+      -webkit-transform: translateX(100%);
+              transform: translateX(100%);
+    }
+  }
+
+
+  @keyframes Hide {
+    100% {
+      -webkit-transform: translateX(100%);
+              transform: translateX(100%);
+    }
+  0% {
+    -webkit-transform: translateX(0%);
+            transform: translateX(0%);
+  }
+}
+  
+  @-webkit-keyframes Hide {
+    100% {
+        -webkit-transform: translateX(100%);
+                transform: translateX(100%);
+      }
+    0% {
+      -webkit-transform: translateX(0%);
+              transform: translateX(0%);
+    }
+  }

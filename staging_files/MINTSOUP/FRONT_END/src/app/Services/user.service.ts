@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AuthService } from '@auth0/auth0-angular';
+import { AuthSoupService } from 'projects/authapp/src/app/Services/user.service';
 import { Viewer } from '../Models/UserModels';
 // import { environment as env } from 'src/environments/environment';
 import { environment as env } from 'src/environments/environment';
@@ -14,9 +14,9 @@ export class UserService {
   public getAccount?: object 
   // private  accoun?: Viewer = {}
 
-  constructor(public http: HttpClient, public auth: AuthService) { 
+  constructor(public http: HttpClient, public soup:AuthSoupService) { 
     this.http;
-    this.auth;
+    this.soup;
   }
 
   public static heldChecks:boolean;

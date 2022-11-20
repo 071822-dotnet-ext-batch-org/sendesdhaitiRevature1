@@ -11,7 +11,7 @@ namespace Models
     public class Admin
     {
         public Guid? ID {get;set;}
-        public string? MSToken {get;set;}
+        public Guid? MSToken {get;set;}
         public string? Email {get;set;}
         public string? Username {get;set;}
         public AdminStatus? AdminStatus {get;set;}
@@ -31,7 +31,7 @@ namespace Models
         /// <param name="adminStatus"></param>
         /// <param name="dateCreated"></param>
         /// <param name="lastSignedIn"></param>
-        public Admin(Guid? id, string? MSToken, string? email, string? username, AdminStatus? adminStatus, DateTime? dateCreated, DateTime? lastSignedIn)
+        public Admin(Guid? id, Guid? MSToken, string? email, string? username, AdminStatus? adminStatus, DateTime? dateCreated, DateTime? lastSignedIn)
         {
             this.ID = id;
             this.MSToken = MSToken;
