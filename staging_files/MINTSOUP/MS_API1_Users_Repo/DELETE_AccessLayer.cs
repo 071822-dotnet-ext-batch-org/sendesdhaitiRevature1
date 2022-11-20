@@ -7,8 +7,8 @@ namespace MS_API1_Users_Repo
 {
     public interface IDELETE_AccessLayer
     {
-        Task<CHECK_AccessLayer.CHECKSTATUS> DELETE_myViewer_by_MSToken(string? MSToken);
-        Task<CHECK_AccessLayer.CHECKSTATUS> DELETE_myLike_on_ShowSession_by_MSToken(string? MSToken, Guid? sessionID);
+        Task<CHECK_AccessLayer.CHECKSTATUS> DELETE_myViewer_by_MSToken(Guid? MSToken);
+        Task<CHECK_AccessLayer.CHECKSTATUS> DELETE_myLike_on_ShowSession_by_MSToken(Guid? MSToken, Guid? sessionID);
     }
 
     public class DELETE_AccessLayer : IDELETE_AccessLayer
@@ -31,11 +31,11 @@ namespace MS_API1_Users_Repo
             }
 
         }
-        public async Task<CHECK_AccessLayer.CHECKSTATUS> DELETE_myViewer_by_MSToken(string? MSToken)
+        public async Task<CHECK_AccessLayer.CHECKSTATUS> DELETE_myViewer_by_MSToken(Guid? MSToken)
         {
             if ((MSToken?.GetType() == typeof(string)))
             {
-                using (SqlCommand command = new SqlCommand($"DELETE FROM Viewers Where MSToken = @MSToken", _conn))
+                using (SqlCommand command = new SqlCommand($"DELETE FROM Viewers Where FK_MSToken = @MSToken", _conn))
                 {
                     command.Parameters.AddWithValue("MSToken", MSToken);
                     _conn.Open();
@@ -59,12 +59,12 @@ namespace MS_API1_Users_Repo
             }
         }//End of DELETE_myViewer_by_MSToken
 
-        public async Task<CHECK_AccessLayer.CHECKSTATUS> DELETE_myLike_on_ShowSession_by_MSToken(string? MSToken, Guid? sessionID)
+        public async Task<CHECK_AccessLayer.CHECKSTATUS> DELETE_myLike_on_ShowSession_by_MSToken(Guid? MSToken, Guid? sessionID)
         {
             if ((MSToken?.GetType() == typeof(string)))
             {
                 using (SqlCommand command = new SqlCommand($"DELETE FROM ShowLikes " + 
-                                " Where FK_ViewerID_Liker = ( select ID from Viewers where MSToken = @MSToken ) " + 
+                                " Where FK_ViewerID_Liker = ( select ID from Viewers where FK_MSToken = @MSToken ) " + 
                                 " AND FK_ShowSessionID = @FK_ShowSessionID ", _conn))
                 {
                     command.Parameters.AddWithValue("MSToken", MSToken);

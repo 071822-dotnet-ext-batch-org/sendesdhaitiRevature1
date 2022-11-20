@@ -9,13 +9,13 @@ export interface MSToken{
 };
 //The mintSoup JWT Token class
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export abstract class  AuthSoupToken{
 
   @Input() private msToken?:MSToken
   private jwthelper:JwtHelperService
-  constructor(public helper:JwtHelperService){
+  constructor(public helper:JwtHelperService, private http:HttpClient, ){
     // this.msToken = mst;
     this.jwthelper = helper;
   }
@@ -48,7 +48,7 @@ export abstract class  AuthSoupToken{
 })
 
 
-export class UserService {
+export class AuthSoupService {
 
   private API: string = env.API.auth_api;
   @Input() public static username_check?:boolean
@@ -110,14 +110,23 @@ export class UserService {
       localStorage.setItem("MINTSOUPTOKEN", token);
     }
   }
+  static  get_mstoken_from_local_storage()
+  {
+    let token = localStorage.getItem("MINTSOUPTOKEN")
+    if(token)
+    {
+      return of(token)
+    }
+    return of("")
+  }
 
   check_email(email:string){
     if(email)
     {
-      this.CHECK_IF_EMAIL_EXISTS(email).subscribe((data:boolean) => {UserService.email_check = data; console.log(`The check data: ${data}`)}, err => {
-        UserService.email_check = false;
+      this.CHECK_IF_EMAIL_EXISTS(email).subscribe((data:boolean) => {AuthSoupService.email_check = data; console.log(`The check data: ${data}`)}, err => {
+        AuthSoupService.email_check = false;
       })
-      let s = UserService.email_check
+      let s = AuthSoupService.email_check
       if(s == true)
       {
         return s;
@@ -154,10 +163,10 @@ export class UserService {
     // let check:boolean = false;
     if(username)
     {
-      this.CHECK_IF_USERNAME_EXISTS(username).subscribe(data => {UserService.username_check = data;console.log(`The check data: ${data}`)}, err => {
-        UserService.username_check = false;
+      this.CHECK_IF_USERNAME_EXISTS(username).subscribe(data => {AuthSoupService.username_check = data;console.log(`The check data: ${data}`)}, err => {
+        AuthSoupService.username_check = false;
       })
-      let s = UserService.username_check
+      let s = AuthSoupService.username_check
       if(s == true)
       {
         return s;
@@ -174,11 +183,11 @@ export class UserService {
   }
   async get_email_check()
   {
-    return UserService.email_check?.valueOf()
+    return AuthSoupService.email_check?.valueOf()
   }
   async get_username_check()
   {
-    return UserService.username_check?.valueOf()
+    return AuthSoupService.username_check?.valueOf()
   }
 
 

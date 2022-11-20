@@ -1,0 +1,75 @@
+/* @import url(../../projects/authentication/src/app/app.component.css) */
+/* .MAINGUI{
+    display: block;
+    margin: 0;
+    padding: 0;
+    background-color: blanchedalmond;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-content: center;
+}
+
+ .MAINCONTAINER {
+    display: block flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+    margin: 0;
+    padding: 0;
+}
+
+.MAINROUTER{
+}
+
+div #logo{
+    width: 80px;
+}
+div div{
+    display: block ;
+}
+.containers > *{
+    display: block flex;
+    justify-content: center;
+} */
+
+app-nav{
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: block flex;
+    flex-wrap: wrap;
+    width: 100%;
+    height: 10%;
+    justify-content: center;
+    align-items: center;
+    background-color: aquamarine;
+}
+
+router-outlet{
+    display: block flex;
+    margin: auto;
+    justify-content: center;
+    align-self: center;
+    width: 100%;
+    /* height: 80vh; */
+    justify-content: center;
+    align-items: center;
+    /* background-color: rebeccapurple; */
+}
+
+app-footer{
+    position:fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 5%;
+    background-color: white;
+}
+div{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+    height: 100%;
+}

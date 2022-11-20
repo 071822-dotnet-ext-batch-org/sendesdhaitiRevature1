@@ -1,0 +1,14 @@
+nav{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    flex-flow: column;
+    /* grid-template-columns: [first] 10% [line2] 30% [line3] auto [col4-start] 30% [five] 10% [end];
+    grid-template-rows: 1fr; */
+    justify-content: space-around;
+    align-items: center ;
+}
+
+button{
+    
+}

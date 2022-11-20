@@ -1,0 +1,19 @@
+/* You can add global styles to this file, and also import other style files */
+/* @import url(../projects/authentication/src/styles.css); */
+
+.MAIN_BODY{
+    background-color: rgb(52, 52, 52);
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    margin: auto;
+    padding: 0;
+}
+
+button{
+    box-shadow: 2px 2px 5px rgb(244, 208, 79);
+    margin: 5px 2px 5px 2px;
+    padding: 5px 3px 5px 3px;
+    border: 1px solid black;
+    border-radius: 10px 10px 10px 10px;
+}

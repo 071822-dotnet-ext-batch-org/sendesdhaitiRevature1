@@ -27,6 +27,8 @@ import { MenuComponent } from './Components/menu/menu.component';
 import { SearchComponent } from './Components/search/search.component';
 import { ShowsComponent } from './Components/shows/shows.component';
 import { AccountComponent } from './Components/account/account.component';
+import { MSGuard } from 'projects/authapp/src/app/Services/ms.guard';
+import { MainMSGuardGuard } from './main-msguard.guard';
 const routes: Routes = [
   {path: 'mint', loadChildren:  () => MintSoupAuthModule}
   // { path: '**', redirectTo: ''}
@@ -57,26 +59,11 @@ const routes: Routes = [
     BrowserAnimationsModule,
     RouterModule.forRoot(routes),
     MintSoupAuthModule.forRoot(),
-    // AuthModule.forRoot({
-    //   // ...env.Auth0.domain,
-    //   ...env.Auth0.clientId,
-    //   ...env.API.audience,
-    //   httpInterceptor: {
-    //     allowedList: [
-    //       `${env.API.DATA_API}/del-my-showlike`,
-    //       `${env.API.audience.audience}/update-my-viewer`,
-    //       `${env.API.audience.audience}/my-viewer`,
-    //       `${env.API.audience.audience}/my-admin`,
-    //       `${env.API.audience.audience}/login`,
-    //       `${env.API.audience.audience}/register`
-    //     ]
-    //   }
-    // }),
   ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: AuthHttpInterceptor,
+      useClass: MainMSGuardGuard,
       multi: true,
     }
   ],

@@ -1,0 +1,42 @@
+<p>login works!</p>
+<div>
+    <form  [formGroup]="loginform">
+        <div>
+            <fieldset>
+                <legend>Login with your email or username:</legend>
+            
+                <div>
+                  <input type="radio" id="radio_email" name="email_or_username" value="Email"
+                        checked (change)="hide_and_clear_username()">
+                  <label for="email">Email</label>
+                </div>
+            
+                <div>
+                  <input type="radio" id="radio_username" name="email_or_username" value="Username"
+                        (change)="hide_and_clear_email()">
+                  <label for="username">Username</label>
+                </div>
+            </fieldset>
+    
+        </div>
+        <div *ngIf="usernamecheck == false">Invalid username</div>
+        <div *ngIf="emailcheck == false">Invalid email</div>
+        
+    
+        <div id="email">
+            <label class="email" for="email">Email: </label> <input name="email" formControlName="email" class="email email_input" placeholder="Enter you email for updates..." type="email" (change)="check_email()">
+        </div>
+        <div id="username">
+            <label class="username" for="username">Username: </label><input  name="username"  formControlName="username" class="username username_input" placeholder="Enter you username for an identity..."  type="text" (change)="check_username()">
+        </div>
+        <div id="password">
+            <label class="password" for="password">Password: </label><input  name="password" formControlName="password" placeholder="Enter you password for security..." class="password password_input" type="password">
+        </div>
+        <button name="authenticatebtn" (click)="login()">Login</button>
+    
+        <div>
+            <a href="" >forgot my password</a>
+        </div>
+          
+    </form>
+</div>

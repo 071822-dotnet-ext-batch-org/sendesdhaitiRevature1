@@ -6,15 +6,30 @@ import { RegisterComponent } from './Components/register/register.component';
 import { ForgotPasswordComponent } from './Components/forgot-password/forgot-password.component';
 import { ChangePasswordComponent } from './Components/change-password/change-password.component';
 import { AccountComponent } from './Components/account/account.component';
-
+import { JwtHelperService, JWT_OPTIONS, JwtModuleOptions } from '@auth0/angular-jwt';
+import { AuthSoupToken } from './Services/user.service';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { RouterModule, Routes } from '@angular/router';
 import { NavComponent } from './Components/nav/nav.component';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthSoupService } from './Services/user.service';
 
-const providers:any = []
+const providers:any = [{
+    provide:JWT_OPTIONS, useValue: JWT_OPTIONS
+  },
+  // {HTTP_INTERCEPTORS:HTTP_INTERCEPTORS},
+  JwtHelperService
+
+]
+
+// const JWT_Module_Options: JwtModuleOptions = {
+//   config: {
+//       tokenGetter: AuthSoupService.get_mstoken_from_local_storage,
+//       whitelistedDomains: []
+//   }
+// };
 const routes: Routes = [
   // {path: '', redirectTo: "account"},
   {path: 'mint/login', component: LoginComponent},
@@ -39,7 +54,8 @@ const routes: Routes = [
   imports: [
     BrowserModule,
     AppRoutingModule,
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes),
+    HttpClientModule
   ],
   providers: providers,
   bootstrap: [AppComponent]
