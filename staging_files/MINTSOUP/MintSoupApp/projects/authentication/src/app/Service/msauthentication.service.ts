@@ -14,7 +14,12 @@ export class MSAuthenticationService {
   private static  usernamecheck?:boolean
 
   constructor(private http: HttpClient, private msaction: MSACTIONS) { 
-    
+    let token = localStorage.getItem("MINTSOUPTOKEN")
+    let check = this.isAuthenticated()
+    if((check == true) && (token))
+    {
+      this.keep_token(token)
+    }
   }
 
   ngOnInit(): void {
@@ -118,7 +123,7 @@ export class MSAuthenticationService {
 
   isAuthenticated():boolean
   {
-    return this.msaction.isAuthenticated()
+    return this.msaction.isAuthenticated();
   }
   logout():void
   {

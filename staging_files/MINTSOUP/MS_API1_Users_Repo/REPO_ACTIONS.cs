@@ -1,11 +1,13 @@
 ﻿using System;
 using Models;
+using MS_API1_Users_Repo;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace actions
 {
     public class REPO_ACTIONS
     {
-
+        private static CHECK_AccessLayer.CHECKSTATUS checkstatus;
         private static ViewerStatus viewersMembershipStatus;
         private static Role viewersrole;
         private static SubscriberMembershipStatus viewersSubscriberStatus;
@@ -14,6 +16,16 @@ namespace actions
         private static FollowerStatus viewerFollowerStatus;
         private static PrivacyLevel showPrivacyLvl;
         private static ShowStanding showStanding;
+
+        private static CHECK_AccessLayer.CHECKSTATUS GetCheckstatus()
+        {
+            return checkstatus;
+        }
+
+        private static void SetCheckstatus(CHECK_AccessLayer.CHECKSTATUS value)
+        {
+            checkstatus = value;
+        }
 
         //show
         private static ShowStanding GetShowStanding()
@@ -192,6 +204,42 @@ namespace actions
             else if (stringStanding == "ExclusiveMember") { SetViewersSubscriberStatus(Models.SubscriberMembershipStatus.ExclusiveMember) ; }
             else SetViewersSubscriberStatus(Models.SubscriberMembershipStatus.Subscriber) ;
             return GetViewersSubscriberStatus();
+        }
+
+        public static bool CHECK_ifStatus_To_CHEKCSTATUS(CHECK_AccessLayer.CHECKSTATUS standing, string checkString)
+        {
+            SetCheckstatus(standing);
+            // Specify the data source.
+            CHECK_AccessLayer.CHECKSTATUS[] checks =  {
+                                                        CHECK_AccessLayer.CHECKSTATUS.TRUE,
+                                                        CHECK_AccessLayer.CHECKSTATUS.FALSE,
+                                                        CHECK_AccessLayer.CHECKSTATUS.SAVED,
+                                                        CHECK_AccessLayer.CHECKSTATUS.NOT_SAVED,
+                                                        CHECK_AccessLayer.CHECKSTATUS.GOTTEN,
+                                                        CHECK_AccessLayer.CHECKSTATUS.NOT_GOTTEN,
+                                                        CHECK_AccessLayer.CHECKSTATUS.DELETED,
+                                                        CHECK_AccessLayer.CHECKSTATUS.NOT_DELETED,
+                                                        CHECK_AccessLayer.CHECKSTATUS.NO_MSTOKEN
+                                                        };
+
+            // Define the query expression.
+            IEnumerable<CHECK_AccessLayer.CHECKSTATUS> checkQuery =
+                from check in checks
+                where check == GetCheckstatus()
+                select check;
+
+            // Execute the query.
+            foreach (CHECK_AccessLayer.CHECKSTATUS i in checkQuery)
+            {
+                Console.Write($"A CHECK___STATUS at {DateTime.UtcNow} was -- " + i.ToString() + " ");
+                if (i.ToString() == checkString)
+                {
+
+                    return true;
+                }
+                
+            }
+            return false;
         }
     }
 }

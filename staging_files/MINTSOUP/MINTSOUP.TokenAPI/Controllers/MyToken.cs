@@ -182,6 +182,7 @@ namespace MINTSOUP.TokenAPI.Controllers
             if ( token.IsValidEmail(email) == true)
             {
                 //this checks if the user exists and returns the user's role if so
+                email = email.ToLowerInvariant();
                 bool res = await this.user.CHECK_IF_EMAIL_EXISTS(email);
 
                 //this checks which result the check for the user in the database was and returns the result
@@ -203,7 +204,8 @@ namespace MINTSOUP.TokenAPI.Controllers
         [HttpGet("check-username/{username}")]
         public async Task<ActionResult<bool>> CHECK_IF_USERNAME_EXISTS( [FromRoute] string username)
         {
-            //this checks if the user exists 
+            //this checks if the user exists
+            username = username.ToLowerInvariant();
             bool res = await this.user.CHECK_IF_EMAIL_EXISTS(username);
 
             //this checks which result the check for the user in the database was
@@ -226,6 +228,8 @@ namespace MINTSOUP.TokenAPI.Controllers
             if(ModelState.IsValid)
             {
                 //this checks if the user exists and returns the user's role if so
+                dto.email = dto.email.ToLowerInvariant();
+                dto.username = dto.username.ToLowerInvariant();
                 bool check_email = await this.user.CHECK_IF_EMAIL_EXISTS(dto.email);
                 bool check_username = await this.user.CHECK_IF_USERNAME_EXISTS(dto.username);
                 //this checks which result the check for the user in the database was and returns the result
@@ -277,6 +281,7 @@ namespace MINTSOUP.TokenAPI.Controllers
             if(ModelState.IsValid)
             {
                 //this checks if the user exists and returns the user's role if so
+                dto.username = dto.username.ToLowerInvariant();
                 bool res = await this.user.CHECK_IF_USERNAME_EXISTS(dto.username);
 
                 //this checks which result the check for the user in the database was and returns the result
@@ -322,6 +327,7 @@ namespace MINTSOUP.TokenAPI.Controllers
             if(ModelState.IsValid)
             {
                 //this checks if the user exists and returns the user's role if so
+                dto.email = dto.email.ToLowerInvariant();
                 bool res = await this.user.CHECK_IF_EMAIL_EXISTS(dto.email);
 
                 //this checks which result the check for the user in the database was and returns the result

@@ -1,0 +1,40 @@
+.menu_container{
+    display: grid;
+    /* flex-direction: row; */
+    grid-template-columns: [first] 5% [line2] 15% [line3]  15% [line4] 15% [line5] 15% [line6] 15% [line7] 15% [line8] 5% [end];
+    grid-template-rows: [row1] 100%  [end];
+    width: 100%;
+    height: 80%;
+}
+section {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    grid-column-start: first;
+    grid-column-end: span line2;
+    grid-row-start: row1;
+    grid-row-end: span end;
+}
+
+button {
+    width: 100%;
+    height:100%;
+}
+
+
+.outlet {
+    display:block;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    grid-column-start: line2;
+    grid-column-end: span end;
+    grid-row-start: row1;
+    grid-row-end: span end;
+}
+
+.router-outlet {
+    overflow: hidden;
+}

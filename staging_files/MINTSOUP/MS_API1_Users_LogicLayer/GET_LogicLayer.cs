@@ -14,10 +14,15 @@ public interface IGET_LogicLayer
 
 public class GET_LogicLayer : IGET_LogicLayer
 {
-    private readonly IGET_AccessLayer _get_Repo;
+    private readonly IGET_AccessLayer get_Repo;
     public GET_LogicLayer(IGET_AccessLayer _get)
     {
-        this._get_Repo = _get;
+        this.get_Repo = _get;
+    }
+
+    public async Task<List<Show?>> GET_all_SHOWS()
+    {
+        //await this.get_Repo.
     }
 
     ////----------------------------------------------GET my ADMIN SECTION--------------------------------------------------

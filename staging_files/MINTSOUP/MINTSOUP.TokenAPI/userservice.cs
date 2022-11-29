@@ -2,31 +2,53 @@
 using System.Data.SqlClient;
 using MINTSOUP.TokenAPI.Controllers;
 using static MINTSOUP.TokenAPI.Controllers.MyToken;
+using Npgsql;
+using System.Data;
 
 
 namespace MINTSOUP.TokenAPI
 {
     public class userservice : Iuserservice
     {
-        private readonly IConfiguration _config;
+        //private readonly IConfiguration _config;
         private readonly IMSAlgos algos;
-        private readonly SqlConnection _conn;
+        //private NpgsqlConnection _conn;
 
-        public userservice(IConfiguration config, IMSAlgos _algo)
+        public userservice(IMSAlgos _algo)
         {
-            _config = config;
+            //_config = config;
             algos = _algo;
+            TestConnection();
 
 
-            if (string.Equals(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"), "Production", StringComparison.InvariantCultureIgnoreCase))
+            //if (string.Equals(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"), "Production", StringComparison.InvariantCultureIgnoreCase))
+            //{
+            //    _conn = new SqlConnection(_config["ConnectionStrings:Development"]);
+            //}
+            //else
+            //{
+            //    _conn = new SqlConnection(_config["ConnectionStrings:Production"]);
+            //}
+
+        }
+        private static void TestConnection()
+        {
+            using(NpgsqlConnection connection = GetConnection())
             {
-                _conn = new SqlConnection(_config["ConnectionStrings:Development"]);
+                if(connection.State == ConnectionState.Open)
+                {
+                    Console.WriteLine($"AT {DateTime.Now} The Connection is Connected");
+                }
+                else
+                {
+                    Console.WriteLine($"AT {DateTime.Now} The Connection is Connected");
+                }
             }
-            else
-            {
-                _conn = new SqlConnection(_config["ConnectionStrings:Production"]);
-            }
+        }
 
+        private static NpgsqlConnection GetConnection()
+        {
+            return new NpgsqlConnection(@"Server=localhost; Port=5432; Username=msadmin; Password=@Arcade30; Database=mintsoupdatadb;");
         }
 
         public enum CHECKSTATUS
@@ -88,12 +110,14 @@ namespace MINTSOUP.TokenAPI
 
         public async Task<bool> CHECK_IF_EMAIL_EXISTS(string Email)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM MintSoupTokens Where Email = @Email", _conn))
+            using (NpgsqlConnection _conn = GetConnection())
             {
-                command.Parameters.AddWithValue("@Email", Email.ToLowerInvariant());
+                string command = $"SELECT * FROM MintSoupTokens Where Email = @Email";
+                using var cmd  = new NpgsqlCommand(command, _conn);
+                cmd.Parameters.AddWithValue("@Email", Email.ToLowerInvariant());
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 if (ret.Read())
                 {
                     _conn.Close();
@@ -109,12 +133,15 @@ namespace MINTSOUP.TokenAPI
 
         public async Task<bool> CHECK_IF_USERNAME_EXISTS(string Username)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM MintSoupTokens Where Username = @Username", _conn))
+            using (NpgsqlConnection _conn = GetConnection())// ($"SELECT TOP(1) * FROM MintSoupTokens Where Username = @Username", _conn))
             {
-                command.Parameters.AddWithValue("@Username", Username.ToLowerInvariant());
+                string command = $"SELECT * FROM MintSoupTokens Where Username = @Username";
+                using var cmd = new NpgsqlCommand(command, _conn);
+                cmd.Parameters.AddWithValue("@Username", Username.ToLowerInvariant());
+
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 if (ret.Read())
                 {
                     _conn.Close();
@@ -131,15 +158,18 @@ namespace MINTSOUP.TokenAPI
 
         public async Task<bool> CREATE_USER_ON_SIGNUP(string Email, string Username, string Password_Hash, string Password_Salt)
         {
-            using (SqlCommand command = new SqlCommand($"INSERT INTO MintSoupTokens ( Email, Username, Password_Hash, Password_Salt) VALUES( @Email, @Username, @Password_Hash, @Password_Salt)", _conn))
+            using (NpgsqlConnection _conn = GetConnection())// ($"INSERT INTO MintSoupTokens ( Email, Username, Password_Hash, Password_Salt) VALUES( @Email, @Username, @Password_Hash, @Password_Salt)", _conn))
             {
-                command.Parameters.AddWithValue("@Email", Email.ToLowerInvariant());
-                command.Parameters.AddWithValue("@Username", Username.ToLowerInvariant());
-                command.Parameters.AddWithValue("@Password_Hash", Password_Hash);
-                command.Parameters.AddWithValue("@Password_Salt", Password_Salt);
+                string command = $"INSERT INTO MintSoupTokens ( Email, Username, Password_Hash, Password_Salt) VALUES( @Email, @Username, @Password_Hash, @Password_Salt)";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@Email", Email.ToLowerInvariant());
+                cmd.Parameters.AddWithValue("@Username", Username.ToLowerInvariant());
+                cmd.Parameters.AddWithValue("@Password_Hash", Password_Hash);
+                cmd.Parameters.AddWithValue("@Password_Salt", Password_Salt);
                 _conn.Open();
 
-                int ret = await command.ExecuteNonQueryAsync();
+                int ret = await cmd.ExecuteNonQueryAsync();
                 if (ret > 0)
                 {
                     _conn.Close();
@@ -155,12 +185,15 @@ namespace MINTSOUP.TokenAPI
 
         public async Task<bool> LOGIN_USER_to_get_TOKEN_w_email(string Email, string Password)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT Password_Hash , Password_Salt FROM MintSoupTokens where Email = @Email ", _conn))
+            using (NpgsqlConnection _conn = GetConnection()) //($"SELECT Password_Hash , Password_Salt FROM MintSoupTokens where Email = @Email ", _conn))
             {
-                command.Parameters.AddWithValue("@Email", Email.ToLowerInvariant());
+                string command = $"SELECT Password_Hash , Password_Salt FROM MintSoupTokens where Email = @Email ";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@Email", Email.ToLowerInvariant());
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 if (ret.Read())
                 {
                     bool verification = this.algos.VerifyPassword(Password, ret.GetString(0), ret.GetString(1));
@@ -185,12 +218,15 @@ namespace MINTSOUP.TokenAPI
 
         public async Task<bool> LOGIN_USER_to_get_TOKEN_w_username(string Username, string Password)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT Password_Hash , Password_Salt FROM MintSoupTokens where Username = @Username", _conn))
+            using (NpgsqlConnection _conn = GetConnection()) //($"SELECT Password_Hash , Password_Salt FROM MintSoupTokens where Username = @Username", _conn))
             {
-                command.Parameters.AddWithValue("@Username", Username.ToLowerInvariant());
+                string command = $"SELECT Password_Hash , Password_Salt FROM MintSoupTokens where Username = @Username";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@Username", Username.ToLowerInvariant());
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 if (ret.Read())
                 {
                     bool verification = this.algos.VerifyPassword(Password, ret.GetString(0), ret.GetString(1));
@@ -215,14 +251,17 @@ namespace MINTSOUP.TokenAPI
 
         public async Task<MyMintSoupToken?> GET_MY_TOKEN_w_email_or_username(string? Email, string? Username)
         {
-            if ((Email != null) || (Username == null))
+            if ((Email != null) && (Username == null))
             {
-                using (SqlCommand command = new SqlCommand($"SELECT ID, Email, Username, DateSignedUp, LastSignedIn FROM MintSoupTokens WHERE Email = @Email ", _conn))
+                using (NpgsqlConnection _conn = GetConnection()) //($"SELECT ID, Email, Username, DateSignedUp, LastSignedIn FROM MintSoupTokens WHERE Email = @Email ", _conn))
                 {
-                    command.Parameters.AddWithValue("@Email", Email?.ToLowerInvariant());
+                    string command = $"SELECT ID, Email, Username, DateSignedUp, LastSignedIn FROM MintSoupTokens WHERE Email = @Email ";
+                    using var cmd = new NpgsqlCommand(command, _conn);
+
+                    cmd.Parameters.AddWithValue("@Email", Email.ToLowerInvariant());
                     _conn.Open();
 
-                    SqlDataReader ret = await command.ExecuteReaderAsync();
+                    NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                     if (ret.Read())
                     {
                         MyMintSoupToken myToken = new MyMintSoupToken(
@@ -245,14 +284,17 @@ namespace MINTSOUP.TokenAPI
                 }
 
             }
-            else if ((Email == null) || (Username != null))
+            else if ((Email == null) && (Username != null))
             {
-                using (SqlCommand command = new SqlCommand($"SELECT ID, Email, Username, DateSignedUp, LastSignedIn FROM MintSoupTokens where Username=@Username ", _conn))
+                using (NpgsqlConnection _conn = GetConnection()) //($"SELECT ID, Email, Username, DateSignedUp, LastSignedIn FROM MintSoupTokens where Username=@Username ", _conn))
                 {
-                    command.Parameters.AddWithValue("@Username", Username.ToLowerInvariant());
+                    string command = $"SELECT ID, Email, Username, DateSignedUp, LastSignedIn FROM MintSoupTokens where Username=@Username ";
+                    using var cmd = new NpgsqlCommand(command, _conn);
+
+                    cmd.Parameters.AddWithValue("@Username", Username.ToLowerInvariant());
                     _conn.Open();
 
-                    SqlDataReader ret = await command.ExecuteReaderAsync();
+                    NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                     if (ret.Read())
                     {
                         MyMintSoupToken myToken = new MyMintSoupToken(
@@ -284,13 +326,16 @@ namespace MINTSOUP.TokenAPI
 
         public async Task<bool> CHANGE_PASSWORD_w_email_and_token(string Email, string Password)
         {
-            using (SqlCommand command = new SqlCommand($"UPDATE MintSoupTokens SET Password = @Password Where Email = @Email ", _conn))
+            using (NpgsqlConnection _conn = GetConnection()) //($"UPDATE MintSoupTokens SET Password = @Password Where Email = @Email ", _conn))
             {
-                command.Parameters.AddWithValue("@Email", Email.ToLowerInvariant());
-                command.Parameters.AddWithValue("@Password", Password);
+                string command = $"UPDATE MintSoupTokens SET Password = @Password Where Email = @Email ";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@Email", Email.ToLowerInvariant());
+                cmd.Parameters.AddWithValue("@Password", Password);
                 _conn.Open();
 
-                int ret = await command.ExecuteNonQueryAsync();
+                int ret = await cmd.ExecuteNonQueryAsync();
                 if (ret > 0)
                 {
                     _conn.Close();

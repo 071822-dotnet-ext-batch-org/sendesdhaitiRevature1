@@ -27,13 +27,13 @@ const providers:any = [{
 
 ]
 const routes:Routes = [
-  {path: "", component: AppComponent},
+  {path: "", component: NavComponent},
   {path: "mint", component: AboutComponent},
   // {path: "mint/about", component: AboutComponent},
   {path: "mint/login", component: LoginComponent},
   {path: "mint/logout", component: LogoutComponent},
   {path: "mint/register", component: RegisterComponent},
-  {path: "mint/account", component: AccountComponent, canActivate: [MSGuard]}
+  {path: "mint/account", component: AccountComponent}//, canActivate: [MSGuard]}
 ]
 
 

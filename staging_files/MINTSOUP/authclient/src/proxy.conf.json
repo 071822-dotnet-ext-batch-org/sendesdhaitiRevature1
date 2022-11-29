@@ -1,8 +1,0 @@
-{
-    "/mint-soup.token/*": {
-        "target": "https://localhost:7215",
-        "secure": false,
-        "logLevel": "debug",
-        "changeOrigin": true
-    }
-}

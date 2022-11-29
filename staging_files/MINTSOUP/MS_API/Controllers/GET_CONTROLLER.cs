@@ -12,11 +12,12 @@ using MS_API1_Users_Repo;
 using Models;
 using actions;
 using static DTOs.MSTokenACTIONDTO;
+using Microsoft.AspNetCore.Cors;
 
 namespace MS_API.Controllers
 {
-    [ApiController]
-    [Route("mint-soup")]
+    [EnableCors("MyAllowAllOrigins")]
+    [Route("mint-soup/")]
     [Authorize]
     public class GET_CONTROLLER : ControllerBase
     {
@@ -27,7 +28,8 @@ namespace MS_API.Controllers
 
         private CHECK_AccessLayer.CHECKSTATUS CheckSTATUS { get => checkSTATUS; set => checkSTATUS = value; }
 
-        private bool CompareCheckStatus(CHECK_AccessLayer.CHECKSTATUS check, string expected)
+        [NonAction]
+        public bool CompareCheckStatus(CHECK_AccessLayer.CHECKSTATUS check, string expected)
         {
             bool res = false;
             string? name = Enum.GetName<CHECK_AccessLayer.CHECKSTATUS>(check);
@@ -48,11 +50,12 @@ namespace MS_API.Controllers
 //-------------------------------------------------------GET VIEWER SECTION----------------------------------------------------
         [HttpGet("all-viewers")]
         //[Authorize(Roles="Admin")]
-        public async Task<ActionResult<List<Viewer?>>> GET_ALL_VIEWERS(DTOs.MSTokenACTIONDTO dto)
+        public async Task<ActionResult<List<Viewer?>>> GET_ALL_VIEWERS()
         {
             if (ModelState.IsValid)
             {
-                //(List<Viewer?>, string) allViewers =  await this._LogicLayer.GET_allViewers_by_MSToken();
+                DTOs.MSTokenACTIONDTO dto = new DTOs.MSTokenACTIONDTO(new Guid(Request.Headers["mstoken"]));
+                Console.WriteLine($"At {DateTime.Now} The header was converted to dto as {dto.GetMSToken()}");
                 List<Viewer?> allViewers = await this._GET.GET_allViewers(dto.GetMSToken());
                 //return Ok(allViewers.Item1);
                 return Ok(allViewers);
@@ -68,28 +71,22 @@ namespace MS_API.Controllers
         /// </summary>
         /// <param name="MSToken"></param>
         /// <returns>returns an async action result as a Viewer</returns>
-        [HttpGet("my-viewer/")]
+        [HttpGet("my-viewer")]
         //[AllowAnonymous]
         public async Task<ActionResult<Models.Viewer?>> GET_myViewer_by_MSToken()
         {
             if(ModelState.IsValid)
             {
-                DTOs.MSTokenACTIONDTO dto = new DTOs.MSTokenACTIONDTO(new Guid());
-                if (Request.Headers["headers"].Count() > 0) {
-                    Console.WriteLine($"At {DateTime.Now} The header was gotten as {Request.Headers["headers"]}");
-                    DTOs.MSTokenACTIONDTO dto2 = new DTOs.MSTokenACTIONDTO(new Guid(Request.Headers["headers"]));
-                    dto = dto2;
-                }
+                DTOs.MSTokenACTIONDTO dto = new DTOs.MSTokenACTIONDTO(new Guid(Request.Headers["mstoken"]));
+                Console.WriteLine($"At {DateTime.Now} The header was converted to dto as {dto.GetMSToken()}");
                 Models.Viewer? viewer = await this._GET.GET_myViewer_by_MSToken(dto.GetMSToken());
-                if(viewer?.MSToken == dto.GetMSToken())
+                if(viewer?.MSToken != null)
                 {
-                    // ActionResult<Viewer?> res1 =  new ActionResult<Viewer?>(viewer.Item1);
-                    // OkObjectResult<string> res2 =  new OkObjectResult<string>(viewer.Item2);
                     return Ok(viewer);
                 }
                 else
                 {
-                    return NoContent();
+                    return NotFound($"You could not get your viewer at - {DateTime.UtcNow.ToString().ToUpper()}");
                 }
             }
             else
@@ -111,11 +108,11 @@ namespace MS_API.Controllers
         {
             if(ModelState.IsValid)
             {
-
+                //string? s = dto.GetMSToken();
                 Guid? myToken = dto.GetMSToken();
                 if(myToken != null)
                 {
-                    CHECK_AccessLayer.CHECKSTATUS check = await this._CheckRepo.CHECK_Viewer_by_MSToken(myToken);
+                    CHECK_AccessLayer.CHECKSTATUS check = await this._CheckRepo.CHECK_Viewer_by_MSToken((Guid)myToken);
                     if(this.CompareCheckStatus(check, "TRUE"))
                     {
                         Models.Admin? admin = await this._GET.GET_myAdmin_by_MSToken(myToken);
@@ -125,7 +122,7 @@ namespace MS_API.Controllers
                         }
                         else
                         {
-                            return NotFound();
+                            return NotFound($"You could not get your admin at - {DateTime.UtcNow.ToString().ToUpper()}");
                         }
                     }
                     else
@@ -145,10 +142,12 @@ namespace MS_API.Controllers
         }//End 
 
         [HttpGet("all-shows")]
-        public async Task<ActionResult<(Models.Admin?, string)>> GET_allShows([FromHeader] DTOs.MSTokenACTIONDTO dto)
+        public async Task<ActionResult<List<Models.Show?>>> GET_allShows()
         {
             if (ModelState.IsValid)
             {
+                DTOs.MSTokenACTIONDTO dto = new DTOs.MSTokenACTIONDTO(new Guid(Request.Headers["mstoken"]));
+                Console.WriteLine($"At {DateTime.Now} The header was converted to dto as {dto.GetMSToken()}");
                 List<Models.Show?> show = await this._GET.GET_allShows(dto.GetMSToken());
                 return Ok(show);
             }
@@ -158,12 +157,54 @@ namespace MS_API.Controllers
             }
         }//End
 
-        [HttpGet("all-show-sessions")]
-        public async Task<ActionResult<List<Models.ShowSession?>>> GET_allShowSessions([FromHeader] DTOs.MSTokenACTIONDTO dto)
+        [HttpGet("show")]
+        public async Task<ActionResult<Models.Show?>> GET_aShow()
         {
             if (ModelState.IsValid)
             {
+                DTOs.MSTokenACTIONDTO.ShowDTO dto = new DTOs.MSTokenACTIONDTO.ShowDTO(new Guid(Request.Headers["mstoken"]), new Guid(Request.Headers["showid"]));
+                Console.WriteLine($"At {DateTime.Now} The header was converted to dto as {dto.GetMSToken()}");
+                Models.Show? show = await this._GET.GET_aShow_by_ShowID_with_MSToken(dto.GetMSToken(), dto.GetShowID());
+                if (show == null)
+                {
+                    return NotFound($"You could not get the show at - {DateTime.UtcNow.ToString().ToUpper()}");
+                }
+                return Ok(show);
+            }
+            else
+            {
+                return BadRequest("That was a bad request");
+            }
+        }//End
+
+        [HttpGet("all-show-sessions")]
+        public async Task<ActionResult<List<Models.ShowSession?>>> GET_allShowSessions()
+        {
+            if (ModelState.IsValid)
+            {
+                DTOs.MSTokenACTIONDTO dto = new DTOs.MSTokenACTIONDTO(new Guid(Request.Headers["mstoken"]));
+                Console.WriteLine($"At {DateTime.Now} The header was converted to dto as {dto.GetMSToken()}");
                 List<Models.ShowSession?> ret = await this._GET.GET_allShowSessions(dto.GetMSToken());
+                return Ok(ret);
+            }
+            else
+            {
+                return BadRequest("That was a bad request");
+            }
+        }//End
+
+        [HttpGet("session")]
+        public async Task<ActionResult<List<Models.ShowSession?>>> GET_aShowSessions()
+        {
+            if (ModelState.IsValid)
+            {
+                DTOs.MSTokenACTIONDTO.ShowDTO.ShowSessionDTO dto = new DTOs.MSTokenACTIONDTO.ShowDTO.ShowSessionDTO(new Guid(Request.Headers["mstoken"]), new Guid(Request.Headers["showid"]), new Guid(Request.Headers["sessionid"]));
+                Console.WriteLine($"At {DateTime.Now} The header was converted to dto as {dto.GetMSToken()}");
+                Models.ShowSession? ret = await this._GET.GET_aShowSession_by_ShowSessionID_with_MSToken(dto.GetMSToken(), dto.GetSessionID());
+                if (ret == null)
+                {
+                    return NotFound($"You could not get the session at - {DateTime.UtcNow.ToString().ToUpper()}");
+                }
                 return Ok(ret);
             }
             else
@@ -174,10 +215,12 @@ namespace MS_API.Controllers
 
 
         [HttpGet("all-show-sessions-joins")]
-        public async Task<ActionResult<List<Models.ShowSessionJoins?>>> GET_allShowSessionJoins([FromHeader] DTOs.MSTokenACTIONDTO dto)
+        public async Task<ActionResult<List<Models.ShowSessionJoins?>>> GET_allShowSessionJoins()
         {
             if (ModelState.IsValid)
             {
+                DTOs.MSTokenACTIONDTO dto = new DTOs.MSTokenACTIONDTO(new Guid(Request.Headers["mstoken"]));
+                Console.WriteLine($"At {DateTime.Now} The header was converted to dto as {dto.GetMSToken()}");
                 List<Models.ShowSessionJoins?> ret = await this._GET.GET_allShowSessionJoins(dto.GetMSToken());
                 return Ok(ret);
             }
@@ -187,11 +230,33 @@ namespace MS_API.Controllers
             }
         }//End
 
-        [HttpGet("all-show-donations")]
-        public async Task<ActionResult<List<Models.ShowDonation?>>> GET_allShowDonations([FromHeader] DTOs.MSTokenACTIONDTO dto)
+        [HttpGet("sessions-joins")]
+        public async Task<ActionResult<Models.ShowSessionJoins?>> GET_aSessionJoin()
         {
             if (ModelState.IsValid)
             {
+                DTOs.MSTokenACTIONDTO.ShowDTO.ShowSessionDTO.SessionJoinDTO dto = new DTOs.MSTokenACTIONDTO.ShowDTO.ShowSessionDTO.SessionJoinDTO(new Guid(Request.Headers["mstoken"]), new Guid(Request.Headers["sessionjoinid"]));
+                Console.WriteLine($"At {DateTime.Now} The header was converted to dto as {dto.GetMSToken()}");
+                Models.ShowSessionJoins? ret = await this._GET.GET_aShowSessionJoin_by_ShowSessionJoinID_with_MSToken(dto.GetMSToken(), dto.GetsessionJoinID());
+                if (ret == null)
+                {
+                    return NotFound($"You could not get the session join at - {DateTime.UtcNow.ToString().ToUpper()}");
+                }
+                return Ok(ret);
+            }
+            else
+            {
+                return BadRequest("That was a bad request");
+            }
+        }//End
+
+        [HttpGet("all-show-donations")]
+        public async Task<ActionResult<List<Models.ShowDonation?>>> GET_allShowDonations()
+        {
+            if (ModelState.IsValid)
+            {
+                DTOs.MSTokenACTIONDTO dto = new DTOs.MSTokenACTIONDTO(new Guid(Request.Headers["mstoken"]));
+                Console.WriteLine($"At {DateTime.Now} The header was converted to dto as {dto.GetMSToken()}");
                 List<Models.ShowDonation?> ret = await this._GET.GET_allShowDonations(dto.GetMSToken());
                 return Ok(ret);
             }
@@ -201,16 +266,43 @@ namespace MS_API.Controllers
             }
         }//End
 
-        [HttpGet("my-viewer-wallet/")]
-        public async Task<ActionResult<Models.Wallet?>> GET_myViewerWallet([FromHeader] DTOs.MSTokenACTIONDTO dto)
+        [HttpGet("donation")]
+        public async Task<ActionResult<Models.ShowDonation?>> GET_aDonation()
         {
             if (ModelState.IsValid)
             {
-                CHECK_AccessLayer.CHECKSTATUS check = await this._CheckRepo.CHECK_Viewer_by_MSToken(dto.GetMSToken());
-                if(this.CompareCheckStatus(check, "TRUE"))
+                DTOs.DonationDTO dto = new DTOs.DonationDTO(new Guid(Request.Headers["mstoken"]), new Guid(Request.Headers["donationid"]));
+                Console.WriteLine($"At {DateTime.Now} The header was converted to dto as {dto.GetMSToken()}");
+                Models.ShowDonation? ret = await this._GET.GET_aShowDonation_by_ShowDonationID_with_MSToken(dto.GetMSToken(), dto.GetDonationID());
+                if(ret == null)
                 {
-                    Models.Wallet? ret = await this._GET.GET_myPersonalWallet_by_viewerID(dto.GetMSToken());
-                    return Ok(ret);
+                    return NotFound($"You could not get the donation at - {DateTime.UtcNow.ToString().ToUpper()}");
+                }
+                return Ok(ret);
+            }
+            else
+            {
+                return BadRequest("That was a bad request");
+            }
+        }//End
+
+        [HttpGet("my-viewer-wallet/")]
+        public async Task<ActionResult<Models.Wallet?>> GET_myViewerWallet()
+        {
+            if (ModelState.IsValid)
+            {
+                DTOs.MSTokenACTIONDTO dto = new DTOs.MSTokenACTIONDTO(new Guid(Request.Headers["mstoken"]));
+                Console.WriteLine($"At {DateTime.Now} The header was converted to dto as {dto.GetMSToken()}");
+                Guid? myToken = dto.GetMSToken();
+                if(myToken != null)
+                {
+                    CHECK_AccessLayer.CHECKSTATUS check = await this._CheckRepo.CHECK_Viewer_by_MSToken((Guid)myToken);
+                    if(this.CompareCheckStatus(check, "TRUE"))
+                    {
+                        Models.Wallet? ret = await this._GET.GET_myPersonalWallet_by_viewerID(dto.GetMSToken());
+                        return Ok(ret);
+                    }
+                    return NoContent();
                 }
                 return NoContent();
             }
@@ -227,11 +319,10 @@ namespace MS_API.Controllers
             {
                 Guid? myToken = dto.GetMSToken();
                 Guid? ShowId = dto.GetShowID();
-                if (myToken == null && ShowId == null) { return NotFound($"At {DateTime.Now} - Your show's wallet could not be retrieved! - Give us a second..."); }
-                else
+                if (myToken != null && ShowId != null)
                 {
-                    CHECK_AccessLayer.CHECKSTATUS check = await this._CheckRepo.CHECK_Viewer_by_MSToken(myToken);
-                    CHECK_AccessLayer.CHECKSTATUS check2 = await this._CheckRepo.CHECK_Viewer_by_MSToken(ShowId);
+                    CHECK_AccessLayer.CHECKSTATUS check = await this._CheckRepo.CHECK_Viewer_by_MSToken((Guid)myToken);
+                    CHECK_AccessLayer.CHECKSTATUS check2 = await this._CheckRepo.CHECK_Viewer_by_MSToken((Guid)ShowId);
                     if (this.CompareCheckStatus(check, "TRUE") && this.CompareCheckStatus(check2, "TRUE"))
                     {
                         Models.ShowWallet? ret = await this._GET.GET_myShowWallet_by_viewer_AND_showID(myToken, ShowId );
@@ -239,6 +330,7 @@ namespace MS_API.Controllers
                     }
                     return NoContent();
                 }
+                else { return NotFound($"At {DateTime.Now} - Your show's wallet could not be retrieved! - Give us a second..."); }
             }
             else
             {
@@ -252,6 +344,26 @@ namespace MS_API.Controllers
             if (ModelState.IsValid)
             {
                 List<Models.Friend?> ret = await this._GET.GET_allFriends(dto.GetMSToken());
+                return Ok(ret);
+            }
+            else
+            {
+                return BadRequest("That was a bad request");
+            }
+        }//End
+
+        [HttpGet("friend")]
+        public async Task<ActionResult<Models.Friend?>> GET_aFriend()
+        {
+            if (ModelState.IsValid)
+            {
+                DTOs.GETDTO dto = new DTOs.GETDTO(new Guid(Request.Headers["mstoken"]), new Guid(Request.Headers["friendid"]));
+                Console.WriteLine($"At {DateTime.Now} The header was converted to dto as {dto.GetMSToken()}");
+                Models.Friend? ret = await this._GET.GET_aFriend_by_ViewerID_Freinder(dto.GetMSToken(), dto.GetOBJID());
+                if (ret == null)
+                {
+                    return NotFound($"You could not get the friend '{dto.GetOBJID()}' at - {DateTime.UtcNow.ToString().ToUpper()}");
+                }
                 return Ok(ret);
             }
             else
@@ -274,12 +386,52 @@ namespace MS_API.Controllers
             }
         }//End
 
+        [HttpGet("follower")]
+        public async Task<ActionResult<Models.Follower?>> GET_aFollower()
+        {
+            if (ModelState.IsValid)
+            {
+                DTOs.GETDTO dto = new DTOs.GETDTO(new Guid(Request.Headers["mstoken"]), new Guid(Request.Headers["followieid"]));
+                Console.WriteLine($"At {DateTime.Now} The header was converted to dto as {dto.GetMSToken()}");
+                Models.Follower? ret = await this._GET.GET_aFollower_by_ViewerID_Followie(dto.GetMSToken(), dto.GetOBJID());
+                if (ret == null)
+                {
+                    return NotFound($"You could not get the follow '{dto.GetOBJID()}' at - {DateTime.UtcNow.ToString().ToUpper()}");
+                }
+                return Ok(ret);
+            }
+            else
+            {
+                return BadRequest("That was a bad request");
+            }
+        }//End
+
         [HttpGet("all-likes")]
         public async Task<ActionResult<List<Models.ShowLikes?>>> GET_allLikes([FromHeader] DTOs.MSTokenACTIONDTO dto)
         {
             if (ModelState.IsValid)
             {
                 List<Models.ShowLikes?> ret = await this._GET.GET_allShowLikes(dto.GetMSToken());
+                return Ok(ret);
+            }
+            else
+            {
+                return BadRequest("That was a bad request");
+            }
+        }//End
+
+        [HttpGet("like")]
+        public async Task<ActionResult<Models.ShowLikes?>> GET_aLike()
+        {
+            if (ModelState.IsValid)
+            {
+                DTOs.GETDTO dto = new DTOs.GETDTO(new Guid(Request.Headers["mstoken"]), new Guid(Request.Headers["sessionid"]));
+                Console.WriteLine($"At {DateTime.Now} The header was converted to dto as {dto.GetMSToken()}");
+                Models.ShowLikes? ret = await this._GET.GET_aShowLike_by_ShowSessionID_with_MSToken(dto.GetMSToken(), dto.GetOBJID());
+                if (ret == null)
+                {
+                    return NotFound($"You could not get the sessions like for '{dto.GetOBJID()}' at - {DateTime.UtcNow.ToString().ToUpper()}");
+                }
                 return Ok(ret);
             }
             else
@@ -302,6 +454,27 @@ namespace MS_API.Controllers
             }
         }//End
 
+        [HttpGet("comment")]
+        public async Task<ActionResult<Models.ShowComment?>> GET_aComment()
+        {
+            if (ModelState.IsValid)
+            {
+                DTOs.GETDTO dto = new DTOs.GETDTO(new Guid(Request.Headers["mstoken"]), new Guid(Request.Headers["commentid"]));
+                Console.WriteLine($"At {DateTime.Now} The header was converted to dto as {dto.GetMSToken()}");
+                Models.ShowComment? ret = await this._GET.GET_aShowComment_by_ShowCommentID_with_MSToken(dto.GetMSToken(), dto.GetOBJID());
+                if (ret == null)
+                {
+                    return NotFound($"You could not get the comment for '{dto.GetOBJID()}' at - {DateTime.UtcNow.ToString().ToUpper()}");
+                }
+                return Ok(ret);
+            }
+            else
+            {
+                return BadRequest("That was a bad request");
+            }
+        }//End
+
+
         [HttpGet("all-comment-likes")]
         public async Task<ActionResult<List<Models.ShowCommentLike?>>> GET_allCommentLikes([FromHeader] DTOs.MSTokenACTIONDTO dto)
         {
@@ -316,8 +489,28 @@ namespace MS_API.Controllers
             }
         }//End
 
+        [HttpGet("comment-like")]
+        public async Task<ActionResult<Models.ShowCommentLike?>> GET_aCommentLike()
+        {
+            if (ModelState.IsValid)
+            {
+                DTOs.GETDTO dto = new DTOs.GETDTO(new Guid(Request.Headers["mstoken"]), new Guid(Request.Headers["commentid"]));
+                Console.WriteLine($"At {DateTime.Now} The header was converted to dto as {dto.GetMSToken()}");
+                Models.ShowCommentLike? ret = await this._GET.GET_aShowCommentLike_by_ShowCommentID_with_MSToken(dto.GetMSToken(), dto.GetOBJID());
+                if (ret == null)
+                {
+                    return NotFound($"You could not get the comment like for '{dto.GetOBJID()}' at - {DateTime.UtcNow.ToString().ToUpper()}");
+                }
+                return Ok(ret);
+            }
+            else
+            {
+                return BadRequest("That was a bad request");
+            }
+        }//End
 
-        
+
+
 
 
 

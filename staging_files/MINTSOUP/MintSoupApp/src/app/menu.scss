@@ -1,0 +1,379 @@
+
+.showMenu
+{
+z-index: 2;
+display: block;
+position: relative;
+border-right: 1px solid black;
+height: 85vh;
+margin: 0;
+width:320px;
+background:rgb(255, 255, 255);
+animation:showMenu .2s;
+-moz-animation:showMenu .2s; /* Firefox */
+-webkit-animation:showMenu .2s; /* Safari and Chrome */
+animation-direction:alternate;
+-moz-animation-direction:alternate;
+-webkit-animation-direction:alternate;
+animation-timing-function:linear;
+-moz-animation-timing-function:linear; /* Firefox */
+-webkit-animation-timing-function:linear; /* Safari and Chrome */
+}
+.showSearch
+{
+z-index: 2;
+display: block;
+position: fixed;
+height: 100vh;
+width: 100vw;
+top: 0;
+right: 0;
+bottom: 0;
+background:rgb(255, 255, 255);
+animation:showSearch .2s;
+-moz-animation:showSearch .2s; /* Firefox */
+-webkit-animation:showSearch .2s; /* Safari and Chrome */
+animation-direction:alternate;
+-moz-animation-direction:alternate;
+-webkit-animation-direction:alternate;
+animation-timing-function:linear;
+-moz-animation-timing-function:linear; /* Firefox */
+-webkit-animation-timing-function:linear; /* Safari and Chrome */
+}
+
+.moveRouter
+{
+animation:moveRouter .2s;
+-moz-animation:moveRouter .2s; /* Firefox */
+-webkit-animation:moveRouter .2s; /* Safari and Chrome */
+animation-direction:alternate;
+-moz-animation-direction:alternate;
+-webkit-animation-direction:alternate;
+animation-timing-function:linear;
+-moz-animation-timing-function:linear; /* Firefox */
+-webkit-animation-timing-function:linear; /* Safari and Chrome */
+}
+.moveRouterLeft
+{
+animation:moveRouterLeft .2s;
+-moz-animation:moveRouterLeft .2s; /* Firefox */
+-webkit-animation:moveRouterLeft .2s; /* Safari and Chrome */
+animation-direction:alternate;
+-moz-animation-direction:alternate;
+-webkit-animation-direction:alternate;
+animation-timing-function:linear;
+-moz-animation-timing-function:linear; /* Firefox */
+-webkit-animation-timing-function:linear; /* Safari and Chrome */
+}
+@keyframes showMenu
+{
+    from {
+        transform: translateX(-100%);
+      }
+    
+      to {
+        transform: translateX(0%);
+      }
+}
+@keyframes showSearch
+{
+    from {
+        transform: translateX(100%);
+      }
+    
+      to {
+        transform: translateX(0%);
+      }
+}
+@keyframes moveRouter
+{
+    from {
+        transform: translateX(0%);
+      }
+    
+      to {
+        transform: translateX(100%);
+      }
+}
+@keyframes moveRouterLeft
+{
+    from {
+        transform: translateX(0%);
+      }
+    
+      to {
+        transform: translateX(-100%);
+      }
+}
+@-moz-keyframes showMenu /* Firefox */
+{
+    from {
+        transform: translateX(-100%);
+      }
+    
+      to {
+        transform: translateX(0%);
+      }
+}
+@-moz-keyframes showSearch /* Firefox */
+{
+    from {
+        transform: translateX(100%);
+      }
+    
+      to {
+        transform: translateX(0%);
+      }
+}
+@-moz-keyframes moveRouter /* Firefox */
+{
+    from {
+        transform: translateX(0%);
+      }
+    
+      to {
+        transform: translateX(100%);
+      }
+}
+@-moz-keyframes moveRouterLeft /* Firefox */
+{
+    from {
+        transform: translateX(0%);
+      }
+    
+      to {
+        transform: translateX(-100%);
+      }
+}
+@-webkit-keyframes showMenu /* Safari and Chrome */
+{
+    from {
+        transform: translateX(-100%);
+      }
+    
+      to {
+        transform: translateX(0%);
+      }
+}
+@-webkit-keyframes showSearch /* Safari and Chrome */
+{
+    from {
+        transform: translateX(100%);
+      }
+    
+      to {
+        transform: translateX(0%);
+      }
+}
+@-webkit-keyframes moveRouter /* Safari and Chrome */
+{
+    from {
+        transform: translateX(0%);
+      }
+    
+      to {
+        transform: translateX(100%);
+      }
+}
+@-webkit-keyframes moveRouterLeft /* Safari and Chrome */
+{
+    from {
+        transform: translateX(0%);
+      }
+    
+      to {
+        transform: translateX(-100%);
+      }
+}
+
+
+
+.hideMenu
+{
+z-index: 2;
+display: none;
+border-right: 1px solid black;
+position: relative;
+height: 85vh;
+margin: 0;
+width:320px;
+background:rgb(255, 255, 255);
+animation:hideMenu .2s;
+-moz-animation:hideMenu .2s; /* Firefox */
+-webkit-animation:hideMenu .2s; /* Safari and Chrome */
+animation-direction:alternate;
+-moz-animation-direction:alternate;
+-webkit-animation-direction:alternate;
+animation-timing-function:linear;
+-moz-animation-timing-function:linear; /* Firefox */
+-webkit-animation-timing-function:linear; /* Safari and Chrome */
+}
+.hideSearch
+{
+z-index: 2;
+display: block;
+position: fixed;
+height: 95vh;
+width: 0;
+margin: 0;
+top: 0;
+right: 0;
+background:rgb(255, 255, 255);
+animation:hideSearch .2s;
+-moz-animation:hideSearch .2s; /* Firefox */
+-webkit-animation:hideSearch .2s; /* Safari and Chrome */
+animation-direction:alternate;
+-moz-animation-direction:alternate;
+-webkit-animation-direction:alternate;
+animation-timing-function:linear;
+-moz-animation-timing-function:linear; /* Firefox */
+-webkit-animation-timing-function:linear; /* Safari and Chrome */
+}
+
+.moveRouterBack
+{
+animation:moveRouterBack .2s;
+-moz-animation:moveRouterBack .2s; /* Firefox */
+-webkit-animation:moveRouterBack .2s; /* Safari and Chrome */
+animation-direction:alternate;
+-moz-animation-direction:alternate;
+-webkit-animation-direction:alternate;
+animation-timing-function:linear;
+-moz-animation-timing-function:linear; /* Firefox */
+-webkit-animation-timing-function:linear; /* Safari and Chrome */
+}
+.moveRouterBackRight
+{
+animation:moveRouterBackRight .2s;
+-moz-animation:moveRouterBackRight .2s; /* Firefox */
+-webkit-animation:moveRouterBackRight .2s; /* Safari and Chrome */
+animation-direction:alternate;
+-moz-animation-direction:alternate;
+-webkit-animation-direction:alternate;
+animation-timing-function:linear;
+-moz-animation-timing-function:linear; /* Firefox */
+-webkit-animation-timing-function:linear; /* Safari and Chrome */
+}
+
+@keyframes hideMenu
+{
+    from {
+        transform: translateX(0%);
+      }
+    
+      to {
+        transform: translateX(-100%);
+      }
+}
+@keyframes hideSearch
+{
+    from {
+        transform: translateX(100vw);
+      }
+    
+      to {
+        transform: translateX(-100%);
+      }
+}
+@keyframes moveRouterBack
+{
+    from {
+        transform: translateX(100%);
+      }
+    
+      to {
+        transform: translateX(0%);
+      }
+}
+@keyframes moveRouterBackRight
+{
+    from {
+        transform: translateX(-100%);
+      }
+    
+      to {
+        transform: translateX(0%);
+      }
+}
+@-moz-keyframes hideMenu /* Firefox */
+{
+    from {
+        transform: translateX(0%);
+      }
+    
+      to {
+        transform: translateX(-100%);
+      }
+}
+@-moz-keyframes hideSearch /* Firefox */
+{
+    from {
+        transform: translateX(100vw);
+      }
+    
+      to {
+        transform: translateX(-100%);
+      }
+}
+@-moz-keyframes moveRouterBack /* Firefox */
+{
+    from {
+        transform: translateX(100%);
+      }
+    
+      to {
+        transform: translateX(0%);
+      }
+}
+@-moz-keyframes moveRouterBackRight /* Firefox */
+{
+    from {
+        transform: translateX(-100%);
+      }
+    
+      to {
+        transform: translateX(0%);
+      }
+}
+@-webkit-keyframes hideMenu /* Safari and Chrome */
+{
+    from {
+        transform: translateX(0%);
+      }
+    
+      to {
+        transform: translateX(-100%);
+      }
+}
+@-webkit-keyframes hideSearch /* Safari and Chrome */
+{
+    from {
+        transform: translateX(100vw);
+      }
+    
+      to {
+        transform: translateX(-100%);
+      }
+}
+@-webkit-keyframes moveRouterBack /* Safari and Chrome */
+{
+    from {
+        transform: translateX(100%);
+      }
+    
+      to {
+        transform: translateX(0%);
+      }
+}
+@-webkit-keyframes moveRouterBackRight /* Safari and Chrome */
+{
+    from {
+        transform: translateX(-100%);
+      }
+    
+      to {
+        transform: translateX(0%);
+      }
+}
+
+

@@ -1,7 +1,10 @@
-<nav>
-    <button routerLink="/mint" routerLinkActive="active" ariaCurrentWhenActive="page">Mint Soup</button>
-    <button *ngIf="amIsignedIn == false" routerLink="/mint/login" routerLinkActive="active" ariaCurrentWhenActive="page">Login</button>
-    <button *ngIf="amIsignedIn == false" routerLink="/mint/register" routerLinkActive="active" ariaCurrentWhenActive="page" >Register</button>
-    <button *ngIf="amIsignedIn == true" routerLink="/mint/account" routerLinkActive="active" ariaCurrentWhenActive="page">Account</button>
-    <button *ngIf="amIsignedIn == true" (click)="logout()">Logout</button>
-</nav>
+
+<div>
+    <nav class="navi">
+        <button routerLink="/mint" routerLinkActive="active" ariaCurrentWhenActive="page">Mint Soup</button>
+        <button *ngIf="amIsignedIn == false" routerLink="/mint/login" routerLinkActive="active" ariaCurrentWhenActive="page">Login</button>
+        <button *ngIf="amIsignedIn == false" routerLink="/mint/register" routerLinkActive="active" ariaCurrentWhenActive="page" >Register</button>
+        <button *ngIf="amIsignedIn == true" routerLink="/mint/account" routerLinkActive="active" ariaCurrentWhenActive="page">Account</button>
+        <button *ngIf="amIsignedIn == true" (click)="logout()">Logout</button>
+    </nav>
+</div>

@@ -47,7 +47,7 @@ export class LoginComponent implements OnInit {
         },
         err => {
           this.isLoginValid = false;
-          this.router.navigate(["home"])
+          this.router.navigate(["login"])
         })//End of Subscribe
       }
     }
@@ -60,7 +60,8 @@ export class LoginComponent implements OnInit {
       if(us_ch)
       {
         check.subscribe(data => {this.msservice.keep_token(data);this.router.navigate(["home"]);}, err => {
-          this.isLoginValid = false
+          this.isLoginValid = false;
+          this.router.navigate(["login"]);
         })
       }
     }
@@ -85,17 +86,6 @@ export class LoginComponent implements OnInit {
   }//END OF CHECK USERNAME
   
   
-  
-  
-  
-
-
-
-
-
-
-
-
   hide_and_clear_username(){
     let val = this.loginform.value
     this.loginform.reset();
