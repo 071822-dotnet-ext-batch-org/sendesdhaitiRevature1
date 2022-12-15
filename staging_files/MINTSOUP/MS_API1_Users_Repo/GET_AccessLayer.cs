@@ -523,6 +523,32 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of GET_allShows
 
+    public async Task<List<ShowSubscriber?>> GET_aShowsSubscribers_by_showID(Guid? showID)
+    {
+        List<ShowSubscriber?> subs = new List<ShowSubscriber?>();
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT * FROM Shows Where Order By LastLive DESC", _conn))
+            {
+                string command = $"SELECT * FROM Shows Order By LastLive DESC";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                _conn.Open();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
+                while (ret.Read())
+                {
+                    Models.ShowSubscriber sub = new Models.ShowSubscriber();
+                    sub.ID = ret.GetGuid(0);
+                    sub.FK_ViewerID_Subscriber = ret.GetGuid(1);
+                    sub.FK_ShowID_Subscribie = ret.GetGuid(2);
+                    sub.MembershipStatus = actions.REPO_ACTIONS.ConvertStringStatus_To_ShowSubscriptionMembershipStatus(ret.GetString(3));
+                    sub.SubscribeDate = ret.GetDateTime(4);
+                    sub.SubscriptionUpdateDate = ret.GetDateTime(5);
+                    subs.Add(sub);
+                }
+                _conn.Close();
+            }
+            return subs;
+    }
+
     public async Task<List<Models.Show?>> GET_myShows_by_ViewerID_Owner(Guid? MSToken)
     {
         List<Models.Show?> createdShowsList = new List<Models.Show?>();
@@ -638,17 +664,15 @@ public class GET_AccessLayer : IGET_AccessLayer
                 {
                     Models.ShowSubscriber subscribedShow = new Models.ShowSubscriber();
 
-                    subscribedShow.ID = ret.GetGuid(0);
-                    subscribedShow.FK_ViewerID_Subscriber = ret.GetGuid(1);
-                    subscribedShow.FK_ShowID_Subscribie = ret.GetGuid(2);
-                    subscribedShow.FK_ShowSessionID = ret.GetGuid(3);
+                    Models.ShowSubscriber sub = new Models.ShowSubscriber();
+                    sub.ID = ret.GetGuid(0);
+                    sub.FK_ViewerID_Subscriber = ret.GetGuid(1);
+                    sub.FK_ShowID_Subscribie = ret.GetGuid(2);
+                    sub.MembershipStatus = actions.REPO_ACTIONS.ConvertStringStatus_To_ShowSubscriptionMembershipStatus(ret.GetString(3));
+                    sub.SubscribeDate = ret.GetDateTime(4);
+                    sub.SubscriptionUpdateDate = ret.GetDateTime(5);
 
-                    subscribedShow.MembershipStatus = REPO_ACTIONS.ConvertStringStatus_To_ShowSubscriptionMembershipStatus(ret.GetString(4));
-
-                    subscribedShow.SubscribeDate = ret.GetDateTime(5);
-                    subscribedShow.SubscriptionUpdateDate = ret.GetDateTime(6);
-
-                    subscribedShowsList.Add(subscribedShow);
+                    subscribedShowsList.Add(sub);
                 }
                 _conn.Close();
                 return subscribedShowsList;
@@ -676,19 +700,15 @@ public class GET_AccessLayer : IGET_AccessLayer
                 NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
-                    Models.ShowSubscriber subscribedShow = new Models.ShowSubscriber();
+                    Models.ShowSubscriber sub = new Models.ShowSubscriber();
+                    sub.ID = ret.GetGuid(0);
+                    sub.FK_ViewerID_Subscriber = ret.GetGuid(1);
+                    sub.FK_ShowID_Subscribie = ret.GetGuid(2);
+                    sub.MembershipStatus = actions.REPO_ACTIONS.ConvertStringStatus_To_ShowSubscriptionMembershipStatus(ret.GetString(3));
+                    sub.SubscribeDate = ret.GetDateTime(4);
+                    sub.SubscriptionUpdateDate = ret.GetDateTime(5);
 
-                    subscribedShow.ID = ret.GetGuid(0);
-                    subscribedShow.FK_ViewerID_Subscriber = ret.GetGuid(1);
-                    subscribedShow.FK_ShowID_Subscribie = ret.GetGuid(2);
-                    subscribedShow.FK_ShowSessionID = ret.GetGuid(3);
-
-                    subscribedShow.MembershipStatus = REPO_ACTIONS.ConvertStringStatus_To_ShowSubscriptionMembershipStatus(ret.GetString(4));
-
-                    subscribedShow.SubscribeDate = ret.GetDateTime(5);
-                    subscribedShow.SubscriptionUpdateDate = ret.GetDateTime(6);
-
-                    subscribedShowsList.Add(subscribedShow);
+                    subscribedShowsList.Add(sub);
                 }
                 _conn.Close();
                 return subscribedShowsList;
@@ -717,19 +737,15 @@ public class GET_AccessLayer : IGET_AccessLayer
                 NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
-                    Models.ShowSubscriber subscribedShow = new Models.ShowSubscriber();
+                    Models.ShowSubscriber sub = new Models.ShowSubscriber();
+                    sub.ID = ret.GetGuid(0);
+                    sub.FK_ViewerID_Subscriber = ret.GetGuid(1);
+                    sub.FK_ShowID_Subscribie = ret.GetGuid(2);
+                    sub.MembershipStatus = actions.REPO_ACTIONS.ConvertStringStatus_To_ShowSubscriptionMembershipStatus(ret.GetString(3));
+                    sub.SubscribeDate = ret.GetDateTime(4);
+                    sub.SubscriptionUpdateDate = ret.GetDateTime(5);
 
-                    subscribedShow.ID = ret.GetGuid(0);
-                    subscribedShow.FK_ViewerID_Subscriber = ret.GetGuid(1);
-                    subscribedShow.FK_ShowID_Subscribie = ret.GetGuid(2);
-                    subscribedShow.FK_ShowSessionID = ret.GetGuid(3);
-
-                    subscribedShow.MembershipStatus = REPO_ACTIONS.ConvertStringStatus_To_ShowSubscriptionMembershipStatus(ret.GetString(4));
-
-                    subscribedShow.SubscribeDate = ret.GetDateTime(5);
-                    subscribedShow.SubscriptionUpdateDate = ret.GetDateTime(6);
-
-                    subscribedShowsList.Add(subscribedShow);
+                    subscribedShowsList.Add(sub);
                 }
                 _conn.Close();
                 return subscribedShowsList;
@@ -757,18 +773,16 @@ public class GET_AccessLayer : IGET_AccessLayer
                 NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    showSubscriber.ID = ret.GetGuid(0);
-                    showSubscriber.FK_ViewerID_Subscriber = ret.GetGuid(1);
-                    showSubscriber.FK_ShowID_Subscribie = ret.GetGuid(2);
-                    showSubscriber.FK_ShowSessionID = ret.GetGuid(3);
-
-                    showSubscriber.MembershipStatus = REPO_ACTIONS.ConvertStringStatus_To_ShowSubscriptionMembershipStatus(ret.GetString(4));
-
-                    showSubscriber.SubscribeDate = ret.GetDateTime(5);
-                    showSubscriber.SubscriptionUpdateDate = ret.GetDateTime(6);
+                    Models.ShowSubscriber sub = new Models.ShowSubscriber();
+                    sub.ID = ret.GetGuid(0);
+                    sub.FK_ViewerID_Subscriber = ret.GetGuid(1);
+                    sub.FK_ShowID_Subscribie = ret.GetGuid(2);
+                    sub.MembershipStatus = actions.REPO_ACTIONS.ConvertStringStatus_To_ShowSubscriptionMembershipStatus(ret.GetString(3));
+                    sub.SubscribeDate = ret.GetDateTime(4);
+                    sub.SubscriptionUpdateDate = ret.GetDateTime(5);
 
                     _conn.Close();
-                    return showSubscriber;
+                    return sub;
                 }
                 else
                 {
@@ -1672,6 +1686,219 @@ public class GET_AccessLayer : IGET_AccessLayer
             return null;
         }
     }//End of GET_myShowWallet_by_viewer_AND_showID
+
+    public async Task<List<ShowSessionJoins?>> GET_aShowsJoinSessions(Guid? showid)
+    {
+        List<Models.ShowSessionJoins?> joinsList = new List<Models.ShowSessionJoins?>();
+        if(showid.HasValue)
+        {
+            using (NpgsqlConnection connection = this._conn.GETDBCONNECTION())
+            {
+                string command = $"SELECT * FROM ShowSessionJoins where FK_ShowSessionID = (select ID from ShowSessions where FK_ShowID = @FK_ShowID) ";
+                using var cmd = new NpgsqlCommand(command, connection);
+
+                cmd.Parameters.AddWithValue("@FK_ShowID", showid);
+                connection.Open();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
+                while(ret.Read())
+                {
+                    ShowSessionJoins obj = new ShowSessionJoins();
+                    obj.ID = ret.GetGuid(0);
+                    obj.FK_ShowSessionsID = ret.GetGuid(1);
+                    obj.FK_ViewerID_ShowViewer = ret.GetGuid(2);
+
+                    obj.SessionJoinDate = ret.GetDateTime(3);
+                    obj.SessionLeaveDate = ret.GetDateTime(4);
+                    joinsList.Add(obj);
+
+                }
+                connection.Close();
+            }
+            Console.WriteLine($"A show's list of session joins was just GOTTEN at {DateTime.UtcNow} for {showid}");
+            return joinsList;
+        }
+        Console.WriteLine($"A show's list of session joins was just NOT GOTTEN at {DateTime.UtcNow} for {showid}");
+        return joinsList;
+    }
+
+    public async Task<List<ShowSession?>> GET_aShowsSessions(Guid? showid)
+    {
+        List<ShowSession?> showsessionlist = new List<ShowSession?>();
+        if (showid.HasValue)
+        {
+            using (NpgsqlConnection connection = this._conn.GETDBCONNECTION())
+            {
+                string command = $"SELECT * FROM ShowSessions where FK_ShowID = @FK_ShowID ";
+                using var cmd = new NpgsqlCommand(command, connection);
+
+                cmd.Parameters.AddWithValue("@FK_ShowID", showid);
+                connection.Open();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
+                while (ret.Read())
+                {
+                    ShowSession obj = new ShowSession();
+                    obj.ID = ret.GetGuid(0);
+                    obj.FK_ShowID = ret.GetGuid(1);
+                    obj.Views = ret.GetInt32(2);
+                    obj.Likes = ret.GetInt32(3);
+                    obj.Comments = ret.GetInt32(4);
+
+                    obj.SessionStartDate = ret.GetDateTime(5);
+                    obj.SessionEndDate = ret.GetDateTime(6);
+                    showsessionlist.Add(obj);
+
+                }
+                connection.Close();
+            }
+            Console.WriteLine($"A show's list of sessions was just GOTTEN at {DateTime.UtcNow} for {showid}");
+            return showsessionlist;
+        }
+        Console.WriteLine($"A show's list of sessions was just NOT GOTTEN at {DateTime.UtcNow} for {showid}");
+        return showsessionlist;
+    }
+
+    public async Task<List<Follower?>> GET_aShowsFollowers_by_showID(Guid? showid)
+    {
+        List<Follower?> showfollowers = new List<Follower?>();
+        if (showid.HasValue)
+        {
+            using (NpgsqlConnection connection = this._conn.GETDBCONNECTION())
+            {
+                string command = $"SELECT * FROM Followers where FK_ShowID_Followie = @FK_ShowID ";
+                using var cmd = new NpgsqlCommand(command, connection);
+
+                cmd.Parameters.AddWithValue("@FK_ShowID", showid);
+                connection.Open();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
+                while (ret.Read())
+                {
+                    Follower obj = new Follower();
+                    obj.ID = ret.GetGuid(0);
+                    obj.FK_ViewerID_Follower = ret.GetGuid(1);
+                    obj.FK_ViewerID_Followie = ret.GetGuid(2);
+                    obj.FK_ShowID_Followie = ret.GetGuid(3);
+                    obj.FollowerStatus =  actions.REPO_ACTIONS.ConvertStringStatus_To_FollowerStatus( ret.GetString(4));
+                    obj.FollowDate = ret.GetDateTime(5);
+
+                    obj.StatusUpdateDate = ret.GetDateTime(5);
+                    showfollowers.Add(obj);
+
+                }
+                connection.Close();
+            }
+            Console.WriteLine($"A show's list of followers was just GOTTEN at {DateTime.UtcNow} for {showid}");
+            return showfollowers;
+        }
+        Console.WriteLine($"A show's list of followers was just NOT GOTTEN at {DateTime.UtcNow} for {showid}");
+        return showfollowers;
+    }
+
+    public async Task<List<ShowLikes?>> GET_aShowsLikes_by_showID(Guid? showid)
+    {
+        List<ShowLikes?> showlikes = new List<ShowLikes?>();
+        if (showid.HasValue)
+        {
+            using (NpgsqlConnection connection = this._conn.GETDBCONNECTION())
+            {
+                string command = $"SELECT * FROM ShowLikes where FK_ShowSessionID = (select ID from ShowSessions where FK_ShowID = @FK_ShowID) ";
+                using var cmd = new NpgsqlCommand(command, connection);
+
+                cmd.Parameters.AddWithValue("@FK_ShowID", showid);
+                connection.Open();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
+                while (ret.Read())
+                {
+                    ShowLikes obj = new ShowLikes();
+                    obj.ID = ret.GetGuid(0);
+                    obj.FK_ViewerID_Liker = ret.GetGuid(1);
+                    obj.FK_ShowSessionID = ret.GetGuid(2);
+                    obj.LikeDate = ret.GetDateTime(3);
+                    showlikes.Add(obj);
+
+                }
+                connection.Close();
+            }
+            Console.WriteLine($"A show's list of showlikes was just GOTTEN at {DateTime.UtcNow} for {showid}");
+            return showlikes;
+        }
+        Console.WriteLine($"A show's list of showlikes was just NOT GOTTEN at {DateTime.UtcNow} for {showid}");
+        return showlikes;
+    }
+
+    public async Task<List<ShowComment?>> GET_aShowsComments_by_showID(Guid? showid)
+    {
+        List<ShowComment?> showcomments = new List<ShowComment?>();
+        if (showid.HasValue)
+        {
+            using (NpgsqlConnection connection = this._conn.GETDBCONNECTION())
+            {
+                string command = $"SELECT * FROM ShowComments where FK_ShowSessionID = (select ID from ShowSessions where FK_ShowID = @FK_ShowID) ";
+                using var cmd = new NpgsqlCommand(command, connection);
+
+                cmd.Parameters.AddWithValue("@FK_ShowID", showid);
+                connection.Open();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
+                while (ret.Read())
+                {
+                    ShowComment obj = new ShowComment();
+                    obj.ID = ret.GetGuid(0);
+                    obj.FK_ViewerID_Commenter = ret.GetGuid(1);
+                    obj.FK_ShowSessionID = ret.GetGuid(2);
+                    obj.Comment = ret.GetString(3);
+                    obj.CommentDate = ret.GetDateTime(4);
+                    showcomments.Add(obj);
+
+                }
+                connection.Close();
+            }
+            Console.WriteLine($"A show's list of showcomments was just GOTTEN at {DateTime.UtcNow} for {showid}");
+            return showcomments;
+        }
+        Console.WriteLine($"A show's list of showcomments was just NOT GOTTEN at {DateTime.UtcNow} for {showid}");
+        return showcomments;
+    }
+
+    public async Task<List<ShowDonation?>> GET_aShowsDonations_by_showID(Guid? showid)
+    {
+        List<ShowDonation?> showDonations = new List<ShowDonation?>();
+        if (showid.HasValue)
+        {
+            using (NpgsqlConnection connection = this._conn.GETDBCONNECTION())
+            {
+                string command = $"SELECT * FROM ShowDonations where FK_Wallets_ShowID = @FK_ShowID_Donatie ";
+                using var cmd = new NpgsqlCommand(command, connection);
+
+                cmd.Parameters.AddWithValue("@FK_ShowID_Donatie", showid);
+                connection.Open();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
+                while (ret.Read())
+                {
+                    ShowDonation obj = new ShowDonation();
+                    obj.ID = ret.GetGuid(0);
+                    obj.FK_ViewerID_Donater = ret.GetGuid(1);
+                    obj.FK_WalletID = ret.GetGuid(2);
+                    obj.FK_ShowID_Donatie = ret.GetGuid(3);
+                    obj.Amount = ret.GetDecimal(4);
+                    obj.Note = ret.GetString(5);
+                    obj.DonationDate = ret.GetDateTime(4);
+                    showDonations.Add(obj);
+
+                }
+                connection.Close();
+            }
+            Console.WriteLine($"A show's list of showDonations was just GOTTEN at {DateTime.UtcNow} for {showid}");
+            return showDonations;
+        }
+        Console.WriteLine($"A show's list of showDonations was just NOT GOTTEN at {DateTime.UtcNow} for {showid}");
+        return showDonations;
+    }
+
+    //Task<List<ShowSessionJoins?>> GET_aShowsJoinSessions(Guid? Showid);
+    //Task<List<ShowSession?>> GET_aShowsSessions(Guid? showID);
+    //Task<List<Follower?>> GET_aShowsFollowers_by_showID(Guid? showID);
+    //Task<List<ShowLikes?>> GET_aShowsLikes_by_showID(Guid? showID);
+    //Task<List<ShowComment?>> GET_aShowsComments_by_showID(Guid? showID);
+    //Task<List<ShowDonation?>> GET_aShowsDonations_by_showID(Guid? showID);
 
 
 

@@ -3,16 +3,18 @@
         <img id="logo" src="../../../assets/MINTSOUP_LOGO/MINTSOUP_LOGO.png" alt="">
     </div>
     <div id="navbtns">
-        <button id="authbtn" routerLink="" routerLinkActive="active" ariaCurrentWhenActive="page">
-            <p>AuthComponent</p>
-            </button>
-        <button id="mainbtn" routerLink="/home" routerLinkActive="active" ariaCurrentWhenActive="page">
-            <p>MainHome</p>
-            </button>
-        <!-- <button *ngIf="isAuthenticated == false" routerLink="/login" routerLinkActive="active" ariaCurrentWhenActive="page">Login</button>
-        <button *ngIf="isAuthenticated == false" routerLink="/register" routerLinkActive="active" ariaCurrentWhenActive="page">Register</button>
-        <button *ngIf="isAuthenticated == true" (click)="logout()">Logout</button>
-        <button *ngIf="isAuthenticated == true" routerLink="/account" routerLinkActive="active" ariaCurrentWhenActive="page">Account</button> -->
+            <div class="btn-group" role="group" aria-label="Basic example">
+                <button routerLink="" type="button" class="btn btn-secondary">Home</button>
+                <button routerLink="home" type="button" class="btn btn-secondary">Main</button>
+                <button routerLink="mint/booking" type="button" class="btn btn-secondary">Booking</button>
+
+                <button routerLink="mint/employee" type="button" class="btn btn-secondary">Employee</button>
+                <button routerLink="mint/client" type="button" class="btn btn-secondary">Client</button>
+                <button routerLink="mint/orders" type="button" class="btn btn-secondary">Orders</button>
+
+                <button routerLink="mint/settings" type="button" class="btn btn-secondary">Settings</button>
+                <button routerLink="mint/store" type="button" class="btn btn-secondary">Store</button>
+              </div>
     </div>
 </nav>
 

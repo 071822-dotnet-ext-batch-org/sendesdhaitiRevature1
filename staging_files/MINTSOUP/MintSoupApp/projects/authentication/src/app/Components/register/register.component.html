@@ -1,4 +1,4 @@
-<p>register works!</p>
+<!-- <p>register works!</p>
 <div>
     <form [formGroup]="registerform">
         <div *ngIf="invalidSignUp == true">Your email "{{registerform.value.email}}" or username "{{registerform.value.username}}" are already taken</div>
@@ -14,5 +14,38 @@
             <label class="password" for="password">Password: </label><input name="password"  formControlName="password" placeholder="Enter you password for security..." class="password password_input" type="password">
         </div>
         <button name="authenticatebtn" (click)="register()">Register</button>
+    </form>
+</div> -->
+
+
+<div class="container">
+    <h3>Sign up</h3>
+    <form [formGroup]="registerform">
+        <div *ngIf="invalidSignUp == true">Your email "{{registerform.value.email}}" or username
+            "{{registerform.value.username}}" are already taken</div>
+
+        <div class="form-group">
+            <div *ngIf="email_check == true">This email {{registerform.value.email}} is registered</div>
+            <label for="email" class="email">Email address</label>
+            <input type="email" class="form-control" id="email" formControlName="email"
+                (change)="check_email()" placeholder="name@example.com">
+        </div>
+
+        <div class="form-group">
+            <div *ngIf="username_check == true">This username {{registerform.value.username}} is registered</div>
+            <label  for="username" class="username">Username</label>
+            <input type="text" class="form-control" id="username" formControlName="username"
+                (change)="check_username()" placeholder="myusername...">
+        </div>
+
+        <div class="form-group">
+            <label class="password" for="password">Password: </label>
+            <input name="password"  formControlName="password" placeholder="Enter you password for security..." class="form-control" type="password">
+        </div>
+        
+        <button name="authenticatebtn" (click)="register()">Register</button>
+        <div>
+            <a routerLink="/mint/login/" >Already have an account? Sign in here.</a>
+        </div>
     </form>
 </div>

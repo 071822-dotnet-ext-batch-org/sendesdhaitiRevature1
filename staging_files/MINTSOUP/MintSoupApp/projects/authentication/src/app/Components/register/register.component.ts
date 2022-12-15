@@ -45,11 +45,21 @@ export class RegisterComponent implements OnInit {
       {
         if((em_ch === false) && (us_ch === false))
         {
-          this.msservice.SignUp(val.email, val.username, val.password).subscribe(saved => console.log(`${saved} at ${Date.now} - checked if signed up with ${val.email}`),
-            err => {
-              this.invalidSignUp = false;
-              this.router.navigate(["login"]);
-            })
+          this.msservice.SignUp(val.email, val.username, val.password).subscribe({
+            next(saved){
+              console.log('You just signed up?: ', saved);
+              console.log(`${saved} at ${Date.now} - checked if signed up with ${val.email}`)
+              // this.router.navigate(["register"]);
+            },
+            error(msg) {
+              console.log('Error Signing Up: ', msg);
+              // this.invalidSignUp = true;
+            }
+          })
+          // .subscribe(saved => {
+          // },
+          //   err => {
+          //   })
         }
         else if((em_ch === true) && (us_ch === false))
         {

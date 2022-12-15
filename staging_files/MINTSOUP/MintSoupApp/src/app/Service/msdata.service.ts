@@ -6,6 +6,7 @@ import { IViewer, Viewer } from './Viewer';
 import { Observable, of } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { formatDate } from '@angular/common';
+import { IShow } from './Show';
 
 
 @Injectable({
@@ -68,7 +69,15 @@ export class MSDataService {
       "mstoken": this.mstoken.sid
     })
 
-    return this.http.get<IViewer>(this.API + "my-viewer/", {headers: this.header})
+    return this.http.get<IViewer>(this.API + "viewer/", {headers: this.header})
+  }
+  sendRequest_to_GET_ALL_SHOWS():Observable<any>
+  {
+    this.header = new HttpHeaders({
+      "Authorization":`bearer ${JSON.parse(this.jwtToken).token}` ,
+      "mstoken": this.mstoken.sid
+    })
+    return this.http.get<any>(this.API + "shows/", {headers: this.header})
   }
 
   // getViewer()

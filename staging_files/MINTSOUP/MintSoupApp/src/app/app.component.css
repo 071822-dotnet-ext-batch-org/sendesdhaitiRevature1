@@ -1,8 +1,10 @@
-.container{
+/* .container{
     height: 100%;
     display: block;
     background-color: aqua;
-    /* overflow: hidden; */
+} */
+*{
+    all: unset;
 }
 
 app-nav{

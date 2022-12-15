@@ -17,7 +17,7 @@ export class HomeComponent implements OnInit {
 
   is_token_here?:boolean
   public myViewer?:Viewer;
-  public shows: IShow[] = []
+  public shows: any[] = []
 
   constructor(private msservice:MSDataService){
     this.msservice.getToken()
@@ -29,6 +29,7 @@ export class HomeComponent implements OnInit {
     {
       this.is_token_here = true;
       this.send_request_for_viewer()
+      this.GET_ALL_SHOWS()
     }
     else{
       this.is_token_here = false;
@@ -87,5 +88,25 @@ export class HomeComponent implements OnInit {
       }
     }
   }//END OF VIEWER REQUEST TO API
+
+  public GET_ALL_SHOWS()
+  {
+    let ret = this.msservice.sendRequest_to_GET_ALL_SHOWS();
+    if(ret)
+    {
+      ret.subscribe(allshows =>
+        {
+          for(var i in allshows)
+          {
+            let show = JSON.parse(i)
+            console.log(`The show ${show.showname}`)
+            this.shows.push(i);
+          }
+        }, err =>
+        {
+          console.log(`The shows could NOT be GOTTEN`)
+        })
+    }
+  }
 
 }

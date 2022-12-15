@@ -1,6 +1,6 @@
 .FOOTER {
     border-top: 1px solid black;
-    height:fit-content;
+    height:inherit;
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;

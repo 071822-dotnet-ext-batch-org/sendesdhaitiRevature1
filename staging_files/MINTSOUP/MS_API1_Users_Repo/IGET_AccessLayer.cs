@@ -42,9 +42,15 @@ namespace MS_API1_Users_Repo
         Task<List<ShowSession?>> GET_myShowSessions_by_showID(Guid? MSToken, Guid? ShowID);
         Task<List<ShowSubscriber?>> GET_myShowSubscribers_by_ShowID_Subscriber(Guid? MSToken, Guid? ShowID);
         Task<List<ShowSubscriber?>> GET_myShowSubscriptions_by_ViewerID_Subscriber(Guid? MSToken);
-        Task<List<ShowSubscriber?>> GET_aShowsSubscriptions_by_ShowID_Subscriber(Guid? showid);
+        Task<List<ShowSubscriber?>> GET_aShowsSubscribers_by_showID(Guid? showid);
         Task<List<Show?>> GET_myShows_by_ViewerID_Owner(Guid? MSToken);
         Task<ShowWallet?> GET_myShowWallet_by_viewer_AND_showID(Guid? MSToken, Guid? ShowID);
         Task<Viewer?> GET_myViewer_by_MSToken(Guid? MSToken);
+        Task<List<ShowSessionJoins?>> GET_aShowsJoinSessions(Guid? Showid);
+        Task<List<ShowSession?>> GET_aShowsSessions(Guid? showID);
+        Task<List<Follower?>> GET_aShowsFollowers_by_showID(Guid? showID);
+        Task<List<ShowLikes?>> GET_aShowsLikes_by_showID(Guid? showID);
+        Task<List<ShowComment?>> GET_aShowsComments_by_showID(Guid? showID);
+        Task<List<ShowDonation?>> GET_aShowsDonations_by_showID(Guid? showID);
     }
 }

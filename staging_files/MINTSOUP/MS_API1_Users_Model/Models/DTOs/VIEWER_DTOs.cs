@@ -8,13 +8,13 @@ namespace DTOs
 {
     public class MSTokenACTIONDTO
     {
-        private static Guid? MSToken;
+        private static Guid  MSToken;
         private static string nullTokenError = "You must be a registerd user with a valid Mint Soup Token to use this service";
 
 
         public string? GetNullTokenError()
         {
-            Guid? check = GetMSToken();
+            Guid check = GetMSToken();
             if(check != null)
             {
                 return null;
@@ -22,12 +22,12 @@ namespace DTOs
             return nullTokenError;
         }
 
-        public Guid? GetMSToken()
+        public Guid GetMSToken()
         {
             return MSToken;
         }
 
-        private static  void SetMSToken(Guid? value)
+        private static  void SetMSToken(Guid  value)
         {
             MSToken = value;
         }
@@ -35,7 +35,7 @@ namespace DTOs
 
         public MSTokenACTIONDTO() { }
 
-        public MSTokenACTIONDTO(Guid? token) {
+        public MSTokenACTIONDTO(Guid  token) {
             SetMSToken(token);
         }
 
@@ -44,20 +44,20 @@ namespace DTOs
         /// </summary>
         public class ShowDTO : MSTokenACTIONDTO
         {
-            private static Guid? showID;
-            public  Guid? GetShowID()
+            private static Guid  showID;
+            public  Guid  GetShowID()
             {
                 return showID;
             }
 
-            private static void SetShowID(Guid? value)
+            private static void SetShowID(Guid  value)
             {
                 showID = value;
             }
 
             public ShowDTO() : base() { }
 
-            public ShowDTO(Guid? mstoken, Guid? showid):base(mstoken)
+            public ShowDTO(Guid  mstoken, Guid  showid):base(mstoken)
             {
                 SetShowID(showid);
                 SetMSToken(mstoken);
@@ -65,25 +65,24 @@ namespace DTOs
 
             public class ShowSessionDTO : ShowDTO
             {
-                private static Guid? sessionID;
+                private static Guid  sessionID;
 
-                public  Guid? GetSessionID()
+                public  Guid  GetSessionID()
                 {
                     return sessionID;
                 }
 
-                private static void SetSessionID(Guid? value)
+                private static void SetSessionID(Guid  value)
                 {
                     sessionID = value;
                 }
 
                 public ShowSessionDTO() { }
 
-                public ShowSessionDTO(Guid? mstoken , Guid?showId, Guid?sessionid): base(mstoken, showId)
+                public ShowSessionDTO(Guid  mstoken , Guid showId, Guid sessionid): base(mstoken, showId)
                 {
-                    if(mstoken != null && sessionid != null && showId != null) { SetSessionID(sessionid);
-                        SetMSToken(mstoken);SetShowID(showId);
-                    }
+                    SetSessionID(sessionid);
+                    SetMSToken(mstoken);SetShowID(showId);
                 }
 
                 /// <summary>
@@ -91,14 +90,14 @@ namespace DTOs
                 /// </summary>
                 public class SessionJoinDTO: MSTokenACTIONDTO
                 {
-                    private static Guid?sessionJoinID;
+                    private static Guid sessionJoinID;
 
-                    public  Guid?GetsessionJoinID()
+                    public  Guid GetsessionJoinID()
                     {
                         return sessionJoinID;
                     }
 
-                    private static void SetsessionJoinID(Guid?value)
+                    private static void SetsessionJoinID(Guid value)
                     {
                         sessionJoinID = value;
                     }
@@ -109,7 +108,7 @@ namespace DTOs
                     /// <param name="sessionID"></param>
                     /// <param name="showid"></param>
                     /// <param name="mstoken"></param>
-                    public SessionJoinDTO(Guid? mstoken, Guid? sessionjoinID ): base(mstoken)
+                    public SessionJoinDTO(Guid  mstoken, Guid  sessionjoinID ): base(mstoken)
                     {
                         SetMSToken(mstoken);
                         //SetShowID(showid);
@@ -124,18 +123,18 @@ namespace DTOs
 
     public class DonationDTO : MSTokenACTIONDTO
     {
-        private static Guid donationID;
+        private static Guid  donationID;
 
-        public Guid GetDonationID()
+        public Guid  GetDonationID()
         {
             return donationID;
         }
 
-        private static void SetDonationID(Guid value)
+        private static void SetDonationID(Guid  value)
         {
             donationID = value;
         }
-        public DonationDTO(Guid mt, Guid did) : base( mt)
+        public DonationDTO(Guid  mt, Guid  did) : base( mt)
         {
             SetDonationID(did);
         }
@@ -144,18 +143,18 @@ namespace DTOs
 
     public class GETDTO : MSTokenACTIONDTO
     {
-        private static Guid id;
+        private static Guid  id;
 
-        public Guid GetOBJID()
+        public Guid  GetOBJID()
         {
             return id;
         }
 
-        private static void SetOBJID(Guid value)
+        private static void SetOBJID(Guid  value)
         {
             id = value;
         }
-        public GETDTO(Guid mt, Guid objectid) : base(mt)
+        public GETDTO(Guid  mt, Guid  objectid) : base(mt)
         {
             SetOBJID(objectid);
         }
@@ -163,18 +162,18 @@ namespace DTOs
 
     //public class LikeDTO : MSTokenACTIONDTO
     //{
-    //    private static Guid likeid;
+    //    private static Guid  likeid;
 
-    //    public static Guid GetLikeID()
+    //    public static Guid  GetLikeID()
     //    {
     //        return likeid;
     //    }
 
-    //    private static void SetLikeID(Guid value)
+    //    private static void SetLikeID(Guid  value)
     //    {
     //        likeid = value;
     //    }
-    //    public LikeDTO(Guid mt, Guid lid) : base(mt)
+    //    public LikeDTO(Guid  mt, Guid  lid) : base(mt)
     //    {
     //        SetLikeID(lid);
     //    }
@@ -183,11 +182,11 @@ namespace DTOs
 
     public class Create_ShowDTO
     {
-        public Guid MSToken { get; set; }
+        public Guid  MSToken { get; set; }
         public string showName { get; set; } = "";
         public string showImage { get; set; } = "";
         public Models.PrivacyLevel privacyLevel { get; set; }
-        public Create_ShowDTO(Guid mt, string sn, string si, PrivacyLevel pl)
+        public Create_ShowDTO(Guid  mt, string sn, string si, PrivacyLevel pl)
         {
             this.MSToken = mt;
             this.showName = sn;
@@ -198,9 +197,9 @@ namespace DTOs
 
     public class Create_Show_SessionDTO
     {
-        public Guid MSToken { get; set; }
-        public Guid showID { get; set; }
-        public Create_Show_SessionDTO(Guid mt, Guid sid)
+        public Guid  MSToken { get; set; }
+        public Guid  showID { get; set; }
+        public Create_Show_SessionDTO(Guid  mt, Guid  sid)
         {
             this.MSToken = mt;
             this.showID = sid;
@@ -209,9 +208,9 @@ namespace DTOs
 
     public class Create_Show_Session_JoinDTO
     {
-        public Guid MSToken { get; set; }
-        public Guid showsessionid { get; set; }
-        public Create_Show_Session_JoinDTO(Guid mt, Guid ssid)
+        public Guid  MSToken { get; set; }
+        public Guid  showsessionid { get; set; }
+        public Create_Show_Session_JoinDTO(Guid  mt, Guid  ssid)
         {
             this.MSToken = mt;
             this.showsessionid = ssid;

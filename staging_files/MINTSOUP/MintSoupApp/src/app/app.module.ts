@@ -1,7 +1,16 @@
 import { NgModule } from '@angular/core';
 import { Injector } from  '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+
+
+
 import { MintSoupAuthModule } from 'projects/authentication/src/app/app.module';
+import { BookingModule } from 'projects/booking/src/app/app.module';
+
+
+
+
+
 import { Routes, RouterModule } from '@angular/router';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
@@ -14,9 +23,20 @@ import { MSDataService } from './Service/msdata.service';
 import { ShowComponent } from './Components/show/show.component';
 import { ShowSessionComponent } from './Components/show-session/show-session.component';
 import { MenuComponent } from './Components/menu/menu.component';
+import { CustomerModule } from 'projects/customer/src/app/app.module';
+import { EmployeeModule } from 'projects/employee/src/app/app.module';
+import { OrdersModule } from 'projects/orders/src/app/app.module';
+import { SettingsModule } from 'projects/settings/src/app/app.module';
+import { StoreModule } from 'projects/store/src/app/app.module';
 
 const routes: Routes = [
   {path: '', loadChildren:  () => MintSoupAuthModule},
+  {path: '', loadChildren:  () => BookingModule},
+  {path: '', loadChildren:  () => CustomerModule},
+  {path: '', loadChildren:  () => EmployeeModule},
+  {path: '', loadChildren:  () => OrdersModule},
+  {path: '', loadChildren:  () => SettingsModule},
+  {path: '', loadChildren:  () => StoreModule},
   {path: 'shows', component: ShowComponent},
   {path: 'shows/sesssion', component: ShowSessionComponent},
   // {path: "home", component: HomeComponent},
@@ -38,7 +58,13 @@ const routes: Routes = [
       AppRoutingModule,
       RouterModule.forRoot(routes),
       HttpClientModule,
-      MintSoupAuthModule.forRoot()
+      MintSoupAuthModule.forRoot(),
+      BookingModule.forRoot(),
+      CustomerModule.forRoot(),
+      EmployeeModule.forRoot(),
+      OrdersModule.forRoot(),
+      SettingsModule.forRoot(),
+      StoreModule.forRoot()
     ],
     providers: [
       HttpClientModule,//HttpClient, HttpHeaders,

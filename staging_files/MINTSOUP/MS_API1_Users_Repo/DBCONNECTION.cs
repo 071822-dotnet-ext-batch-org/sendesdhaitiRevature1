@@ -16,7 +16,7 @@ namespace MS_API1_Users_Repo
                 }
                 else
                 {
-                    Console.WriteLine($"AT {DateTime.Now} The Connection is Connected");
+                    Console.WriteLine($"AT {DateTime.Now} The Connection is NOT Connected");
                 }
             }
         }
