@@ -1,3 +1,75 @@
+---------------------- get my person --------------------
+DROP FUNCTION IF EXISTS get_my_person;
+CREATE OR REPLACE FUNCTION get_my_person( mstoken uuid)
+RETURNS TABLE 
+		(
+        personID uuid,
+        username VARCHAR,
+		image VARCHAR,
+		aboutme VARCHAR,
+		role int,
+		membership int,
+
+		added TIMESTAMP,
+		updated TIMESTAMP,
+		fk_mstokenid uuid
+		) 
+	AS $$
+BEGIN
+  	RETURN  query 	SELECT * 
+					FROM Person 
+					WHERE fk_mstoken = mstoken
+					ORDER BY updated limit 1;
+END $$ language plpgsql;
+
+---------------------- create a order invoice --------------------
+DROP FUNCTION IF EXISTS create_order_invoice;
+CREATE OR REPLACE FUNCTION create_order_invoice(fk_orderID_ uuid, storename_ varchar, payment_method_ varchar, card_number_ int, quantity_ int)
+RETURNS boolean --this function is going to return a trigger
+LANGUAGE PLPGSQL
+AS
+ $$
+	BEGIN
+ 		INSERT INTO OrderInvoice (fk_orderID, storename ,payment_method, card_number, quantity) VALUES(fk_orderID_ , storename_ , payment_method_ , card_number_ , quantity_ );
+		return TRUE;
+		exception when others then 
+		return FALSE;
+	END;
+$$;
+
+---------------------- create a order receipt --------------------
+DROP FUNCTION IF EXISTS create_order_receipt;
+CREATE OR REPLACE FUNCTION create_order_receipt(fk_personID_ uuid, fk_orderID_ uuid, fk_productID_ uuid, amount_ money, quantity_ money)
+RETURNS boolean --this function is going to return a trigger
+LANGUAGE PLPGSQL
+AS
+ $$
+	BEGIN
+ 		INSERT INTO OrderReceipt (fk_personID, fk_orderID, fk_productID,amount, quantity) VALUES(fk_personID_ , fk_orderID_ , fk_productID_ , amount_ , quantity_ );
+		return TRUE;
+		exception when others then 
+		return FALSE;
+	END;
+$$;
+
+---------------------- check if person exists with person ID --------------------
+DROP FUNCTION IF EXISTS check_if_person_exists_with_personID;
+CREATE OR REPLACE FUNCTION check_if_person_exists_with_personID(id uuid)
+RETURNS boolean
+LANGUAGE PLPGSQL
+AS
+$$
+	BEGIN
+ 		IF (select personID FROM Person where personID = id) = id
+		THEN
+			return TRUE;
+			
+		ELSE
+			return FALSE;
+ 		END IF;
+	END;
+$$;
+
 ---------------------- convert password to hash --------------------
 DROP FUNCTION IF EXISTS convertpassword_to_a_hash;
 CREATE OR REPLACE FUNCTION convertpassword_to_a_hash(a varchar)
@@ -50,29 +122,12 @@ $$;
 ---------------------- get all stores --------------------
 DROP FUNCTION IF EXISTS get_all_stores;
 CREATE OR REPLACE FUNCTION get_all_stores()
-RETURNS TABLE 
-		(
-        storeID uuid,
-        fk_personID VARCHAR,
-		storename VARCHAR,
-		storeimage VARCHAR(200),
-		clients int,
-		views int,
-		likes int,
-		comments int,
-		rating float(24),
-		rank int,
-		privacylevel int,
-		storestatus int,
-
-		added TIMESTAMP,
-		updated TIMESTAMP
-		) 
+RETURNS setof store 
 	AS $$
 BEGIN
-  	RETURN  query 	SELECT * 
-					FROM store 
-					ORDER BY updated;
+  	return query SELECT * 
+	FROM store 
+	ORDER BY updated;
 END $$ language plpgsql;
 	
 ---------------------- get storeID with productID--------------------

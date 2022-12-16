@@ -4,7 +4,7 @@ import { interval } from 'rxjs';
 import { TimeInterval } from 'rxjs/internal/operators/timeInterval';
 import { MSDataService } from 'src/app/Service/msdata.service';
 import { IShow } from 'src/app/Service/Show';
-import { IViewer, Viewer } from 'src/app/Service/Viewer';
+import { IPerson, IViewer, Viewer } from 'src/app/Service/Viewer';
 
 
 @Component({
@@ -16,7 +16,7 @@ import { IViewer, Viewer } from 'src/app/Service/Viewer';
 export class HomeComponent implements OnInit {
 
   is_token_here?:boolean
-  public myViewer?:Viewer;
+  public myPerson?:IPerson;
   public shows: any[] = []
 
   constructor(private msservice:MSDataService){
@@ -28,8 +28,8 @@ export class HomeComponent implements OnInit {
     if(check == true)
     {
       this.is_token_here = true;
-      this.send_request_for_viewer()
-      this.GET_ALL_SHOWS()
+      this.send_request_for_person()
+      // this.GET_ALL_SHOWS()
     }
     else{
       this.is_token_here = false;
@@ -37,14 +37,14 @@ export class HomeComponent implements OnInit {
   }//END NG ON INIT
 
 
-  setViewer(requestReturn:IViewer):void{
-    let viewer = new Viewer(requestReturn);
-    this.myViewer = viewer;
+  setViewer(requestReturn:IPerson):void{
+    let viewer:IPerson = requestReturn
+    this.myPerson = viewer;
   }//END SET VIEWER
 
 
   getViewer():IViewer | undefined{
-    return this.myViewer?.getViewer();
+    return this.myPerson;
   }//END GET VIEWER
 
 
@@ -62,7 +62,7 @@ export class HomeComponent implements OnInit {
   }//END CHECK IF VIEWER IS HERE
 
 
-  send_request_for_viewer():void{
+  send_request_for_person():void{
     // console.log(`At ${Date.now()} - headers added as to the request as '' - true means it exists`)
     if(this.is_token_here == true)
     {
@@ -71,10 +71,10 @@ export class HomeComponent implements OnInit {
       {
         viewer.subscribe(
           {
-            next: (ret:IViewer) => {
-              let c:IViewer = ret
+            next: (ret:IPerson) => {
+              let c:IPerson = ret
               this.setViewer(ret);
-              console.log(`At ${Date.now()} - the viewer was gotten successfully with ${ret.id}`);
+              console.log(`At ${Date.now()} - the viewer was gotten successfully with ${ret.personID}`);
             },
             error: (err) => {
               console.log(`At ${Date.now()} - the viewer was not gotten with ${err}`)
@@ -89,24 +89,24 @@ export class HomeComponent implements OnInit {
     }
   }//END OF VIEWER REQUEST TO API
 
-  public GET_ALL_SHOWS()
-  {
-    let ret = this.msservice.sendRequest_to_GET_ALL_SHOWS();
-    if(ret)
-    {
-      ret.subscribe(allshows =>
-        {
-          for(var i in allshows)
-          {
-            let show = JSON.parse(i)
-            console.log(`The show ${show.showname}`)
-            this.shows.push(i);
-          }
-        }, err =>
-        {
-          console.log(`The shows could NOT be GOTTEN`)
-        })
-    }
-  }
+  // public GET_ALL_SHOWS()
+  // {
+  //   let ret = this.msservice.sendRequest_to_GET_ALL_SHOWS();
+  //   if(ret)
+  //   {
+  //     ret.subscribe(allshows =>
+  //       {
+  //         for(var i in allshows)
+  //         {
+  //           let show = JSON.parse(i)
+  //           console.log(`The show ${show.showname}`)
+  //           this.shows.push(i);
+  //         }
+  //       }, err =>
+  //       {
+  //         console.log(`The shows could NOT be GOTTEN`)
+  //       })
+  //   }
+  // }
 
 }

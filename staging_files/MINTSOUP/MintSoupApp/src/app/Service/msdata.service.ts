@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment as env } from 'src/environments/environment';
 import { Injectable} from '@angular/core';
 // import { MS_Service_Actions_and_Operations as MSACTIONS } from 'projects/authentication/src/app/Service/ms_service_actions_and_operations';
-import { IViewer, Viewer } from './Viewer';
+import { IPerson, IViewer, Viewer } from './Viewer';
 import { Observable, of } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { formatDate } from '@angular/common';
@@ -62,23 +62,23 @@ export class MSDataService {
   //   this.myviewer = viewer.getViewer();
   //   console.log(`At ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()} - the viewer was gotten successfully with ${this.myviewer?.MSToken}`)
   // }
-  sendRequest_to_GET_Viewer(): Observable<IViewer>
+  sendRequest_to_GET_Viewer(): Observable<IPerson>
   {
     this.header = new HttpHeaders({
       "Authorization":`bearer ${JSON.parse(this.jwtToken).token}` ,
       "mstoken": this.mstoken.sid
     })
 
-    return this.http.get<IViewer>(this.API + "viewer/", {headers: this.header})
+    return this.http.get<IPerson>(this.API + "myperson/", {headers: this.header})
   }
-  sendRequest_to_GET_ALL_SHOWS():Observable<any>
-  {
-    this.header = new HttpHeaders({
-      "Authorization":`bearer ${JSON.parse(this.jwtToken).token}` ,
-      "mstoken": this.mstoken.sid
-    })
-    return this.http.get<any>(this.API + "shows/", {headers: this.header})
-  }
+  // sendRequest_to_GET_ALL_SHOWS():Observable<any>
+  // {
+  //   this.header = new HttpHeaders({
+  //     "Authorization":`bearer ${JSON.parse(this.jwtToken).token}` ,
+  //     "mstoken": this.mstoken.sid
+  //   })
+  //   return this.http.get<any>(this.API + "stores/", {headers: this.header})
+  // }
 
   // getViewer()
   // {

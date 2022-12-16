@@ -16,7 +16,7 @@
       <div class="panel panel-primary">
         <div class="panel-heading">Status</div>
   
-        <div class="container-fluid">
+        <li class="container-fluid" *ngFor="let store of stores">
           <div class="row flex-row flex-nowrap overflow-auto">
               <div class="col-3">
                   <div class="card card-block">
@@ -106,7 +106,7 @@
               </div>
   
           </div>
-      </div>
+        </li>
   
 
 

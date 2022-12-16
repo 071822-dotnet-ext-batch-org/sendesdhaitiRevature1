@@ -32,12 +32,31 @@ namespace MS.MODELS
     public class CreateOrderDTO
     {
         public Guid personID { get; set; }
-        public Guid productID { get; set; }
+        public Guid storeID { get; set; }
+        public List<Guid> productIDs { get; set; } = new();
         public ProductType type { get; set; }
         public string category { get; set; } = "";
         public decimal amount { get; set; }
         public string desc { get; set; } = "";
         public OrderStatus orderStatus { get; set; }
+        public List<OrderProductsDTO> products { get; set; } = new();
+        public OrderInvoiceDTO? invoice { get; set; } 
+    }
+
+    public class OrderProductsDTO
+    {
+        public Guid personID { get; set; }
+        public Guid orderID { get; set; }
+        public Guid productID { get; set; }
+        public decimal amount { get; set; }
+        public int quantity { get; set; }
+    }
+    public class OrderInvoiceDTO
+    {
+        public string storename { get; set; } = "";
+        public string payment_method { get; set; } = "";
+        public int card_number { get; set; }
+        public int quantity { get; set; }
     }
 
     public class CreateCommentDTO

@@ -236,6 +236,39 @@ Create Table "Order"(
 			REFERENCES Store(storeID)
 );
 
+Create Table IF NOT EXISTS "OrderReceipt"(
+	receiptID uuid DEFAULT(uuid_generate_v4()) primary key,
+	amount money not null default(0),
+	quantity int not null,
+	added TIMESTAMP not null default(NOW()),
+	updated TIMESTAMP not null default(NOW()),
+
+	fk_personID uuid not null,--a person
+	fk_orderID uuid not null,--made an order
+	fk_productID uuid not null,--containing this product
+	CONSTRAINT fk_person_customer_relation FOREIGN KEY(fk_personID)
+			REFERENCES Person(personID),
+	CONSTRAINT fk_order_relation FOREIGN KEY(fk_orderID)
+			REFERENCES "Order"(orderid),
+	CONSTRAINT fk_product_relation FOREIGN KEY(fk_productID)
+			REFERENCES Product(productid)
+);
+
+Create Table IF NOT EXISTS OrderInvoice(
+	invoiceid uuid DEFAULT(uuid_generate_v4()) primary key,
+	storename varchar(100) not null,
+	datepurchased TIMESTAMP not null,
+	payment_method varchar(25) not null,
+	card_number int not null,
+	quantity int not null,
+	added TIMESTAMP not null default(NOW()),
+	updated TIMESTAMP not null default(NOW()),
+
+	fk_orderID uuid not null,--made an order
+	CONSTRAINT fk_order_relation FOREIGN KEY(fk_orderID)
+			REFERENCES "Order"(orderid)
+);
+
 Create  table StoreLike(
 	likeID uuid DEFAULT(uuid_generate_v4()) primary key,
 	likestatus int not null default(0),

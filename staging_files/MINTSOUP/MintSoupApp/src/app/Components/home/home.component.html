@@ -1,56 +1,8 @@
-  <!-- <div class="HOME">
-    
-    <div class="HOME_COLUMNS" id="featured">
-        <h3>Featured</h3>  
-        <ol id="feat">
-            <div class="card" style="width: 18rem;">
-                <img src="..." class="card-img-top" alt="...">
-                <div class="card-body">
-                  <h5 class="card-title">Card title</h5>
-                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                  <a href="#" class="btn btn-primary">Go somewhere</a>
-                </div>
-            </div>
-        </ol>
-    </div>
-
-    <div class="HOME_COLUMNS" id="recommendations">
-        <h3>My Recommendations</h3>
-        <ol id="rec">
-            <div class="card" style="width: 18rem;">
-                <img src=".../.../.../assets/ICONS/show.svg" class="card-img-top" alt="...">
-                <div class="card-body">
-                  <h5 class="card-title">Card title</h5>
-                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                  <a href="#" class="btn btn-primary">Go somewhere</a>
-                </div>
-            </div>
-        </ol>
-    </div>
-
-    <div class="HOME_COLUMNS" id="live">
-        <h3>Live Now</h3>
-        <ol>
-            <div class="card" style="width: 18rem;">
-                <img src="..." class="card-img-top" alt="...">
-                <div class="card-body">
-                  <h5 class="card-title">Card title</h5>
-                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                  <a href="#" class="btn btn-primary">Go somewhere</a>
-                </div>
-            </div>
-        </ol>
-    </div>
-
-  </div>
-
-   -->
-
    <div class="container">
     <div class="jumbotron">
-      <h1>Welcome</h1>
+      <h1 *ngIf="myPerson != undefined">Welcome {{myPerson.personID}}</h1>
       <h2>Main Page</h2>
-      <h3>This is where the main apps content will be</h3>
+      <h3>This is where the main apps content will be. It will feature the user's person account, thier stores and relevent info</h3>
 
     </div>  <div class="panel panel-primary">
       <div class="panel-heading">Status</div>
@@ -58,4 +10,204 @@
         <h3>Hello</h3>
       </div>
     </div>
+  </div>
+
+
+  <div class="overflow-auto" *ngIf="myPerson != undefined">
+    <div class="panel panel-primary">
+
+      <div class="container-fluid" >
+        <div class="row flex-row flex-nowrap overflow-auto">
+            <div class="col-3">
+                <div class="card card-block">
+                  
+                  <!-- personID:string,
+                  username:string,
+                  image:string,
+                  aboutme:string,
+                  role:number,
+                  membership:number,
+                  added:Date,
+                  updated:Date,
+                  fk_mstoken:string,
+                  emails:Email[],
+                  addresses:Address[] -->
+                  <div class="card-deck">
+                    <div class="card">
+                      <img src="../../../assets/ICONS/profile2.svg" class="rounded-circle" alt="../../../assets/ICONS/profile2.svg" style="width: 30%; margin: auto;">
+                      <div class="card-body">
+                        <h5 class="card-title">{{myPerson.username}}</h5>
+                        <p class="card-text" *ngIf="myPerson.aboutme != '' ; else alternatebio">Bio: {{myPerson.aboutme}}</p>
+                        <ng-template #alternatebio class="card-text" >Bio: add a bio</ng-template>
+                        <p class="card-text">{{myPerson.membership}}</p>
+                      </div>
+                      <div class="card-footer">
+                        <small class="text-muted">Updated since {{myPerson.added |  date:'fullDate' }} </small>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+            </div>
+
+            <div class="col-3">
+              <div class="card card-block">
+                
+                <div class="card-deck">
+                  <div class="card">
+                    <img src="..." class="card-img-top" alt="...">
+                    <div class="card-body">
+                      <h5 class="card-title">Card title</h5>
+                      <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                    </div>
+                    <div class="card-footer">
+                      <small class="text-muted">Last updated 3 mins ago</small>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+          </div>
+
+            <div class="col-3">
+                <div class="card card-block">
+                  <div class="card-deck">
+                    <div class="card">
+                      <img src="..." class="card-img-top" alt="...">
+                      <div class="card-body">
+                        <h5 class="card-title">Card title</h5>
+                        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                      </div>
+                      <div class="card-footer">
+                        <small class="text-muted">Last updated 3 mins ago</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card card-block">
+                  <div class="card-deck">
+                    <div class="card">
+                      <img src="..." class="card-img-top" alt="...">
+                      <div class="card-body">
+                        <h5 class="card-title">Card title</h5>
+                        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                      </div>
+                      <div class="card-footer">
+                        <small class="text-muted">Last updated 3 mins ago</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card card-block">
+                  <div class="card-deck">
+                    <div class="card">
+                      <img src="..." class="card-img-top" alt="...">
+                      <div class="card-body">
+                        <h5 class="card-title">Card title</h5>
+                        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                      </div>
+                      <div class="card-footer">
+                        <small class="text-muted">Last updated 3 mins ago</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+
+
+
+    <div class="card text-white bg-primary mb-3" style="max-width: 90%; margin: auto; margin-top: 10px;  ">
+      <div class="card-header">Header</div>
+      <div class="card-body">
+        <h5 class="card-title">Primary card title</h5>
+        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+      </div>
+    </div>
+    <div class="card text-white bg-secondary mb-3" style="max-width: 90%; margin: auto; margin-top: 10px;  ">
+      <div class="card-header">Header</div>
+      <div class="card-body">
+        <h5 class="card-title">Secondary card title</h5>
+        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+      </div>
+    </div>
+    <div class="card text-white bg-success mb-3" style="max-width: 90%; margin: auto; margin-top: 10px;  ">
+      <div class="card-header">Header</div>
+      <div class="card-body">
+        <h5 class="card-title">Success card title</h5>
+        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+      </div>
+    </div>
+    <div class="card text-white bg-danger mb-3" style="max-width: 90%; margin: auto; margin-top: 10px;  ">
+      <div class="card-header">Header</div>
+      <div class="card-body">
+        <h5 class="card-title">Danger card title</h5>
+        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+      </div>
+    </div>
+    <div class="card text-white bg-warning mb-3" style="max-width: 90%; margin: auto; margin-top: 10px;  ">
+      <div class="card-header">Header</div>
+      <div class="card-body">
+        <h5 class="card-title">Warning card title</h5>
+        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+      </div>
+    </div>
+    <div class="card text-white bg-info mb-3" style="max-width: 90%; margin: auto; margin-top: 10px;  ">
+      <div class="card-header">Header</div>
+      <div class="card-body">
+        <h5 class="card-title">Info card title</h5>
+        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+      </div>
+    </div>
+    <div class="card bg-light mb-3" style="max-width: 90%; margin: auto; margin-top: 10px;  ">
+      <div class="card-header">Header</div>
+      <div class="card-body">
+        <h5 class="card-title">Light card title</h5>
+        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+      </div>
+    </div>
+    <div class="card text-white bg-dark mb-3" style="max-width: 90%; margin: auto; margin-top: 10px;  ">
+      <div class="card-header">Header</div>
+      <div class="card-body">
+        <h5 class="card-title">Dark card title</h5>
+        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+      </div>
+    </div>
+
+
+
+
+
+
+
+    <div class="card mb-3" style="max-width: 100%; margin: auto; ">
+      <div class="row no-gutters">
+        <div class="col-md-4">
+          <img src="..." class="card-img" alt="...">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+            <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  
+
+
+    
   </div>

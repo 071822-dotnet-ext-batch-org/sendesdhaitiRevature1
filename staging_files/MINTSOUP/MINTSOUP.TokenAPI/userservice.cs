@@ -57,7 +57,7 @@ namespace MINTSOUP.TokenAPI
             bool check = false;
             using (NpgsqlConnection _conn = GetConnection())
             {
-                string command = $"SELECT  CHECK_if_mstoken_exists_by_email(@Email) ";
+                string command = $"SELECT * from CHECK_if_mstoken_exists_by_email(@Email) ";
                 var cmd  = new NpgsqlCommand(command, _conn);
                 cmd.Parameters.AddWithValue("@Email", Email);
                 _conn.Open();
@@ -65,9 +65,8 @@ namespace MINTSOUP.TokenAPI
                 NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    bool c = ret.GetBoolean(0);
-                    check = c;
-                    Console.WriteLine("The check was",check);
+                    check = ret.GetBoolean(0);
+                    Console.WriteLine($"The check was {check}");
                 }
                 _conn.Close();
             }
@@ -79,7 +78,7 @@ namespace MINTSOUP.TokenAPI
             bool check = false;
             using (NpgsqlConnection _conn = GetConnection())// ($"SELECT TOP(1) * FROM MintSoupTokens Where Username = @Username", _conn))
             {
-                string command = $"SELECT  CHECK_if_mstoken_exists_by_username(@Username) ";
+                string command = $"SELECT * from CHECK_if_mstoken_exists_by_username(@Username) ";
                 var cmd = new NpgsqlCommand(command, _conn);
                 cmd.Parameters.AddWithValue("@Username", Username);
 
@@ -88,9 +87,8 @@ namespace MINTSOUP.TokenAPI
                 NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    bool c = ret.GetBoolean(0);
-                    check = c;
-                    Console.WriteLine("The check was",check);
+                    check = ret.GetBoolean(0);
+                    Console.WriteLine($"The check was {check}");
                 }
                 _conn.Close();
             }

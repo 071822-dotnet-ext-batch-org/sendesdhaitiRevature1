@@ -40,6 +40,42 @@ export interface IViewer{
 // interface IViewerConstructor {
 //   new (...deps: any[]): IViewer;
 // }
+export interface IPerson {
+  personID:string,
+  username:string,
+  image:string,
+  aboutme:string,
+  role:number,
+  membership:number,
+  added:Date,
+  updated:Date,
+  fk_mstoken:string,
+  emails:Email[],
+  addresses:Address[]
+}
+export interface Email{
+  emailID:string,
+  email:string,
+  added:Date,
+  updated:Date,
+  fk_personID:string
+}
+
+export interface Address{
+  addressID:string,
+  street:string,
+  city:string,
+  state:string,
+  counrty:string,
+  areacode:number,
+  added:Date,
+  updated:Date,
+  fk_personID:string
+}
+// export class Person implements IPerson, Email, Address{
+//   private person:IPerson = {}
+//   constructor(){}
+// }
 
 export class Viewer implements IViewer
 {

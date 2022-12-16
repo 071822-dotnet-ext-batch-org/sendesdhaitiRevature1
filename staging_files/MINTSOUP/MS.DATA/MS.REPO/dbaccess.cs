@@ -21,11 +21,13 @@ namespace MS.REPO
 {
     public interface Idbaccess
     {
-        Task<List<MintSoupToken>> GET_ALL_MintSoupTokens();
+        Task<List<MintSoupToken>> GET_ALL_MintSoupTokens(Guid mstoken);
         Task<List<Store>> GetStoresAsync(Guid mstoken);
+        Task<List<Store>> GetmyStoresAsync(Guid mstoken);
         Task<List<Person>> GET_ALL_Persons();
         Task<List<Email>> GET_ALL_Emails(Guid personID);
-        Task<List<Store>> GetmyStoresAsync(Guid mstoken);
+        Task<Order> GET_MOST_RECENT_ORDER_by_PERSON_and_STOREID(Guid fk_personID, Guid fk_storeID);
+        Task<Person> GET_myMOST_RECENT_PERSON_by_mstokenID(Guid mstoken);
     }
 
     public class dbaccess : Idbaccess
@@ -39,7 +41,7 @@ namespace MS.REPO
             this.actions = act;
         }
 
-        public async Task<List<MintSoupToken>> GET_ALL_MintSoupTokens()
+        public async Task<List<MintSoupToken>> GET_ALL_MintSoupTokens(Guid mstoken)
         {
             string cmdstring = $"SELECT mstokenID, email, username, added, updated FROM MintSoupToken ORDER BY added DESC";
 
@@ -191,7 +193,7 @@ namespace MS.REPO
 
         private async Task<List<Email>> GetEmails_of_person_Async(Guid personID)
         {
-            string cmdstring = $"SELECT emailID, email, added, updated FROM Email WHERE fk_personID = @personID ORDER BY added DESC";
+            string cmdstring = $"SELECT * FROM Email WHERE fk_personID = @personID ORDER BY added DESC";
             List<Email> objs = new();
             //msproperties.
             using (NpgsqlConnection npgsqlConnection = this.connection.GETDBCONNECTION())
@@ -221,7 +223,7 @@ namespace MS.REPO
 
         private async Task<List<Address>> GetAddresses_of_person_Async(Guid personID)
         {
-            string cmdstring = $"SELECT addressID, street, city, state, coutry, areacode, added, updated, fk_personID FROM Address WHERE fk_personID = @personID ORDER BY added DESC";
+            string cmdstring = $"SELECT * FROM Address WHERE fk_personID = @personID ORDER BY added DESC";
             List<Address> objs = new();
             //msproperties.
             using (NpgsqlConnection npgsqlConnection = this.connection.GETDBCONNECTION())
@@ -326,6 +328,73 @@ namespace MS.REPO
 
             }
             return objs;
+        }
+
+        public async Task<Order> GET_MOST_RECENT_ORDER_by_PERSON_and_STOREID(Guid fk_personID, Guid fk_storeID)
+        {
+            string cmdstring = $" SELECT * from Order where fk_personID = @fk_personID AND fk_storeID = @fk_storeID Order BY added limit 1";
+            Order order = new();
+            using (NpgsqlConnection dbconnection = this.connection.GETDBCONNECTION())
+            {
+                var command = new NpgsqlCommand(cmdstring, dbconnection);
+                command.Parameters.AddWithValue("@fk_personID", fk_personID);
+                command.Parameters.AddWithValue("@fk_storeID", fk_storeID);
+
+                dbconnection.Open();
+                NpgsqlDataReader ret = await command.ExecuteReaderAsync();
+                if (ret.Read())
+                {
+                    order.orderID = ret.GetGuid(0);
+                    order.type = (Statuses.ProductType)this.actions.CONVERT_INT_TO_ENUM_STATUS(ret.GetInt32(1), typeof(Statuses.ProductType));
+                    order.category = ret.GetString(2);
+                    order.amount = ret.GetDecimal(3);
+                    order.description = ret.GetString(4);
+                    order.orderstatus = (Statuses.OrderStatus)this.actions.CONVERT_INT_TO_ENUM_STATUS(ret.GetInt32(5), typeof(Statuses.OrderStatus));
+                    order.added = ret.GetDateTime(6);
+                    order.updated = ret.GetDateTime(7);
+                }
+                dbconnection.Close();
+            }
+            return order;
+        }
+
+        public async Task<Person> GET_myMOST_RECENT_PERSON_by_mstokenID(Guid mstoken)
+        {
+            string cmdstring = $" SELECT * from get_my_person(@mstoken) ";
+            Person person = new();
+            using (NpgsqlConnection dbconnection = this.connection.GETDBCONNECTION())
+            {
+                var command = new NpgsqlCommand(cmdstring, dbconnection);
+                command.Parameters.AddWithValue("@mstoken", mstoken);
+
+                dbconnection.Open();
+                NpgsqlDataReader ret = await command.ExecuteReaderAsync();
+                if (ret.Read())
+                {
+                    Person person2 = new()
+                    {
+                        personID = ret.GetGuid(0),
+                        username = ret.GetString(1),
+                        image = ret.GetString(2),
+                        aboutme = ret.GetString(3),
+                        role = (Statuses.Role)this.actions.CONVERT_INT_TO_ENUM_STATUS(ret.GetInt32(4), typeof(Statuses.Role)),
+                        membership = (Statuses.ViewerMembership)this.actions.CONVERT_INT_TO_ENUM_STATUS(ret.GetInt32(5), typeof(Statuses.ViewerMembership)),
+                        added = ret.GetDateTime(6),
+                        updated = ret.GetDateTime(7),
+                        fk_mstokenID = ret.GetGuid(8)
+                    };
+
+                    person = person2;
+                }
+                dbconnection.Close();
+            }
+            if(person.fk_mstokenID == mstoken)
+            {
+                person.emails = await GetEmails_of_person_Async(person.personID);
+                person.addresses = await GetAddresses_of_person_Async(person.personID);
+                person.stores = await GetmyStoresAsync(mstoken);
+            }
+            return person;
         }
 
 

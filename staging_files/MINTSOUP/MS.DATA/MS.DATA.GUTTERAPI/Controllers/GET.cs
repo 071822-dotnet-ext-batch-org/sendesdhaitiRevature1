@@ -3,8 +3,12 @@ using MS.REPO;
 using MS.ACTIONS;
 using MS.MODELS;
 using MS.DATA.GUTTERAPI;
-namespace MS.DATA.GUTTERAPI.Controllers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 
+namespace MS.DATA.GUTTERAPI.Controllers;
+[EnableCors("MyAllowAllOrigins")]
+[Authorize]
 [ApiController]
 [Route("gutter/")]
 public class GET_CONTROLLER : ControllerBase
@@ -28,19 +32,65 @@ public class GET_CONTROLLER : ControllerBase
     [HttpGet("mst")]
     public async Task<ActionResult<List<MintSoupToken>>> Get()
     {
-        List<MintSoupToken> tokens = await this.repo.GET_ALL_MintSoupTokens();
-        return Ok(tokens);
-    }
-
-    [HttpGet("stores")]
-    public async Task<ActionResult<List<Store>>> Get_Stores([FromBody] Guid mstokenID)
-    {
         if (ModelState.IsValid)
         {
-            List<Store> tokens = await this.repo.GetStoresAsync(mstokenID);
+            List<MintSoupToken> tokens = new();
+            string? mstoken = Request.Headers["mstoken"];
+            try
+            {
+                tokens = await this.repo.GET_ALL_MintSoupTokens(new Guid(mstoken));
+            }
+            catch (ArgumentNullException msg)
+            {
+                Console.WriteLine($"The token used was null and as a result threw this exception: {msg}");
+            }
+            Console.WriteLine($"The token {mstoken} got a list of all tokens at {DateTime.Now}");
             return Ok(tokens);
         }
         return BadRequest();
     }
-}
+
+    [HttpGet("stores")]
+    public async Task<ActionResult<List<Store>>> Get_Stores()
+    {
+        if (ModelState.IsValid)
+        {
+            List<Store> stores = new();
+            string? mstoken = Request.Headers["mstoken"];
+            try
+            {
+                stores = await this.repo.GetStoresAsync(new Guid(mstoken)); 
+            }
+            catch( ArgumentNullException msg)
+            {
+                Console.WriteLine($"The token used was null and as a result threw this exception: {msg}");
+            }
+            Console.WriteLine($"The token {mstoken} got a list of all stores at {DateTime.Now}");
+            return Ok(stores);
+        }
+        return BadRequest();
+    }
+
+    [HttpGet("myperson")]
+    public async Task<ActionResult<Person>> Get_my_Person()
+    {
+        if (ModelState.IsValid)
+        {
+            Person person = new();
+            string? mstoken = Request.Headers["mstoken"];
+            try
+            {
+                person = await this.repo.GET_myMOST_RECENT_PERSON_by_mstokenID(new Guid(mstoken));
+            }
+            catch (ArgumentNullException msg)
+            {
+                Console.WriteLine($"The token used was null and as a result threw this exception: {msg}");
+            }
+            Console.WriteLine($"The token {mstoken} got a person at {DateTime.Now}");
+            return Ok(person);
+        }
+        return BadRequest();
+    }
+
+}//END of GET CONTROLLER
 
