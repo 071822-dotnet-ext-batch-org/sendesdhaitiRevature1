@@ -1,4 +1,4 @@
 {
     "Auth" : "https://localhost:7215/mint-soup.token/",
-    "Data" : "http://localhost:7094/mint-soup/"
+    "Data" : "http://localhost:7960/gutter/"
 }

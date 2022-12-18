@@ -38,8 +38,8 @@ builder.Services.AddAuthentication(options =>
             ValidateLifetime = true,//the token is not expired
             ValidateIssuerSigningKey = true,//the signing key is valide and translated by the server
 
-            ValidIssuer = "http://localhost:7215",
-            ValidAudience = "http://localhost:7215",
+            ValidIssuer = "https://localhost:7215",
+            ValidAudience = "https://localhost:7215",
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes($"MINTSOUP|BY|SENDES"))
         };
     });

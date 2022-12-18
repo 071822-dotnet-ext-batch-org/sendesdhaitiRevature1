@@ -7,6 +7,7 @@ using System.Security.Claims;
 
 // using MS_API1_Users_API;
 using MS_API1_Users_LogicLayer;
+using MS_API.Models;
 // using MS_API1_Users_Model;
 using MS_API1_Users_Repo;
 using System.Text;
@@ -27,6 +28,8 @@ builder.Services.AddScoped<ICREATE_AccessLayer, CREATE_AccessLayer>();
 builder.Services.AddScoped<ICREATE_LogicLayer, CREATE_LogicLayer>();
 builder.Services.AddScoped<ICHECK_AccessLayer, CHECK_AccessLayer>();
 builder.Services.AddScoped<IDELETE_AccessLayer, DELETE_AccessLayer>();
+builder.Services.AddScoped<IDBCONNECTION, DBCONNECTION>();
+builder.Services.AddScoped<IDB_ACCESS, DB_Access>();
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -45,7 +48,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: "MyAllowAllOrigins",
     builder =>
     {
-        builder.AllowAnyOrigin()
+        builder
+            .AllowAnyOrigin()
             .AllowAnyHeader()
             .AllowAnyMethod();
     });

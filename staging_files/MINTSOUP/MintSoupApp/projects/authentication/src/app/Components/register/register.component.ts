@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 // import { msservice } from 'src/app/Services/user.service';
 import { MSAuthenticationService } from '../../Service/msauthentication.service';
 import {FormBuilder, FormGroup, FormsModule, NgForm, Validators} from '@angular/forms';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
@@ -15,7 +16,7 @@ export class RegisterComponent implements OnInit {
   public username_check?:boolean
   public invalidSignUp?:boolean
 
-  constructor(public msservice: MSAuthenticationService, private formbuilder:FormBuilder) {
+  constructor(public msservice: MSAuthenticationService, private formbuilder:FormBuilder, private router:Router) {
 
     this.registerform = this.formbuilder.group({
       email: [null,Validators.required],
@@ -44,7 +45,21 @@ export class RegisterComponent implements OnInit {
       {
         if((em_ch === false) && (us_ch === false))
         {
-          this.msservice.SignUp(val.email, val.username, val.password).subscribe(saved => console.log(`${saved} at ${Date.now} - checked if signed up with ${val.email}`))
+          this.msservice.SignUp(val.email, val.username, val.password).subscribe({
+            next(saved){
+              console.log('You just signed up?: ', saved);
+              console.log(`${saved} at ${Date.now} - checked if signed up with ${val.email}`)
+              // this.router.navigate(["register"]);
+            },
+            error(msg) {
+              console.log('Error Signing Up: ', msg);
+              // this.invalidSignUp = true;
+            }
+          })
+          // .subscribe(saved => {
+          // },
+          //   err => {
+          //   })
         }
         else if((em_ch === true) && (us_ch === false))
         {

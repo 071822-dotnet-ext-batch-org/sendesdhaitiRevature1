@@ -16,6 +16,7 @@ import { AccountComponent } from './Components/account/account.component';
 import { AboutComponent } from './Components/about/about.component';
 import { MS_Service_Actions_and_Operations as MSACTIONS} from './Service/ms_service_actions_and_operations';
 import { MSGuard } from './Service/ms.guard';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 
 
 const providers:any = [{
@@ -27,13 +28,15 @@ const providers:any = [{
 
 ]
 const routes:Routes = [
-  {path: "", component: AppComponent},
+  {path: "", component: NavComponent},
   {path: "mint", component: AboutComponent},
   // {path: "mint/about", component: AboutComponent},
   {path: "mint/login", component: LoginComponent},
   {path: "mint/logout", component: LogoutComponent},
   {path: "mint/register", component: RegisterComponent},
-  {path: "mint/account", component: AccountComponent, canActivate: [MSGuard]}
+  {path: "mint/account", component: AccountComponent},//, canActivate: [MSGuard]}
+  {path: "mint/forgot-password", component: ForgotPasswordComponent}
+
 ]
 
 
@@ -46,6 +49,7 @@ const routes:Routes = [
     RegisterComponent,
     AccountComponent,
     AboutComponent,
+    ForgotPasswordComponent,
   ],
   imports: [
     BrowserModule,

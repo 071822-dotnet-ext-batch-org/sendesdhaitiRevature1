@@ -1,23 +1,28 @@
+/* div > nav {
+    height: 100%;
+} */
 nav{
     width: 100%;
-    height: 100%;
+    /* height: 100%; */
     display:grid;
-    grid-template-columns: [first] 10% [line2] 30% [line3] auto [col4-start] 30% [five] 10% [end];
+    grid-template-columns: [first] 10% [line2] 10% [line3] 10% [line4] 10%  [line5] auto  [line8] 10% [line7] 10% [line6] 10% [col4-start] 10% [five] 10% [end];
     /* grid-template-rows: [row1-start] 25% [row1-end] ; */
     grid-template-rows: 1fr;
     background-color: aliceblue;
     margin: auto;
+    border-bottom: 2% solid;
 }
 
 nav > div{
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-evenly;
     justify-items: center;
     align-items: center;
 }
 
 #logo{
-    width: 80px;
+    width: 59%;
     grid-column-start: first;
     grid-column-end: line2;
     /* grid-row-start: row1-start;
@@ -28,15 +33,21 @@ nav > div{
     grid-column-start: line3;
     grid-column-end: col4-start;
     margin: auto;
+    width: 40%;
+    /* height: 60%; */
+
+    
     /* grid-row: 1fr; */
     /* grid-row-start: row1-start;
     grid-row-end: row1-end; */
 }
 
 button{
-    box-shadow: 10px 5px 5px rgb(244, 208, 79);
-    margin: 0 5px 0 5px;
-    padding: 5px 2px 5px 2px;
-    border: 1px solid black;
-    border-radius: 10px 10px 10px 10px;
+    box-shadow: 10% 5% 5% rgb(244, 208, 79);
+    /* margin: 0 5% 0 5%;
+    padding: 5% 2% 5% 2%; */
+    /* border: 1% solid black;
+    border-radius: 10% 10% 10% 10%; */
+    width:30%;
+    height: 80%;
 }

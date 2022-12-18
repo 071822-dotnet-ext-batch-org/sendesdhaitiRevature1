@@ -1,0 +1,57 @@
+.HOME {
+    display: grid;
+    width: 100%;
+    height: 80%;
+    grid-template-columns: [start] 5% [line2] 15% [line3]  15% [line4] 15% [line5] 15% [line6] 15% [line7] 15% [line8] 5% [end];
+    grid-template-rows: [start] 20%  [row2] 20%  [row3] 20%  [row4] 20%  [row5] 20%  [end];
+}
+
+/* .HOME_COLUMNS {
+    display: block;
+} */
+
+.HOME_COLUMNS  {
+    display: grid;
+    width: 100%;
+    /* height: 80%; */
+    grid-template-columns: [start] 5% [line2] 15% [line3]  15% [line4] 15% [line5] 15% [line6] 15% [line7] 15% [line8] 5% [end];
+    grid-template-rows: [start] auto [end];
+}
+.HOME_COLUMNS > ol {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+}
+.HOME_COLUMNS > ol > div {
+    display: block;
+    /* margin:10px; */
+    /* width: 18rem; */
+}
+
+#feat{
+    grid-column-start: line2;
+    grid-column-end: span line8;
+    grid-row-start: start;
+    grid-row-end: span end;
+}
+#featured {
+    grid-column-start: line3;
+    grid-column-end: span line8;
+    grid-row-start: start;
+    grid-row-end: span row2;
+}
+
+#live {
+    grid-column-start: line3;
+    grid-column-end: span line8;
+    grid-row-start: row3;
+    grid-row-end: span row4;
+}
+
+#recommendations {
+    grid-column-start: line3;
+    grid-column-end: span line8;
+    grid-row-start: row4;
+    grid-row-end: span row5;
+}

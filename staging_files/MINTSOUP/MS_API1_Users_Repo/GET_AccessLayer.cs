@@ -3,43 +3,53 @@ using Microsoft.Extensions.Configuration;
 using MS_API1_Users_Model;
 using Models;
 using actions;
+using Npgsql;
+
 namespace MS_API1_Users_Repo;
 
 
 public class GET_AccessLayer : IGET_AccessLayer
 {
-    private readonly IConfiguration _config;
-    private readonly SqlConnection _conn;
-
-    public GET_AccessLayer(IConfiguration config)
+    private readonly IDBCONNECTION _conn;
+    public GET_AccessLayer(IDBCONNECTION c)
     {
-        _config = config;
-
-
-        if (string.Equals(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"), "Production", StringComparison.InvariantCultureIgnoreCase))
-        {
-            _conn = new SqlConnection(_config["ConnectionStrings:Development"]);
-        }
-        else
-        {
-            _conn = new SqlConnection(_config["ConnectionStrings:Production"]);
-        }
-
+        this._conn = c;
     }
+
+    //public GET_AccessLayer(IConfiguration config)
+    //{
+    //    _config = config;
+
+
+    //    if (string.Equals(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"), "Production", StringComparison.InvariantCultureIgnoreCase))
+    //    {
+    //        _conn = new SqlConnection(_config["ConnectionStrings:Development"]);
+    //    }
+    //    else
+    //    {
+    //        _conn = new SqlConnection(_config["ConnectionStrings:Production"]);
+    //    }
+
+    //}
 
     //-----------------------GET VIEWER SECTION---------------------
     public async Task<List<Models.Viewer?>> GET_allViewers(Guid? MSToken)
     {
         List<Models.Viewer?> listOfViewers = new List<Models.Viewer?>();
-        if(MSToken != null)
+        if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT ID, FK_MSToken, Fn, Ln, Email, Image, Username, AboutMe, StreetAddy, " +
-                " City, State, Country, AreaCode, Role, MembershipStatus, DateSignedUp, LastSignedIn " +
-                " FROM Viewers Order By LastSignedIn DESC", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION()) //(NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT ID, FK_MSToken, Fn, Ln, Email, Image, Username, AboutMe, StreetAddy, " +
+                                                                          //" City, State, Country, AreaCode, Role, MembershipStatus, DateSignedUp, LastSignedIn " +
+                                                                          //" FROM Viewers Order By LastSignedIn DESC", _conn))
             {
+                string command = $"SELECT ID, FK_MSToken, Fn, Ln, Email, Image, Username, AboutMe, StreetAddy, " +
+                " City, State, Country, AreaCode, Role, MembershipStatus, DateSignedUp, LastSignedIn " +
+                " FROM Viewers Order By LastSignedIn DESC";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
                     Models.Viewer viewer = new Models.Viewer();
@@ -79,14 +89,17 @@ public class GET_AccessLayer : IGET_AccessLayer
 
     public async Task<Models.Viewer?> GET_myViewer_by_MSToken(Guid? MSToken)
     {
-        if(MSToken != null)
+        if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Viewers Where FK_MSToken = @MSToken", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION()) //(NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT TOP(1) * FROM Viewers Where FK_MSToken = @MSToken", _conn))
             {
-                command.Parameters.AddWithValue("@MSToken", MSToken);
+                string command = $"SELECT * FROM Viewers Where FK_MSToken = @MSToken LIMIT 1";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 Models.Viewer? viewer = new Models.Viewer();
                 if (ret.Read())
                 {
@@ -116,7 +129,7 @@ public class GET_AccessLayer : IGET_AccessLayer
                 else
                 {
                     _conn.Close();
-                    return viewer;
+                    return null;
                 }
             }
         }
@@ -128,14 +141,17 @@ public class GET_AccessLayer : IGET_AccessLayer
 
     public async Task<Models.Viewer?> GET_aViewer_by_aViewerID(Guid? ViewerID)
     {
-        if(ViewerID != null)
+        if (ViewerID != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Viewers Where ID = @ID", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION()) //(NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT TOP(1) * FROM Viewers Where ID = @ID", _conn))
             {
-                command.Parameters.AddWithValue("@ID", ViewerID);
+                string command = $"SELECT * FROM Viewers Where ID = @ID LIMIT 1";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@ID", ViewerID);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 if (ret.Read())
                 {
                     Models.Viewer viewer = new Models.Viewer();
@@ -179,14 +195,17 @@ public class GET_AccessLayer : IGET_AccessLayer
     //-----------------------GET ADMIN SECTION---------------------
     public async Task<Models.Admin?> GET_myAdmin_by_MSToken(Guid? MSToken)
     {
-        if(MSToken != null)
+        if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Admins Where FK_MSToken = @MSToken", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION()) //(NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT TOP(1) * FROM Admins Where FK_MSToken = @MSToken", _conn))
             {
-                command.Parameters.AddWithValue("@MSToken", MSToken);
+                string command = $"SELECT * FROM Admins Where FK_MSToken = @MSToken LIMIT 1";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 if (ret.Read())
                 {
                     Models.Admin admin = new Models.Admin();
@@ -220,11 +239,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         List<Models.Friend?> friendsList = new List<Models.Friend?>();
         if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM Friends where FK_ViewerID_Friender = (select ID from Viewers WHERE FK_MSToken = @MSToken ) AND FollowerStatus = 'Follower' Order By FriendUpdateDate DESC", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT * FROM Friends where FK_ViewerID_Friender = (select ID from Viewers WHERE FK_MSToken = @MSToken ) AND FollowerStatus = 'Follower' Order By FriendUpdateDate DESC", _conn))
             {
+                string command = $"SELECT * FROM Admins Where FK_MSToken = @MSToken LIMIT 1";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
                     Models.Friend friend = new Models.Friend();
@@ -255,12 +277,15 @@ public class GET_AccessLayer : IGET_AccessLayer
         List<Models.Friend?> friendsList = new List<Models.Friend?>();
         if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM Friends Where FK_ViewerID_Friender = (select ID from Viewers Where FK_MSToken = @MSToken) Order By FriendUpdateDate DESC", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT * FROM Friends Where FK_ViewerID_Friender = (select ID from Viewers Where FK_MSToken = @MSToken) Order By FriendUpdateDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@MSToken", MSToken);
+                string command = $"SELECT * FROM Friends Where FK_ViewerID_Friender = (select ID from Viewers Where FK_MSToken = @MSToken) Order By FriendUpdateDate DESC";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
                     Models.Friend friend = new Models.Friend();
@@ -286,35 +311,45 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of Get_myFriends_by_ViewerID_Freinder
 
-    public async Task<Models.Friend?> GET_aFriend_by_ViewerID_Freinder(Guid? FriendID)
+    public async Task<Models.Friend?> GET_aFriend_by_ViewerID_Freinder(Guid? MSToken, Guid? FriendID)
     {
-        using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Friends Where ID = @ID  ", _conn))
+        if ((MSToken != null) && (FriendID != null))
         {
-            command.Parameters.AddWithValue("@ID", FriendID);
-            _conn.Open();
-
-            SqlDataReader ret = await command.ExecuteReaderAsync();
-            if (ret.Read())
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT TOP(1) * FROM Friends Where ID = @ID  ", _conn))
             {
-                Models.Friend friend = new Models.Friend();
+                string command = $"SELECT  * FROM Friends Where ID = @ID LIMIT 1 ";
+                using var cmd = new NpgsqlCommand(command, _conn);
 
-                friend.ID = ret.GetGuid(0);
-                friend.FK_ViewerID_Friender = ret.GetGuid(1);
-                friend.FK_ViewerID_Friendie = ret.GetGuid(2);
+                cmd.Parameters.AddWithValue("@ID", FriendID);
+                _conn.Open();
 
-                friend.FriendshipStatus = REPO_ACTIONS.ConvertStringStatus_To_FriendshipStatus(ret.GetString(3));
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
+                if (ret.Read())
+                {
+                    Models.Friend friend = new Models.Friend();
 
-                friend.FriendDate = ret.GetDateTime(4);
-                friend.FriendshipUpdateDate = ret.GetDateTime(5);
+                    friend.ID = ret.GetGuid(0);
+                    friend.FK_ViewerID_Friender = ret.GetGuid(1);
+                    friend.FK_ViewerID_Friendie = ret.GetGuid(2);
 
-                _conn.Close();
-                return friend;
+                    friend.FriendshipStatus = REPO_ACTIONS.ConvertStringStatus_To_FriendshipStatus(ret.GetString(3));
+
+                    friend.FriendDate = ret.GetDateTime(4);
+                    friend.FriendshipUpdateDate = ret.GetDateTime(5);
+
+                    _conn.Close();
+                    return friend;
+                }
+                else
+                {
+                    _conn.Close();
+                    return null;
+                }
             }
-            else
-            {
-                _conn.Close();
-                return null;
-            }
+        }
+        else
+        {
+            return null;
         }
     }//End of GET_aFriend_by_ViewerID_Freinder
 
@@ -326,11 +361,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         List<Models.Follower?> followerList = new List<Models.Follower?>();
         if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM Followers Order By StatusUpdateDate DESC", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT * FROM Followers Order By StatusUpdateDate DESC", _conn))
             {
+                string command = $"SELECT * FROM Followers Order By StatusUpdateDate DESC";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
                     Models.Follower follower = new Models.Follower();
@@ -361,12 +399,15 @@ public class GET_AccessLayer : IGET_AccessLayer
         List<Models.Follower?> followerList = new List<Models.Follower?>();
         if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM Followers Where FK_ViewerID_Follower = (select ID from Viewers Where FK_MSToken = @MSToken) Order By FollowDate DESC", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT * FROM Followers Where FK_ViewerID_Follower = (select ID from Viewers Where FK_MSToken = @MSToken) Order By FollowDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@MSToken", MSToken);
+                string command = $"SELECT * FROM Followers Where FK_ViewerID_Follower = (select ID from Viewers Where FK_MSToken = @MSToken) Order By FollowDate DESC";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
                     Models.Follower follower = new Models.Follower();
@@ -392,18 +433,21 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of Get_myFollowers_by_ViewerID_Follower
 
-    public async Task<Models.Follower?> GET_aFollower_by_ViewerID_Follower(Guid? MSToken, Guid? FollowerID, Guid? ViewerID_Follower)
+    public async Task<Models.Follower?> GET_aFollower_by_ViewerID_Followie(Guid? MSToken, Guid? Followie)
     {
         Models.Follower follower = new Models.Follower();
-        if (MSToken != null)
+        if ((MSToken != null) && (Followie != null))
         {
-            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Followers Where ID = @ID AND FK_ViewerID_Follower = @FK_ViewerID_Follower ", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT TOP(1) * FROM Followers Where ID = @ID AND FK_ViewerID_Follower = @FK_ViewerID_Follower ", _conn))
             {
-                command.Parameters.AddWithValue("@ID", FollowerID);
-                command.Parameters.AddWithValue("@FK_ViewerID_Follower", ViewerID_Follower);
+                string command = $"SELECT * FROM Followers Where FK_ViewerID_Follower = (select ID from Viewers where FK_MSToken = @MSToken) AND FK_ViewerID_Followie = @FK_Followie LIMIT 1";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
+                cmd.Parameters.AddWithValue("@FK_Followie", Followie);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 if (ret.Read())
                 {
 
@@ -422,7 +466,7 @@ public class GET_AccessLayer : IGET_AccessLayer
                 else
                 {
                     _conn.Close();
-                    return follower;
+                    return null;
                 }
             }
         }
@@ -430,7 +474,7 @@ public class GET_AccessLayer : IGET_AccessLayer
         {
             return null;
         }
-    }//End of GET_aFollower_by_ViewerID_Follower
+    }//End of GET_aFollower_by_ViewerID_Followie
 
     //-----------------------GET SHOWS SECTION---------------------
     public async Task<List<Models.Show?>> GET_allShows(Guid? MSToken)
@@ -438,11 +482,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         List<Models.Show?> createdShowsList = new List<Models.Show?>();
         if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM Shows Where Order By LastLive DESC", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT * FROM Shows Where Order By LastLive DESC", _conn))
             {
+                string command = $"SELECT * FROM Shows Order By LastLive DESC";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
                     Models.Show show = new Models.Show();
@@ -476,17 +523,46 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of GET_allShows
 
+    public async Task<List<ShowSubscriber?>> GET_aShowsSubscribers_by_showID(Guid? showID)
+    {
+        List<ShowSubscriber?> subs = new List<ShowSubscriber?>();
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT * FROM Shows Where Order By LastLive DESC", _conn))
+            {
+                string command = $"SELECT * FROM Shows Order By LastLive DESC";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                _conn.Open();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
+                while (ret.Read())
+                {
+                    Models.ShowSubscriber sub = new Models.ShowSubscriber();
+                    sub.ID = ret.GetGuid(0);
+                    sub.FK_ViewerID_Subscriber = ret.GetGuid(1);
+                    sub.FK_ShowID_Subscribie = ret.GetGuid(2);
+                    sub.MembershipStatus = actions.REPO_ACTIONS.ConvertStringStatus_To_ShowSubscriptionMembershipStatus(ret.GetString(3));
+                    sub.SubscribeDate = ret.GetDateTime(4);
+                    sub.SubscriptionUpdateDate = ret.GetDateTime(5);
+                    subs.Add(sub);
+                }
+                _conn.Close();
+            }
+            return subs;
+    }
+
     public async Task<List<Models.Show?>> GET_myShows_by_ViewerID_Owner(Guid? MSToken)
     {
         List<Models.Show?> createdShowsList = new List<Models.Show?>();
         if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM Shows Where FK_ViewerID_Owner = (select ID from Viewers WHERE FK_MSToken = @MSToken ) Order By LastLive DESC", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT * FROM Shows Where FK_ViewerID_Owner = (select ID from Viewers WHERE FK_MSToken = @MSToken ) Order By LastLive DESC", _conn))
             {
-                command.Parameters.AddWithValue("@MSToken", MSToken);
+                string command = $"SELECT * FROM Shows Where FK_ViewerID_Owner = (select ID from Viewers WHERE FK_MSToken = @MSToken ) Order By LastLive DESC";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
                     Models.Show show = new Models.Show();
@@ -523,14 +599,17 @@ public class GET_AccessLayer : IGET_AccessLayer
     public async Task<Models.Show?> GET_aShow_by_ShowID_with_MSToken(Guid? MSToken, Guid? showID)
     {
         Models.Show show = new Models.Show();
-        if (MSToken != null)
+        if ((MSToken != null) && (showID != null))
         {
-            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Shows Where ID = @ID ", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT TOP(1) * FROM Shows Where ID = @ID ", _conn))
             {
-                command.Parameters.AddWithValue("@ID", showID);
+                string command = $"SELECT * FROM Shows Where ID = @ID LIMIT 1";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@ID", showID);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 if (ret.Read())
                 {
                     show.ID = ret.GetGuid(0);
@@ -556,7 +635,7 @@ public class GET_AccessLayer : IGET_AccessLayer
                 else
                 {
                     _conn.Close();
-                    return show;
+                    return null;
                 }
             }
         }
@@ -573,26 +652,27 @@ public class GET_AccessLayer : IGET_AccessLayer
         List<Models.ShowSubscriber?> subscribedShowsList = new List<Models.ShowSubscriber?>();
         if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM Subscribers Order By LastLive DESC", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT * FROM Subscribers Order By LastLive DESC", _conn))
             {
+                string command = $"SELECT * FROM Subscribers Order By LastLive DESC";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
                     Models.ShowSubscriber subscribedShow = new Models.ShowSubscriber();
 
-                    subscribedShow.ID = ret.GetGuid(0);
-                    subscribedShow.FK_ViewerID_Subscriber = ret.GetGuid(1);
-                    subscribedShow.FK_ShowID_Subscribie = ret.GetGuid(2);
-                    subscribedShow.FK_ShowSessionID = ret.GetGuid(3);
+                    Models.ShowSubscriber sub = new Models.ShowSubscriber();
+                    sub.ID = ret.GetGuid(0);
+                    sub.FK_ViewerID_Subscriber = ret.GetGuid(1);
+                    sub.FK_ShowID_Subscribie = ret.GetGuid(2);
+                    sub.MembershipStatus = actions.REPO_ACTIONS.ConvertStringStatus_To_ShowSubscriptionMembershipStatus(ret.GetString(3));
+                    sub.SubscribeDate = ret.GetDateTime(4);
+                    sub.SubscriptionUpdateDate = ret.GetDateTime(5);
 
-                    subscribedShow.MembershipStatus = REPO_ACTIONS.ConvertStringStatus_To_ShowSubscriptionMembershipStatus(ret.GetString(4));
-
-                    subscribedShow.SubscribeDate = ret.GetDateTime(5);
-                    subscribedShow.SubscriptionUpdateDate = ret.GetDateTime(6);
-
-                    subscribedShowsList.Add(subscribedShow);
+                    subscribedShowsList.Add(sub);
                 }
                 _conn.Close();
                 return subscribedShowsList;
@@ -609,27 +689,26 @@ public class GET_AccessLayer : IGET_AccessLayer
         List<Models.ShowSubscriber?> subscribedShowsList = new List<Models.ShowSubscriber?>();
         if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM Subscribers Where FK_ViewerID_Subscriber = (select ID from Viewers WHERE FK_MSToken = @MSToken ) Order By SubscriptionUpdateDate DESC", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT * FROM Subscribers Where FK_ViewerID_Subscriber = (select ID from Viewers WHERE FK_MSToken = @MSToken ) Order By SubscriptionUpdateDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@MSToken", MSToken);
+                string command = $"SELECT * FROM Subscribers Where FK_ViewerID_Subscriber = (select ID from Viewers WHERE FK_MSToken = @MSToken ) Order By SubscriptionUpdateDate DESC";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
-                    Models.ShowSubscriber subscribedShow = new Models.ShowSubscriber();
+                    Models.ShowSubscriber sub = new Models.ShowSubscriber();
+                    sub.ID = ret.GetGuid(0);
+                    sub.FK_ViewerID_Subscriber = ret.GetGuid(1);
+                    sub.FK_ShowID_Subscribie = ret.GetGuid(2);
+                    sub.MembershipStatus = actions.REPO_ACTIONS.ConvertStringStatus_To_ShowSubscriptionMembershipStatus(ret.GetString(3));
+                    sub.SubscribeDate = ret.GetDateTime(4);
+                    sub.SubscriptionUpdateDate = ret.GetDateTime(5);
 
-                    subscribedShow.ID = ret.GetGuid(0);
-                    subscribedShow.FK_ViewerID_Subscriber = ret.GetGuid(1);
-                    subscribedShow.FK_ShowID_Subscribie = ret.GetGuid(2);
-                    subscribedShow.FK_ShowSessionID = ret.GetGuid(3);
-
-                    subscribedShow.MembershipStatus = REPO_ACTIONS.ConvertStringStatus_To_ShowSubscriptionMembershipStatus(ret.GetString(4));
-
-                    subscribedShow.SubscribeDate = ret.GetDateTime(5);
-                    subscribedShow.SubscriptionUpdateDate = ret.GetDateTime(6);
-
-                    subscribedShowsList.Add(subscribedShow);
+                    subscribedShowsList.Add(sub);
                 }
                 _conn.Close();
                 return subscribedShowsList;
@@ -644,30 +723,29 @@ public class GET_AccessLayer : IGET_AccessLayer
     public async Task<List<Models.ShowSubscriber?>> GET_myShowSubscribers_by_ShowID_Subscriber(Guid? MSToken, Guid? ShowID)
     {
         List<Models.ShowSubscriber?> subscribedShowsList = new List<Models.ShowSubscriber?>();
-        if (MSToken != null)
+        if ((MSToken != null) && (ShowID != null))
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM Subscribers Where FK_ShowID_Subscribie = @FK_ShowID_Subscribie  AND FK_ViewerID_Subscriber = (select ID from Viewers where FK_MSToken = @MSToken ) Order By SubscriptionUpdateDate DESC", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT * FROM Subscribers Where FK_ShowID_Subscribie = @FK_ShowID_Subscribie  AND FK_ViewerID_Subscriber = (select ID from Viewers where FK_MSToken = @MSToken ) Order By SubscriptionUpdateDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@MSToken", MSToken);
-                command.Parameters.AddWithValue("@FK_ShowID_Subscribie", ShowID);
+                string command = $"SELECT * FROM Subscribers Where FK_ShowID_Subscribie = @FK_ShowID_Subscribie  AND FK_ViewerID_Subscriber = (select ID from Viewers where FK_MSToken = @MSToken ) Order By SubscriptionUpdateDate DESC";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
+                cmd.Parameters.AddWithValue("@FK_ShowID_Subscribie", ShowID);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
-                    Models.ShowSubscriber subscribedShow = new Models.ShowSubscriber();
+                    Models.ShowSubscriber sub = new Models.ShowSubscriber();
+                    sub.ID = ret.GetGuid(0);
+                    sub.FK_ViewerID_Subscriber = ret.GetGuid(1);
+                    sub.FK_ShowID_Subscribie = ret.GetGuid(2);
+                    sub.MembershipStatus = actions.REPO_ACTIONS.ConvertStringStatus_To_ShowSubscriptionMembershipStatus(ret.GetString(3));
+                    sub.SubscribeDate = ret.GetDateTime(4);
+                    sub.SubscriptionUpdateDate = ret.GetDateTime(5);
 
-                    subscribedShow.ID = ret.GetGuid(0);
-                    subscribedShow.FK_ViewerID_Subscriber = ret.GetGuid(1);
-                    subscribedShow.FK_ShowID_Subscribie = ret.GetGuid(2);
-                    subscribedShow.FK_ShowSessionID = ret.GetGuid(3);
-
-                    subscribedShow.MembershipStatus = REPO_ACTIONS.ConvertStringStatus_To_ShowSubscriptionMembershipStatus(ret.GetString(4));
-
-                    subscribedShow.SubscribeDate = ret.GetDateTime(5);
-                    subscribedShow.SubscriptionUpdateDate = ret.GetDateTime(6);
-
-                    subscribedShowsList.Add(subscribedShow);
+                    subscribedShowsList.Add(sub);
                 }
                 _conn.Close();
                 return subscribedShowsList;
@@ -682,33 +760,34 @@ public class GET_AccessLayer : IGET_AccessLayer
     public async Task<Models.ShowSubscriber?> GET_aSubscriber_by_SubscriberID_with_MSToken(Guid? MSToken, Guid? subscriberID)
     {
         Models.ShowSubscriber showSubscriber = new Models.ShowSubscriber();
-        if (MSToken != null)
+        if ((MSToken != null) && (subscriberID != null))
         {
-            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Subscribers Where ID = @ID ", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT TOP(1) * FROM Subscribers Where ID = @ID ", _conn))
             {
-                command.Parameters.AddWithValue("@ID", subscriberID);
+                string command = $"SELECT * FROM Subscribers Where ID = @ID LIMIT 1";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@ID", subscriberID);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 if (ret.Read())
                 {
-                    showSubscriber.ID = ret.GetGuid(0);
-                    showSubscriber.FK_ViewerID_Subscriber = ret.GetGuid(1);
-                    showSubscriber.FK_ShowID_Subscribie = ret.GetGuid(2);
-                    showSubscriber.FK_ShowSessionID = ret.GetGuid(3);
-
-                    showSubscriber.MembershipStatus = REPO_ACTIONS.ConvertStringStatus_To_ShowSubscriptionMembershipStatus(ret.GetString(4));
-
-                    showSubscriber.SubscribeDate = ret.GetDateTime(5);
-                    showSubscriber.SubscriptionUpdateDate = ret.GetDateTime(6);
+                    Models.ShowSubscriber sub = new Models.ShowSubscriber();
+                    sub.ID = ret.GetGuid(0);
+                    sub.FK_ViewerID_Subscriber = ret.GetGuid(1);
+                    sub.FK_ShowID_Subscribie = ret.GetGuid(2);
+                    sub.MembershipStatus = actions.REPO_ACTIONS.ConvertStringStatus_To_ShowSubscriptionMembershipStatus(ret.GetString(3));
+                    sub.SubscribeDate = ret.GetDateTime(4);
+                    sub.SubscriptionUpdateDate = ret.GetDateTime(5);
 
                     _conn.Close();
-                    return showSubscriber;
+                    return sub;
                 }
                 else
                 {
                     _conn.Close();
-                    return showSubscriber;
+                    return null;
                 }
             }
         }
@@ -725,11 +804,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         List<Models.ShowLikes?> showSessionLikes = new List<Models.ShowLikes?>();
         if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowLikes Order By LikeDate DESC", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT * FROM ShowLikes Order By LikeDate DESC", _conn))
             {
+                string command = $"SELECT * FROM ShowLikes Order By LikeDate DESC";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
                     Models.ShowLikes showLike = new Models.ShowLikes();
@@ -749,18 +831,21 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of GET_allShowLikes
 
-    public async Task<List<Models.ShowLikes?>> GET_myShowSessionsLikes_by_ShowSessionID(Guid? MSToken, Guid? OBJID)
+    public async Task<List<Models.ShowLikes?>> GET_myShowSessionsLikes_by_ShowSessionID(Guid? MSToken, Guid? showsessionID)
     {
         List<Models.ShowLikes?> showSessionLikes = new List<Models.ShowLikes?>();
-        if (MSToken != null)
+        if ((MSToken != null) && (showsessionID != null))
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowLikes Where FK_ShowSessionID = @FK_ShowSessionID AND FK_ViewerID_Liker = (select ID From Viewers WHERE FK_MSToken = @MSToken ) Order By LikeDate DESC", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT * FROM ShowLikes Where FK_ShowSessionID = @FK_ShowSessionID AND FK_ViewerID_Liker = (select ID From Viewers WHERE FK_MSToken = @MSToken ) Order By LikeDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@MSToken", MSToken);
-                command.Parameters.AddWithValue("@FK_ShowSessionID", OBJID);
+                string command = $"SELECT * FROM ShowLikes Where FK_ShowSessionID = @FK_ShowSessionID AND FK_ViewerID_Liker = (select ID From Viewers WHERE FK_MSToken = @MSToken ) Order By LikeDate DESC";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
+                cmd.Parameters.AddWithValue("@FK_ShowSessionID", showsessionID);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
                     Models.ShowLikes showLike = new Models.ShowLikes();
@@ -783,14 +868,17 @@ public class GET_AccessLayer : IGET_AccessLayer
     public async Task<List<Models.ShowLikes?>> GET_LikesOfShowSession_by_ShowSessionID(Guid? MSToken, Guid? ShowSessionID)
     {
         List<Models.ShowLikes?> showSessionLikes = new List<Models.ShowLikes?>();
-        if (MSToken != null)
+        if ((MSToken != null) && (ShowSessionID != null))
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowLikes Where FK_ShowSessionID = @FK_ShowSessionID Order By LikeDate DESC", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT * FROM ShowLikes Where FK_ShowSessionID = @FK_ShowSessionID Order By LikeDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@FK_ShowSessionID", ShowSessionID);
+                string command = $"SELECT * FROM ShowLikes Where FK_ShowSessionID = @FK_ShowSessionID Order By LikeDate DESC";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@FK_ShowSessionID", ShowSessionID);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
                     Models.ShowLikes showLike = new Models.ShowLikes();
@@ -810,17 +898,21 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of GET_LikesOfShowSession_by_ShowSessionID
 
-    public async Task<Models.ShowLikes?> GET_aShowLike_by_ShowLikeID_with_MSToken(Guid? MSToken, Guid? ShowLikeID)
+    public async Task<Models.ShowLikes?> GET_aShowLike_by_ShowSessionID_with_MSToken(Guid? MSToken, Guid? FK_ShowSessionID)
     {
         Models.ShowLikes showLike = new Models.ShowLikes();
-        if (MSToken != null)
+        if ((MSToken != null) && (FK_ShowSessionID != null))
         {
-            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM ShowLikes Where ID = @ID ", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT TOP(1) * FROM ShowLikes Where ID = @ID ", _conn))
             {
-                command.Parameters.AddWithValue("@ID", ShowLikeID);
+                string command = $"SELECT * FROM ShowLikes Where FK_ViewerID_Liker = (select ID from Viewers where FK_MSToken = @MSToken) AND FK_ShowSessionID = @FK_ShowSessionID LIMIT 1";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
+                cmd.Parameters.AddWithValue("@FK_ShowSessionID", FK_ShowSessionID);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 if (ret.Read())
                 {
                     showLike.ID = ret.GetGuid(0);
@@ -834,7 +926,7 @@ public class GET_AccessLayer : IGET_AccessLayer
                 else
                 {
                     _conn.Close();
-                    return showLike;
+                    return null;
                 }
             }
         }
@@ -851,11 +943,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         List<Models.ShowComment?> showSessionComments = new List<Models.ShowComment?>();
         if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowComments Order By CommentUpdateDate DESC", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT * FROM ShowComments Order By CommentUpdateDate DESC", _conn))
             {
+                string command = $"SELECT * FROM ShowComments Order By CommentUpdateDate DESC";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
                     Models.ShowComment showComment = new Models.ShowComment();
@@ -881,15 +976,18 @@ public class GET_AccessLayer : IGET_AccessLayer
     public async Task<List<Models.ShowComment?>> GET_myShowComments_by_ViewerID_Commenter(Guid? MSToken, Guid? ShowSessionID)
     {
         List<Models.ShowComment?> showSessionComments = new List<Models.ShowComment?>();
-        if (MSToken != null)
+        if ((MSToken != null) && (ShowSessionID != null))
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowComments Where FK_ShowSessionID = @FK_ShowSessionID AND FK_ViewerID_Commenter = (select ID from Viewers WHERE FK_MSToken = @MSToken ) Order By CommentUpdateDate DESC", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT * FROM ShowComments Where FK_ShowSessionID = @FK_ShowSessionID AND FK_ViewerID_Commenter = (select ID from Viewers WHERE FK_MSToken = @MSToken ) Order By CommentUpdateDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@MSToken", MSToken);
-                command.Parameters.AddWithValue("@FK_ShowSessionID", ShowSessionID);
+                string command = $"SELECT * FROM ShowComments Where FK_ShowSessionID = @FK_ShowSessionID AND FK_ViewerID_Commenter = (select ID from Viewers WHERE FK_MSToken = @MSToken ) Order By CommentUpdateDate DESC";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
+                cmd.Parameters.AddWithValue("@FK_ShowSessionID", ShowSessionID);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
                     Models.ShowComment showComment = new Models.ShowComment();
@@ -912,17 +1010,21 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of Get_myShowComments_by_ViewerID_Commenter
 
-    public async Task<Models.ShowComment?> GET_aShowComment_by_ShowCommentID_with_MSToken(Guid? MSToken, Guid? OBJID)
+    public async Task<Models.ShowComment?> GET_aShowComment_by_ShowCommentID_with_MSToken(Guid? MSToken, Guid? commentID)
     {
         Models.ShowComment showComment = new Models.ShowComment();
-        if (MSToken != null)
+        if ((MSToken != null) && (commentID != null))
         {
-            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM ShowComments Where ID = @ID ", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT TOP(1) * FROM ShowComments Where ID = @ID ", _conn))
             {
-                command.Parameters.AddWithValue("@ID", OBJID);
+                string command = $"SELECT * FROM ShowComments Where ID = @ID AND FK_ViewerID_Commenter = (select ID from Viewers where FK_MSToken = @MSToken ) LIMIT 1";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
+                cmd.Parameters.AddWithValue("@ID", commentID);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 if (ret.Read())
                 {
                     showComment.ID = ret.GetGuid(0);
@@ -939,7 +1041,7 @@ public class GET_AccessLayer : IGET_AccessLayer
                 else
                 {
                     _conn.Close();
-                    return showComment;
+                    return null;
                 }
             }
         }
@@ -955,11 +1057,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         List<Models.ShowDonation?> showDonationsList = new List<Models.ShowDonation?>();
         if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowDonations Order By DonationDate DESC", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT * FROM ShowDonations Order By DonationDate DESC", _conn))
             {
+                string command = $"SELECT * FROM ShowDonations Order By DonationDate DESC";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
                     Models.ShowDonation showDonation = new Models.ShowDonation();
@@ -986,12 +1091,15 @@ public class GET_AccessLayer : IGET_AccessLayer
         List<Models.ShowDonation?> showDonationsList = new List<Models.ShowDonation?>();
         if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowDonations Where FK_ViewerID_Donater = (select ID from Viewers WHERE FK_MSToken = @MSToken ) Order By DonationDate DESC", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT * FROM ShowDonations Where FK_ViewerID_Donater = (select ID from Viewers WHERE FK_MSToken = @MSToken ) Order By DonationDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@MSToken", MSToken);
+                string command = $"SELECT * FROM ShowDonations Where FK_ViewerID_Donater = (select ID from Viewers WHERE FK_MSToken = @MSToken ) Order By DonationDate DESC";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
                     Models.ShowDonation showDonation = new Models.ShowDonation();
@@ -1013,17 +1121,20 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of Get_myShowDonations_by_ViewerID_Donater
 
-    public async Task<Models.ShowDonation?> GET_aShowDonation_by_ShowDonationID_with_MSToken(Guid? MSToken, Guid? OBJID)
+    public async Task<Models.ShowDonation?> GET_aShowDonation_by_ShowDonationID_with_MSToken(Guid? MSToken, Guid? donationid)
     {
         Models.ShowDonation objToReturn = new Models.ShowDonation();
-        if (MSToken != null)
+        if ((MSToken != null) && (donationid != null))
         {
-            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM ShowDonations Where ID = @ID ", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT TOP(1) * FROM ShowDonations Where ID = @ID ", _conn))
             {
-                command.Parameters.AddWithValue("@ID", OBJID);
+                string command = $"SELECT * FROM ShowDonations Where ID = @ID LIMIT 1";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@ID", donationid);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 if (ret.Read())
                 {
                     objToReturn.ID = ret.GetGuid(0);
@@ -1038,7 +1149,7 @@ public class GET_AccessLayer : IGET_AccessLayer
                 else
                 {
                     _conn.Close();
-                    return objToReturn;
+                    return null;
                 }
             }
         }
@@ -1054,11 +1165,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         List<Models.ShowSession?> showSessionsList = new List<Models.ShowSession?>();
         if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowSessions Order By SessionEndDate DESC", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT * FROM ShowSessions Order By SessionEndDate DESC", _conn))
             {
+                string command = $"SELECT * FROM ShowSessions Order By SessionEndDate DESC";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
                     Models.ShowSession showSession = new Models.ShowSession();
@@ -1083,15 +1197,18 @@ public class GET_AccessLayer : IGET_AccessLayer
     public async Task<List<Models.ShowSession?>> GET_myShowSessions_by_showID(Guid? MSToken, Guid? ShowID)
     {
         List<Models.ShowSession?> showSessionsList = new List<Models.ShowSession?>();
-        if (MSToken != null)
+        if ((MSToken != null) && (ShowID != null))
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowSessions Where FK_ShowID = @ShowID AND Where FK_ShowID = (select ID from Viewers WHERE FK_MSToken = @MSToken )) Order By SessionEndDate DESC", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT * FROM ShowSessions Where FK_ShowID = @ShowID AND Where FK_ShowID = (select ID from Viewers WHERE FK_MSToken = @MSToken )) Order By SessionEndDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@MSToken", MSToken);
-                command.Parameters.AddWithValue("@ShowID", ShowID);
+                string command = $"SELECT * FROM ShowSessions Where FK_ShowID = @ShowID AND Where FK_ShowID = (select ID from Viewers WHERE FK_MSToken = @MSToken )) Order By SessionEndDate DESC";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
+                cmd.Parameters.AddWithValue("@ShowID", ShowID);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
                     Models.ShowSession showSession = new Models.ShowSession();
@@ -1116,14 +1233,17 @@ public class GET_AccessLayer : IGET_AccessLayer
     public async Task<Models.ShowSession?> GET_aShowSession_by_ShowSessionID_with_MSToken(Guid? MSToken, Guid? ShowSessionID)
     {
         Models.ShowSession objToReturn = new Models.ShowSession();
-        if (MSToken != null)
+        if ((MSToken != null) && (ShowSessionID != null))
         {
-            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM ShowSessions Where ID = @ID ", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT TOP(1) * FROM ShowSessions Where ID = @ID ", _conn))
             {
-                command.Parameters.AddWithValue("@ID", ShowSessionID);
+                string command = $"SELECT TOP(1) * FROM ShowSessions Where ID = @ID ";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@ID", ShowSessionID);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 if (ret.Read())
                 {
                     objToReturn.ID = ret.GetGuid(0);
@@ -1138,7 +1258,7 @@ public class GET_AccessLayer : IGET_AccessLayer
                 else
                 {
                     _conn.Close();
-                    return objToReturn;
+                    return null;
                 }
             }
         }
@@ -1155,11 +1275,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         List<Models.ShowSessionJoins?> showSessionsList = new List<Models.ShowSessionJoins?>();
         if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowSessionJoins Order By SessionLeaveDate DESC", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT * FROM ShowSessionJoins Order By SessionLeaveDate DESC", _conn))
             {
+                string command = $"SELECT * FROM ShowSessionJoins Order By SessionLeaveDate DESC";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
                     Models.ShowSessionJoins showSessionJoin = new Models.ShowSessionJoins();
@@ -1186,15 +1309,18 @@ public class GET_AccessLayer : IGET_AccessLayer
     public async Task<List<Models.ShowSessionJoins?>> GET_all_of_my_Joins_of_ShowSession_by_showSessionID(Guid? MSToken, Guid? ShowSessionID)
     {
         List<Models.ShowSessionJoins?> showSessionsList = new List<Models.ShowSessionJoins?>();
-        if (MSToken != null)
+        if ((MSToken != null) && (ShowSessionID != null))
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowSessionJoins Where FK_ShowSessionID = @FK_ShowSessionID AND FK_ViewerID_ShowViewer = (select ID from Viewers WHERE FK_MSToken = @MSToken ) Order By SessionLeaveDate DESC", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT * FROM ShowSessionJoins Where FK_ShowSessionID = @FK_ShowSessionID AND FK_ViewerID_ShowViewer = (select ID from Viewers WHERE FK_MSToken = @MSToken ) Order By SessionLeaveDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@MSToken", MSToken);
-                command.Parameters.AddWithValue("@FK_ShowSessionID", ShowSessionID);
+                string command = $"SELECT * FROM ShowSessionJoins Where FK_ShowSessionID = @FK_ShowSessionID AND FK_ViewerID_ShowViewer = (select ID from Viewers WHERE FK_MSToken = @MSToken ) Order By SessionLeaveDate DESC";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
+                cmd.Parameters.AddWithValue("@FK_ShowSessionID", ShowSessionID);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
                     Models.ShowSessionJoins showSessionJoin = new Models.ShowSessionJoins();
@@ -1221,14 +1347,17 @@ public class GET_AccessLayer : IGET_AccessLayer
     public async Task<Models.ShowSessionJoins?> GET_aShowSessionJoin_by_ShowSessionJoinID_with_MSToken(Guid? MSToken, Guid? SessionJoinID)
     {
         Models.ShowSessionJoins objToReturn = new Models.ShowSessionJoins();
-        if (MSToken != null)
+        if ((MSToken != null) && (SessionJoinID != null))
         {
-            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM ShowSessionJoins Where ID = @ID ", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT TOP(1) * FROM ShowSessionJoins Where ID = @ID ", _conn))
             {
-                command.Parameters.AddWithValue("@ID", SessionJoinID);
+                string command = $"SELECT * FROM ShowSessionJoins Where ID = @ID LIMIT 1";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@ID", SessionJoinID);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 if (ret.Read())
                 {
                     objToReturn.ID = ret.GetGuid(0);
@@ -1244,7 +1373,7 @@ public class GET_AccessLayer : IGET_AccessLayer
                 else
                 {
                     _conn.Close();
-                    return objToReturn;
+                    return null;
                 }
             }
         }
@@ -1261,11 +1390,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         List<Models.ShowCommentLike?> showSessionsList = new List<Models.ShowCommentLike?>();
         if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowCommentLikes Order By LikeDate DESC", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT * FROM ShowCommentLikes Order By LikeDate DESC", _conn))
             {
+                string command = $"SELECT * FROM ShowCommentLikes Order By LikeDate DESC";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
                     Models.ShowCommentLike showCommentLike = new Models.ShowCommentLike();
@@ -1291,14 +1423,17 @@ public class GET_AccessLayer : IGET_AccessLayer
     public async Task<List<Models.ShowCommentLike?>> GET_allLikes_of_ShowComment_by_showCommentID(Guid? MSToken, Guid? CommentID)
     {
         List<Models.ShowCommentLike?> showSessionsList = new List<Models.ShowCommentLike?>();
-        if (MSToken != null)
+        if ((MSToken != null) && (CommentID != null))
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM ShowCommentLikes Where FK_ShowCommentID = @FK_ShowCommentID Order By LikeDate DESC", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT * FROM ShowCommentLikes Where FK_ShowCommentID = @FK_ShowCommentID Order By LikeDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@FK_ShowCommentID", CommentID);
+                string command = $"SELECT * FROM ShowCommentLikes Where FK_ShowCommentID = @FK_ShowCommentID Order By LikeDate DESC";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@FK_ShowCommentID", CommentID);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
                     Models.ShowCommentLike showCommentLike = new Models.ShowCommentLike();
@@ -1323,16 +1458,19 @@ public class GET_AccessLayer : IGET_AccessLayer
 
     public async Task<Models.ShowCommentLike?> GET_myLike_of_ShowComment_by_showCommentID(Guid? MSToken, Guid? CommentID)
     {
-        if (MSToken != null)
+        if ((MSToken != null) && (CommentID != null))
         {
             Models.ShowCommentLike showCommentLike = new Models.ShowCommentLike();
-            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM ShowCommentLikes Where FK_ShowCommentID = @FK_ShowCommentID AND FK_ViewerID_Liker = (select ID from Viewers WHERE FK_MSToken = @MSToken ) Order By LikeDate DESC", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT TOP(1) * FROM ShowCommentLikes Where FK_ShowCommentID = @FK_ShowCommentID AND FK_ViewerID_Liker = (select ID from Viewers WHERE FK_MSToken = @MSToken ) Order By LikeDate DESC", _conn))
             {
-                command.Parameters.AddWithValue("@MSToken", MSToken);
-                command.Parameters.AddWithValue("@FK_ShowCommentID", CommentID);
+                string command = $"SELECT * FROM ShowCommentLikes Where FK_ShowCommentID = @FK_ShowCommentID AND FK_ViewerID_Liker = (select ID from Viewers WHERE FK_MSToken = @MSToken ) Order By LikeDate DESC LIMIT 1";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
+                cmd.Parameters.AddWithValue("@FK_ShowCommentID", CommentID);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 if (ret.Read())
                 {
 
@@ -1347,7 +1485,7 @@ public class GET_AccessLayer : IGET_AccessLayer
                 else
                 {
                     _conn.Close();
-                    return showCommentLike;
+                    return null;
                 }
             }
         }
@@ -1357,17 +1495,21 @@ public class GET_AccessLayer : IGET_AccessLayer
         }
     }//End of Get_myShowDonations_by_ViewerID_Donater
 
-    public async Task<Models.ShowCommentLike?> GET_aShowCommentLike_by_ShowCommentLikeID_with_MSToken(Guid? MSToken, Guid? CommentsLikeID)
+    public async Task<Models.ShowCommentLike?> GET_aShowCommentLike_by_ShowCommentID_with_MSToken(Guid? MSToken, Guid? CommentID)
     {
         Models.ShowCommentLike objToReturn = new Models.ShowCommentLike();
-        if (MSToken != null)
+        if ((MSToken != null) && (CommentID != null))
         {
-            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM ShowCommentLikes Where ID = @ID ", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT TOP(1) * FROM ShowCommentLikes Where ID = @ID ", _conn))
             {
-                command.Parameters.AddWithValue("@ID", CommentsLikeID);
+                string command = $"SELECT * FROM ShowCommentLikes Where FK_ViewerID_Liker = (select ID Viewers where FK_MSToken = @MSToken) AND FK_ShowCommentID_Likie = @FK_ShowCommentID_Likie LIMIT 1";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
+                cmd.Parameters.AddWithValue("@FK_ShowCommentID_Likie", CommentID);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 if (ret.Read())
                 {
                     objToReturn.ID = ret.GetGuid(0);
@@ -1382,7 +1524,7 @@ public class GET_AccessLayer : IGET_AccessLayer
                 else
                 {
                     _conn.Close();
-                    return objToReturn;
+                    return null;
                 }
             }
         }
@@ -1398,11 +1540,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         List<Models.Wallet?> allWallets = new List<Models.Wallet?>();
         if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM Wallets_Viewer ORDER BY DateUpdated DESC ", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT * FROM Wallets_Viewer ORDER BY DateUpdated DESC ", _conn))
             {
+                string command = $"SELECT * FROM Wallets_Viewer ORDER BY DateUpdated DESC ";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
                     Models.Wallet myWallet = new Models.Wallet();
@@ -1429,11 +1574,14 @@ public class GET_AccessLayer : IGET_AccessLayer
         List<Models.ShowWallet?> allWallets = new List<Models.ShowWallet?>();
         if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT * FROM Wallets_Show ORDER BY DateUpdated DESC ", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT * FROM Wallets_Show ORDER BY DateUpdated DESC ", _conn))
             {
+                string command = $"SELECT * FROM Wallets_Show ORDER BY DateUpdated DESC ";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 while (ret.Read())
                 {
                     Models.ShowWallet myWallet = new Models.ShowWallet();
@@ -1460,17 +1608,20 @@ public class GET_AccessLayer : IGET_AccessLayer
     }//End of GET_allShowWallets
 
 
-    public async Task<Models.Wallet> GET_myPersonalWallet_by_viewerID(Guid? MSToken)
+    public async Task<Models.Wallet?> GET_myPersonalWallet_by_viewerID(Guid? MSToken)
     {
         Models.Wallet myWallet = new Models.Wallet();
         if (MSToken != null)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Wallets_Viewer Where FK_ViewerID_WalletOwner = (select ID from Viewers WHERE FK_MSToken = @MSToken ) ", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT TOP(1) * FROM Wallets_Viewer Where FK_ViewerID_WalletOwner = (select ID from Viewers WHERE FK_MSToken = @MSToken ) ", _conn))
             {
-                command.Parameters.AddWithValue("@MSToken", MSToken);
+                string command = $"SELECT * FROM Wallets_Viewer Where FK_ViewerID_WalletOwner = (select ID from Viewers WHERE FK_MSToken = @MSToken ) LIMIT 1";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 if (ret.Read())
                 {
                     myWallet.ID = ret.GetGuid(0);
@@ -1485,28 +1636,31 @@ public class GET_AccessLayer : IGET_AccessLayer
                 else
                 {
                     _conn.Close();
-                    return myWallet;
+                    return null;
                 }
             }
         }
         else
         {
-            return myWallet;
+            return null;
         }
     }//End of GET_myPersonalWallet_by_viewerID
 
-    public async Task<Models.ShowWallet> GET_myShowWallet_by_viewer_AND_showID(Guid? MSToken, Guid? ShowID)
+    public async Task<Models.ShowWallet?> GET_myShowWallet_by_viewer_AND_showID(Guid? MSToken, Guid? ShowID)
     {
         Models.ShowWallet myShowWallet = new Models.ShowWallet();
-        if (MSToken != null)
+        if ((MSToken != null) && (ShowID != null))
         {
-            using (SqlCommand command = new SqlCommand($"SELECT TOP(1) * FROM Wallets_Show WHERE FK_ViewerID_WalletOwner = (select ID from Viewers WHERE FK_MSToken = @MSToken ) AND FK_ShowID_WalletShow = @FK_ShowID_WalletShow ", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())// = new SqlCommand($"SELECT TOP(1) * FROM Wallets_Show WHERE FK_ViewerID_WalletOwner = (select ID from Viewers WHERE FK_MSToken = @MSToken ) AND FK_ShowID_WalletShow = @FK_ShowID_WalletShow ", _conn))
             {
-                command.Parameters.AddWithValue("@MSToken", MSToken);
-                command.Parameters.AddWithValue("@FK_ShowID_WalletShow", ShowID);
+                string command = $"SELECT * FROM Wallets_Show WHERE FK_ViewerID_WalletOwner = (select ID from Viewers WHERE FK_MSToken = @MSToken ) AND FK_ShowID_WalletShow = @FK_ShowID_WalletShow LIMIT 1";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
+                cmd.Parameters.AddWithValue("@FK_ShowID_WalletShow", ShowID);
                 _conn.Open();
 
-                SqlDataReader ret = await command.ExecuteReaderAsync();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
                 if (ret.Read())
                 {
                     myShowWallet.ID = ret.GetGuid(0);
@@ -1523,15 +1677,228 @@ public class GET_AccessLayer : IGET_AccessLayer
                 else
                 {
                     _conn.Close();
-                    return myShowWallet;
+                    return null;
                 }
             }
         }
         else
         {
-            return myShowWallet;
+            return null;
         }
     }//End of GET_myShowWallet_by_viewer_AND_showID
+
+    public async Task<List<ShowSessionJoins?>> GET_aShowsJoinSessions(Guid? showid)
+    {
+        List<Models.ShowSessionJoins?> joinsList = new List<Models.ShowSessionJoins?>();
+        if(showid.HasValue)
+        {
+            using (NpgsqlConnection connection = this._conn.GETDBCONNECTION())
+            {
+                string command = $"SELECT * FROM ShowSessionJoins where FK_ShowSessionID = (select ID from ShowSessions where FK_ShowID = @FK_ShowID) ";
+                using var cmd = new NpgsqlCommand(command, connection);
+
+                cmd.Parameters.AddWithValue("@FK_ShowID", showid);
+                connection.Open();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
+                while(ret.Read())
+                {
+                    ShowSessionJoins obj = new ShowSessionJoins();
+                    obj.ID = ret.GetGuid(0);
+                    obj.FK_ShowSessionsID = ret.GetGuid(1);
+                    obj.FK_ViewerID_ShowViewer = ret.GetGuid(2);
+
+                    obj.SessionJoinDate = ret.GetDateTime(3);
+                    obj.SessionLeaveDate = ret.GetDateTime(4);
+                    joinsList.Add(obj);
+
+                }
+                connection.Close();
+            }
+            Console.WriteLine($"A show's list of session joins was just GOTTEN at {DateTime.UtcNow} for {showid}");
+            return joinsList;
+        }
+        Console.WriteLine($"A show's list of session joins was just NOT GOTTEN at {DateTime.UtcNow} for {showid}");
+        return joinsList;
+    }
+
+    public async Task<List<ShowSession?>> GET_aShowsSessions(Guid? showid)
+    {
+        List<ShowSession?> showsessionlist = new List<ShowSession?>();
+        if (showid.HasValue)
+        {
+            using (NpgsqlConnection connection = this._conn.GETDBCONNECTION())
+            {
+                string command = $"SELECT * FROM ShowSessions where FK_ShowID = @FK_ShowID ";
+                using var cmd = new NpgsqlCommand(command, connection);
+
+                cmd.Parameters.AddWithValue("@FK_ShowID", showid);
+                connection.Open();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
+                while (ret.Read())
+                {
+                    ShowSession obj = new ShowSession();
+                    obj.ID = ret.GetGuid(0);
+                    obj.FK_ShowID = ret.GetGuid(1);
+                    obj.Views = ret.GetInt32(2);
+                    obj.Likes = ret.GetInt32(3);
+                    obj.Comments = ret.GetInt32(4);
+
+                    obj.SessionStartDate = ret.GetDateTime(5);
+                    obj.SessionEndDate = ret.GetDateTime(6);
+                    showsessionlist.Add(obj);
+
+                }
+                connection.Close();
+            }
+            Console.WriteLine($"A show's list of sessions was just GOTTEN at {DateTime.UtcNow} for {showid}");
+            return showsessionlist;
+        }
+        Console.WriteLine($"A show's list of sessions was just NOT GOTTEN at {DateTime.UtcNow} for {showid}");
+        return showsessionlist;
+    }
+
+    public async Task<List<Follower?>> GET_aShowsFollowers_by_showID(Guid? showid)
+    {
+        List<Follower?> showfollowers = new List<Follower?>();
+        if (showid.HasValue)
+        {
+            using (NpgsqlConnection connection = this._conn.GETDBCONNECTION())
+            {
+                string command = $"SELECT * FROM Followers where FK_ShowID_Followie = @FK_ShowID ";
+                using var cmd = new NpgsqlCommand(command, connection);
+
+                cmd.Parameters.AddWithValue("@FK_ShowID", showid);
+                connection.Open();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
+                while (ret.Read())
+                {
+                    Follower obj = new Follower();
+                    obj.ID = ret.GetGuid(0);
+                    obj.FK_ViewerID_Follower = ret.GetGuid(1);
+                    obj.FK_ViewerID_Followie = ret.GetGuid(2);
+                    obj.FK_ShowID_Followie = ret.GetGuid(3);
+                    obj.FollowerStatus =  actions.REPO_ACTIONS.ConvertStringStatus_To_FollowerStatus( ret.GetString(4));
+                    obj.FollowDate = ret.GetDateTime(5);
+
+                    obj.StatusUpdateDate = ret.GetDateTime(5);
+                    showfollowers.Add(obj);
+
+                }
+                connection.Close();
+            }
+            Console.WriteLine($"A show's list of followers was just GOTTEN at {DateTime.UtcNow} for {showid}");
+            return showfollowers;
+        }
+        Console.WriteLine($"A show's list of followers was just NOT GOTTEN at {DateTime.UtcNow} for {showid}");
+        return showfollowers;
+    }
+
+    public async Task<List<ShowLikes?>> GET_aShowsLikes_by_showID(Guid? showid)
+    {
+        List<ShowLikes?> showlikes = new List<ShowLikes?>();
+        if (showid.HasValue)
+        {
+            using (NpgsqlConnection connection = this._conn.GETDBCONNECTION())
+            {
+                string command = $"SELECT * FROM ShowLikes where FK_ShowSessionID = (select ID from ShowSessions where FK_ShowID = @FK_ShowID) ";
+                using var cmd = new NpgsqlCommand(command, connection);
+
+                cmd.Parameters.AddWithValue("@FK_ShowID", showid);
+                connection.Open();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
+                while (ret.Read())
+                {
+                    ShowLikes obj = new ShowLikes();
+                    obj.ID = ret.GetGuid(0);
+                    obj.FK_ViewerID_Liker = ret.GetGuid(1);
+                    obj.FK_ShowSessionID = ret.GetGuid(2);
+                    obj.LikeDate = ret.GetDateTime(3);
+                    showlikes.Add(obj);
+
+                }
+                connection.Close();
+            }
+            Console.WriteLine($"A show's list of showlikes was just GOTTEN at {DateTime.UtcNow} for {showid}");
+            return showlikes;
+        }
+        Console.WriteLine($"A show's list of showlikes was just NOT GOTTEN at {DateTime.UtcNow} for {showid}");
+        return showlikes;
+    }
+
+    public async Task<List<ShowComment?>> GET_aShowsComments_by_showID(Guid? showid)
+    {
+        List<ShowComment?> showcomments = new List<ShowComment?>();
+        if (showid.HasValue)
+        {
+            using (NpgsqlConnection connection = this._conn.GETDBCONNECTION())
+            {
+                string command = $"SELECT * FROM ShowComments where FK_ShowSessionID = (select ID from ShowSessions where FK_ShowID = @FK_ShowID) ";
+                using var cmd = new NpgsqlCommand(command, connection);
+
+                cmd.Parameters.AddWithValue("@FK_ShowID", showid);
+                connection.Open();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
+                while (ret.Read())
+                {
+                    ShowComment obj = new ShowComment();
+                    obj.ID = ret.GetGuid(0);
+                    obj.FK_ViewerID_Commenter = ret.GetGuid(1);
+                    obj.FK_ShowSessionID = ret.GetGuid(2);
+                    obj.Comment = ret.GetString(3);
+                    obj.CommentDate = ret.GetDateTime(4);
+                    showcomments.Add(obj);
+
+                }
+                connection.Close();
+            }
+            Console.WriteLine($"A show's list of showcomments was just GOTTEN at {DateTime.UtcNow} for {showid}");
+            return showcomments;
+        }
+        Console.WriteLine($"A show's list of showcomments was just NOT GOTTEN at {DateTime.UtcNow} for {showid}");
+        return showcomments;
+    }
+
+    public async Task<List<ShowDonation?>> GET_aShowsDonations_by_showID(Guid? showid)
+    {
+        List<ShowDonation?> showDonations = new List<ShowDonation?>();
+        if (showid.HasValue)
+        {
+            using (NpgsqlConnection connection = this._conn.GETDBCONNECTION())
+            {
+                string command = $"SELECT * FROM ShowDonations where FK_Wallets_ShowID = @FK_ShowID_Donatie ";
+                using var cmd = new NpgsqlCommand(command, connection);
+
+                cmd.Parameters.AddWithValue("@FK_ShowID_Donatie", showid);
+                connection.Open();
+                NpgsqlDataReader ret = await cmd.ExecuteReaderAsync();
+                while (ret.Read())
+                {
+                    ShowDonation obj = new ShowDonation();
+                    obj.ID = ret.GetGuid(0);
+                    obj.FK_ViewerID_Donater = ret.GetGuid(1);
+                    obj.FK_WalletID = ret.GetGuid(2);
+                    obj.FK_ShowID_Donatie = ret.GetGuid(3);
+                    obj.Amount = ret.GetDecimal(4);
+                    obj.Note = ret.GetString(5);
+                    obj.DonationDate = ret.GetDateTime(4);
+                    showDonations.Add(obj);
+
+                }
+                connection.Close();
+            }
+            Console.WriteLine($"A show's list of showDonations was just GOTTEN at {DateTime.UtcNow} for {showid}");
+            return showDonations;
+        }
+        Console.WriteLine($"A show's list of showDonations was just NOT GOTTEN at {DateTime.UtcNow} for {showid}");
+        return showDonations;
+    }
+
+    //Task<List<ShowSessionJoins?>> GET_aShowsJoinSessions(Guid? Showid);
+    //Task<List<ShowSession?>> GET_aShowsSessions(Guid? showID);
+    //Task<List<Follower?>> GET_aShowsFollowers_by_showID(Guid? showID);
+    //Task<List<ShowLikes?>> GET_aShowsLikes_by_showID(Guid? showID);
+    //Task<List<ShowComment?>> GET_aShowsComments_by_showID(Guid? showID);
+    //Task<List<ShowDonation?>> GET_aShowsDonations_by_showID(Guid? showID);
 
 
 

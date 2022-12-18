@@ -1,71 +1,46 @@
 using System.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using Npgsql;
 
 namespace MS_API1_Users_Repo
 {
 
     public class CREATE_AccessLayer : ICREATE_AccessLayer
     {
-        private readonly IConfiguration _config;
-        private readonly SqlConnection _conn;
-
-        public CREATE_AccessLayer(IConfiguration config)
+        private readonly IDBCONNECTION _conn;
+        public CREATE_AccessLayer(IDBCONNECTION c)
         {
-            _config = config;
-
-
-            if (string.Equals(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"), "Development", StringComparison.InvariantCultureIgnoreCase))
-            {
-                _conn = new SqlConnection(_config["ConnectionStrings:Development"]);
-            }
-            else
-            {
-                _conn = new SqlConnection(_config["ConnectionStrings:ProductionString"]);
-            }
-
+            this._conn = c;
         }
 
-        //-----------------------CREATE ADMIN SECTION---------------------
-        public async Task<bool> CREATE_Admin_by_MSToken(Guid MSToken, string email, string username)
-        {
-            if (email == "sendes12@gmail.com")
-            {
-                using (SqlCommand command = new SqlCommand($"INSERT INTO Admins (FK_MSToken, Email, Username) VALUES(@MSToken, @Email, @Username)", _conn))
-                {
-                    command.Parameters.AddWithValue("@MSToken", MSToken);
-                    command.Parameters.AddWithValue("@Email", email);
-                    command.Parameters.AddWithValue("@Username", username);
-                    _conn.Open();
+        //public CREATE_AccessLayer(IConfiguration config)
+        //{
+        //    _config = config;
 
-                    int ret = await command.ExecuteNonQueryAsync();
-                    if (ret > 0)
-                    {
-                        _conn.Close();
-                        return true;
-                    }
-                    else
-                    {
-                        _conn.Close();
-                        return false;
-                    }
-                }
-            }
-            else
-            {
-                return false;
-            }
-        }//End of CREATE_Viewer_by_MSToken
 
+        //    if (string.Equals(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"), "Development", StringComparison.InvariantCultureIgnoreCase))
+        //    {
+        //        _conn = new SqlConnection(_config["ConnectionStrings:Development"]);
+        //    }
+        //    else
+        //    {
+        //        _conn = new SqlConnection(_config["ConnectionStrings:ProductionString"]);
+        //    }
+
+        //}
         //-----------------------CREATE FRIEND SECTION---------------------
         public async Task<bool> CREATE_Friend_by_FriendieID(Guid MSToken, Guid viewerID_Friendie)
         {
-            using (SqlCommand command = new SqlCommand($"INSERT INTO Friends ( FK_ViewerID_Friender, FK_ViewerID_Friendie ) VALUES( (select ID from Viewers where FK_MSToken = @MSToken) , @FK_ViewerID_Friendie ) ", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())//SqlCommand($"INSERT INTO Friends ( FK_ViewerID_Friender, FK_ViewerID_Friendie ) VALUES( (select ID from Viewers where FK_MSToken = @MSToken) , @FK_ViewerID_Friendie ) ", _conn))
             {
-                command.Parameters.AddWithValue("@MSToken", MSToken);
-                command.Parameters.AddWithValue("@FK_ViewerID_Friendie", viewerID_Friendie);
+                string command = $"INSERT INTO Friends ( FK_ViewerID_Friender, FK_ViewerID_Friendie ) VALUES( (select ID from Viewers where FK_MSToken = @MSToken) , @FK_ViewerID_Friendie ) ";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
+                cmd.Parameters.AddWithValue("@FK_ViewerID_Friendie", viewerID_Friendie);
                 _conn.Open();
 
-                int ret = await command.ExecuteNonQueryAsync();
+                int ret = await cmd.ExecuteNonQueryAsync();
                 if (ret > 0)
                 {
                     _conn.Close();
@@ -82,13 +57,16 @@ namespace MS_API1_Users_Repo
         //-----------------------CREATE FOLLOWER SECTION---------------------
         public async Task<bool> CREATE_aFollow_to_Viewer_by_viewerID(Guid MSToken, Guid followieID)
         {
-            using (SqlCommand command = new SqlCommand($"INSERT INTO Followers (FK_ViewerID_Follower, FK_ViewerID_Followie) VALUES( (select ID from Viewers where FK_MSToken = @MSToken) , @FK_ViewerID_Followie ) ", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())//SqlCommand($"INSERT INTO Followers (FK_ViewerID_Follower, FK_ViewerID_Followie) VALUES( (select ID from Viewers where FK_MSToken = @MSToken) , @FK_ViewerID_Followie ) ", _conn))
             {
-                command.Parameters.AddWithValue("@MSToken", MSToken);
-                command.Parameters.AddWithValue("@FK_ViewerID_Followie", followieID);
+                string command = $"INSERT INTO Followers (FK_ViewerID_Follower, FK_ViewerID_Followie) VALUES( (select ID from Viewers where FK_MSToken = @MSToken) , @FK_ViewerID_Followie ) ";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
+                cmd.Parameters.AddWithValue("@FK_ViewerID_Followie", followieID);
                 _conn.Open();
 
-                int ret = await command.ExecuteNonQueryAsync();
+                int ret = await cmd.ExecuteNonQueryAsync();
                 if (ret > 0)
                 {
                     _conn.Close();
@@ -105,13 +83,16 @@ namespace MS_API1_Users_Repo
 
         public async Task<bool> CREATE_aFollow_to_Show_with_showID(Guid MSToken, Guid FollowieID)
         {
-            using (SqlCommand command = new SqlCommand($"INSERT INTO Followers (FK_ViewerID_Follower, FK_ShowID_Followie) VALUES( (select ID from Viewers where FK_MSToken = MSToken) , @FK_ShowID_Followie) ", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())//SqlCommand($"INSERT INTO Followers (FK_ViewerID_Follower, FK_ShowID_Followie) VALUES( (select ID from Viewers where FK_MSToken = MSToken) , @FK_ShowID_Followie) ", _conn))
             {
-                command.Parameters.AddWithValue("@MSToken", MSToken);
-                command.Parameters.AddWithValue("@FK_ShowID_Followie", FollowieID);
+                string command = $"INSERT INTO Followers (FK_ViewerID_Follower, FK_ShowID_Followie) VALUES( (select ID from Viewers where FK_MSToken = MSToken) , @FK_ShowID_Followie) ";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
+                cmd.Parameters.AddWithValue("@FK_ShowID_Followie", FollowieID);
                 _conn.Open();
 
-                int ret = await command.ExecuteNonQueryAsync();
+                int ret = await cmd.ExecuteNonQueryAsync();
                 if (ret > 0)
                 {
                     _conn.Close();
@@ -129,15 +110,18 @@ namespace MS_API1_Users_Repo
         //-----------------------CREATE SHOW SECTION---------------------
         public async Task<bool> CREATE_myShow_by_MSToken(Guid MSToken, string showName, string showImage, Models.PrivacyLevel privacyLevel)
         {
-            using (SqlCommand command = new SqlCommand($"INSERT INTO Shows (FK_ViewerID_Owner, ShowName, ShowImage, PrivacyLevel) VALUES( (select ID from Viewers where FK_MSToken = @MSToken) , @ShowName, @ShowImage, @PrivacyLevel) ", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())//SqlCommand($"INSERT INTO Shows (FK_ViewerID_Owner, ShowName, ShowImage, PrivacyLevel) VALUES( (select ID from Viewers where FK_MSToken = @MSToken) , @ShowName, @ShowImage, @PrivacyLevel) ", _conn))
             {
-                command.Parameters.AddWithValue("@MSToken", MSToken);
-                command.Parameters.AddWithValue("@ShowName", showName);
-                command.Parameters.AddWithValue("@ShowImage", showImage);
-                command.Parameters.AddWithValue("@PrivacyLevel", privacyLevel);
+                string command = $"INSERT INTO Shows (FK_ViewerID_Owner, ShowName, ShowImage, PrivacyLevel) VALUES( (select ID from Viewers where FK_MSToken = @MSToken) , @ShowName, @ShowImage, @PrivacyLevel) ";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
+                cmd.Parameters.AddWithValue("@ShowName", showName);
+                cmd.Parameters.AddWithValue("@ShowImage", showImage);
+                cmd.Parameters.AddWithValue("@PrivacyLevel", privacyLevel);
                 _conn.Open();
 
-                int ret = await command.ExecuteNonQueryAsync();
+                int ret = await cmd.ExecuteNonQueryAsync();
                 if (ret > 0)
                 {
                     _conn.Close();
@@ -154,14 +138,17 @@ namespace MS_API1_Users_Repo
         //-----------------------CREATE SHOW SUBSCRIPTION SECTION---------------------
         public async Task<bool> CREATE_mySubscription_to_Show_by_MSToken_showID(Guid MSToken, Guid showID, Models.SubscriberMembershipStatus MembershipStatus)
         {
-            using (SqlCommand command = new SqlCommand($"INSERT INTO Subscribers (FK_ViewerID_Subscriber, FK_ShowID_Subscribie, MembershipStatus) VALUES( (select ID from Viewers where FK_MSToken = @MSToken) , @FK_ShowID_Subscribie, @FK_ShowSessionID, @MembershipStatus) ", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())//SqlCommand($"INSERT INTO Subscribers (FK_ViewerID_Subscriber, FK_ShowID_Subscribie, MembershipStatus) VALUES( (select ID from Viewers where FK_MSToken = @MSToken) , @FK_ShowID_Subscribie, @FK_ShowSessionID, @MembershipStatus) ", _conn))
             {
-                command.Parameters.AddWithValue("@MSToken", MSToken);
-                command.Parameters.AddWithValue("@FK_ShowID_Subscribie", showID);
-                command.Parameters.AddWithValue("@MembershipStatus", MembershipStatus);
+                string command = $"INSERT INTO Subscribers (FK_ViewerID_Subscriber, FK_ShowID_Subscribie, MembershipStatus) VALUES( (select ID from Viewers where FK_MSToken = @MSToken) , @FK_ShowID_Subscribie, @FK_ShowSessionID, @MembershipStatus) ";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
+                cmd.Parameters.AddWithValue("@FK_ShowID_Subscribie", showID);
+                cmd.Parameters.AddWithValue("@MembershipStatus", MembershipStatus);
                 _conn.Open();
 
-                int ret = await command.ExecuteNonQueryAsync();
+                int ret = await cmd.ExecuteNonQueryAsync();
                 if (ret > 0)
                 {
                     _conn.Close();
@@ -178,13 +165,16 @@ namespace MS_API1_Users_Repo
         //-----------------------CREATE SHOW LIKE SECTION---------------------
         public async Task<bool> CREATE_ShowLike_by_ShowSessionID(Guid MSToken, Guid ShowSessionID)
         {
-            using (SqlCommand command = new SqlCommand($"INSERT INTO ShowLikes (FK_ViewerID_Liker, FK_ShowSessionID) VALUES( (select ID from Viewers where FK_MSToken = @MSToken), @FK_ShowSessionID) ", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())//SqlCommand($"INSERT INTO ShowLikes (FK_ViewerID_Liker, FK_ShowSessionID) VALUES( (select ID from Viewers where FK_MSToken = @MSToken), @FK_ShowSessionID) ", _conn))
             {
-                command.Parameters.AddWithValue("@FK_ShowID_Likie", MSToken);
-                command.Parameters.AddWithValue("@FK_ShowSessionID", ShowSessionID);
+                string command = $"INSERT INTO ShowLikes (FK_ViewerID_Liker, FK_ShowSessionID) VALUES( (select ID from Viewers where FK_MSToken = @MSToken), @FK_ShowSessionID) ";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@FK_ShowID_Likie", MSToken);
+                cmd.Parameters.AddWithValue("@FK_ShowSessionID", ShowSessionID);
                 _conn.Open();
 
-                int ret = await command.ExecuteNonQueryAsync();
+                int ret = await cmd.ExecuteNonQueryAsync();
                 if (ret > 0)
                 {
                     _conn.Close();
@@ -201,14 +191,17 @@ namespace MS_API1_Users_Repo
         //-----------------------CREATE SHOW COMMENT SECTION---------------------
         public async Task<bool> CREATE_ShowComment_by_showSessionID(Guid MSToken, Guid showSessionID_ShowCommentie, string comment)
         {
-            using (SqlCommand command = new SqlCommand($"INSERT INTO ShowComments (FK_ViewerID_Commenter, FK_ShowSessionID, Comment) VALUES( (select ID from Viewers where FK_MSToken = @MSToken) , @FK_ShowSessionID, @Comment) ", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())//SqlCommand($"INSERT INTO ShowComments (FK_ViewerID_Commenter, FK_ShowSessionID, Comment) VALUES( (select ID from Viewers where FK_MSToken = @MSToken) , @FK_ShowSessionID, @Comment) ", _conn))
             {
-                command.Parameters.AddWithValue("@MSToken", MSToken);
-                command.Parameters.AddWithValue("@FK_ShowSessionID", showSessionID_ShowCommentie);
-                command.Parameters.AddWithValue("@Comment", comment);
+                string command = $"INSERT INTO ShowComments (FK_ViewerID_Commenter, FK_ShowSessionID, Comment) VALUES( (select ID from Viewers where FK_MSToken = @MSToken) , @FK_ShowSessionID, @Comment) ";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
+                cmd.Parameters.AddWithValue("@FK_ShowSessionID", showSessionID_ShowCommentie);
+                cmd.Parameters.AddWithValue("@Comment", comment);
                 _conn.Open();
 
-                int ret = await command.ExecuteNonQueryAsync();
+                int ret = await cmd.ExecuteNonQueryAsync();
                 if (ret > 0)
                 {
                     _conn.Close();
@@ -225,13 +218,16 @@ namespace MS_API1_Users_Repo
         //-----------------------CREATE SHOW COMMENT SECTION---------------------
         public async Task<bool> CREATE_myLike_to_ShowComment_by_CommetID(Guid MSToken, Guid showCommentID)
         {
-            using (SqlCommand command = new SqlCommand($"INSERT INTO ShowCommentLikes (FK_ViewerID_Liker, FK_ShowCommentID) VALUES( (select ID from Viewers where FK_MSToken = @MSToken) , @FK_ShowCommentID) ", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())//SqlCommand($"INSERT INTO ShowCommentLikes (FK_ViewerID_Liker, FK_ShowCommentID) VALUES( (select ID from Viewers where FK_MSToken = @MSToken) , @FK_ShowCommentID) ", _conn))
             {
-                command.Parameters.AddWithValue("@MSToken", MSToken);
-                command.Parameters.AddWithValue("@FK_ShowID_Commentie", showCommentID);
+                string command = $"INSERT INTO ShowCommentLikes (FK_ViewerID_Liker, FK_ShowCommentID) VALUES( (select ID from Viewers where FK_MSToken = @MSToken) , @FK_ShowCommentID) ";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
+                cmd.Parameters.AddWithValue("@FK_ShowID_Commentie", showCommentID);
                 _conn.Open();
 
-                int ret = await command.ExecuteNonQueryAsync();
+                int ret = await cmd.ExecuteNonQueryAsync();
                 if (ret > 0)
                 {
                     _conn.Close();
@@ -248,15 +244,18 @@ namespace MS_API1_Users_Repo
         //-----------------------CREATE SHOW DONATION SECTION---------------------
         public async Task<bool> CREATE_myDonation_to_Show_by_ShowID(Guid MSToken, Guid fk_showID_Subscribie, decimal Amount, string Note)
         {
-            using (SqlCommand command = new SqlCommand($"INSERT INTO ShowDonations (FK_ViewerID_Donater, FK_ShowID_Donatie, Amount, Note) VALUES( (select ID from Viewers where FK_MSToken = @MSToken) , @FK_ShowID_Donatie, @Amount, @Note) ", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())//SqlCommand($"INSERT INTO ShowDonations (FK_ViewerID_Donater, FK_ShowID_Donatie, Amount, Note) VALUES( (select ID from Viewers where FK_MSToken = @MSToken) , @FK_ShowID_Donatie, @Amount, @Note) ", _conn))
             {
-                command.Parameters.AddWithValue("@MSToken", MSToken);
-                command.Parameters.AddWithValue("@FK_ShowID_Donatie", fk_showID_Subscribie);
-                command.Parameters.AddWithValue("@Amount", Amount);
-                command.Parameters.AddWithValue("@Note", Note);
+                string command = $"INSERT INTO ShowDonations (FK_ViewerID_Donater, FK_ShowID_Donatie, Amount, Note) VALUES( (select ID from Viewers where FK_MSToken = @MSToken) , @FK_ShowID_Donatie, @Amount, @Note) ";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
+                cmd.Parameters.AddWithValue("@FK_ShowID_Donatie", fk_showID_Subscribie);
+                cmd.Parameters.AddWithValue("@Amount", Amount);
+                cmd.Parameters.AddWithValue("@Note", Note);
                 _conn.Open();
 
-                int ret = await command.ExecuteNonQueryAsync();
+                int ret = await cmd.ExecuteNonQueryAsync();
                 if (ret > 0)
                 {
                     _conn.Close();
@@ -273,13 +272,16 @@ namespace MS_API1_Users_Repo
         //-----------------------CREATE SHOW SESSION SECTION---------------------
         public async Task<bool> CREATE_myShowSession_by_ShowID(Guid MSToken, Guid showID)
         {
-            using (SqlCommand command = new SqlCommand($"INSERT INTO ShowSessions (FK_ShowID ) VALUES( (select ID from Shows where FK_ViewerID_Owner = (select ID from Viewers where MSToken = @MSToken) ) ) ", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())//SqlCommand($"INSERT INTO ShowSessions (FK_ShowID ) VALUES( (select ID from Shows where FK_ViewerID_Owner = (select ID from Viewers where MSToken = @MSToken) ) ) ", _conn))
             {
-                command.Parameters.AddWithValue("@MSToken", MSToken);
-                command.Parameters.AddWithValue("@FK_ShowID", showID);
+                string command = $"INSERT INTO ShowSessions (FK_ShowID ) VALUES( (select ID from Shows where FK_ViewerID_Owner = (select ID from Viewers where MSToken = @MSToken) ) ) ";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
+                cmd.Parameters.AddWithValue("@FK_ShowID", showID);
                 _conn.Open();
 
-                int ret = await command.ExecuteNonQueryAsync();
+                int ret = await cmd.ExecuteNonQueryAsync();
                 if (ret > 0)
                 {
                     _conn.Close();
@@ -296,13 +298,16 @@ namespace MS_API1_Users_Repo
         //-----------------------CREATE SHOW SESSION JOIN SECTION---------------------
         public async Task<bool> CREATE_myJoin_to_ShowSession_by_ShowSessionID(Guid MSToken, Guid ShowSessionID)
         {
-            using (SqlCommand command = new SqlCommand($"INSERT INTO ShowSessionJoins (FK_ShowSessionsID, FK_ViewerID_ShowViewer) VALUES(@FK_ShowSessionsID, (select ID from Viewers where FK_MSToken = @MSToken)) ", _conn))
+            using (NpgsqlConnection _conn = this._conn.GETDBCONNECTION())//SqlCommand($"INSERT INTO ShowSessionJoins (FK_ShowSessionsID, FK_ViewerID_ShowViewer) VALUES(@FK_ShowSessionsID, (select ID from Viewers where FK_MSToken = @MSToken)) ", _conn))
             {
-                command.Parameters.AddWithValue("@FK_ShowSessionsID", ShowSessionID);
-                command.Parameters.AddWithValue("@MSToken", MSToken);
+                string command = $"INSERT INTO ShowSessionJoins (FK_ShowSessionsID, FK_ViewerID_ShowViewer) VALUES(@FK_ShowSessionsID, (select ID from Viewers where FK_MSToken = @MSToken)) ";
+                using var cmd = new NpgsqlCommand(command, _conn);
+
+                cmd.Parameters.AddWithValue("@FK_ShowSessionsID", ShowSessionID);
+                cmd.Parameters.AddWithValue("@MSToken", MSToken);
                 _conn.Open();
 
-                int ret = await command.ExecuteNonQueryAsync();
+                int ret = await cmd.ExecuteNonQueryAsync();
                 if (ret > 0)
                 {
                     _conn.Close();

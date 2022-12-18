@@ -4,7 +4,6 @@ namespace MS_API1_Users_Repo
 {
     public interface ICREATE_AccessLayer
     {
-        Task<bool> CREATE_Admin_by_MSToken(Guid MSToken, string email, string username);
         Task<bool> CREATE_aFollow_to_Show_with_showID(Guid MSToken, Guid FollowieID);
         Task<bool> CREATE_aFollow_to_Viewer_by_viewerID(Guid MSToken, Guid followieID);
         Task<bool> CREATE_Friend_by_FriendieID(Guid MSToken, Guid viewerID_Friendie);

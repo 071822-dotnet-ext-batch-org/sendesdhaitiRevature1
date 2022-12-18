@@ -1,1 +1,114 @@
-<p>account works!</p>
+<div class="ACCOUNT">
+    
+    <!-- <p *ngIf="myViewer != null">Welcome to MINT SOUP {{myViewer.Email}}!</p> -->
+    <h1 class="header">{{myToken.unique_name}}'s Account</h1>
+    <div>
+        <div class="SHOWS_SECTION">
+                <div class="lastJoined">
+                    <h3>My Last Joined Sessions <span> <img src="../../../assets/ICONS/clock2.svg" alt=""></span></h3> 
+                    <hr>
+                    <ol>
+                        <li>link to past show's session</li>
+                    </ol>
+                </div>
+            
+                <div class="liveNow">
+                    <h3>Shows Live Now <span> <img src="../../../assets/ICONS/live.svg" alt=""></span></h3>
+                    <hr>
+                    <ol>
+                        <li>link to current show's session</li>
+                    </ol>
+                </div>
+
+                <div class="myshowsubs">
+                    <div class="myShowSubscriptions">
+                        <h3>My Show Subscrptions <span> <img src="../../../assets/ICONS/show.svg" alt=""></span></h3>
+                        <hr>
+                        <button id="myshowsubbtn" (click)="showMyShowSubs()">Show my subscriptions</button>
+                        <ol id="myshowsubs">
+                            <li>
+                                <p>The shows I subscribe to</p>
+                            </li>
+                            <li>
+                                <p>The shows I subscribe to</p>
+                            </li>
+                        </ol>
+                    </div>
+        
+                    <div class="myShows">
+                        <h3>My Shows <span> <img src="../../../assets/ICONS/show.svg" alt=""></span></h3>
+                        <hr>
+                        <button id="myshowbtn" (click)="showMyShows()">Show my shows</button>
+                        <ol id="myshows">
+                            <li>
+                                <p>My shows</p>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+    
+        </div>
+        
+        <div class="ACCOUNT_SECTION">
+            <h3>My Acount <span> <img src="../../../assets/ICONS/profile2.svg" alt=""></span></h3>
+            <hr>
+            <table>
+                <tr>
+                    <td>
+                        <h5>myID: </h5>
+                    </td>
+                    <td>
+                        <p>{{myToken.sid}}</p>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <h5>Username: </h5>
+                    </td>
+                    <td>
+                        <p>{{myToken.unique_name}}</p>
+                    </td>
+                    <td>
+                        <button>Edit</button>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <h5>My Email: </h5>
+                    </td>
+                    <td>
+                        <p>{{myToken.email}}</p>
+                    </td>
+                    <td>
+                        <button>Edit</button>
+                    </td>
+                </tr>
+
+            </table>
+
+            <div class="accountsub">
+                <div class="subList">
+                    <h4>My Friends</h4>
+                    <hr>
+                    <button id="myfriendsbtn" (click)="showMyFriends()">Show my friends</button>
+                    <ol id="myfriends">
+                        <li><p>my friend</p></li>
+                    </ol>
+                </div>
+            
+                <div class="subList">
+                    <h4>My Followers</h4>
+                    <hr>
+                    <button id="myfollowersbtn" (click)="showMyFollowers()">Show my followers</button>
+                    <ol id="myfollowers">
+                        <li><p>my follower</p></li>
+                    </ol>
+                </div>
+            </div>
+        
+        </div> 
+    </div>
+
+</div>

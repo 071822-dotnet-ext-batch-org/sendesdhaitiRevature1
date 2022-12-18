@@ -180,3 +180,37 @@ AS
 	SET  Subscribers = Subscribers - 1
 	WHERE ID = (SELECT FK_ShowID_Subscribie from deleted)
 GO
+
+select public.login_with_email_and_password('sendes12@gmail.com', 123);
+SELECT signup('sendes12@gmail.com', 'sendes', '123');
+SELECT * from login_with_email_and_password('sendes12@gmail.com', '123'); --this will return the same hashed password if it matches
+SELECT * from login_with_username_and_password('sendes', '123'); --this will return the same hashed password if it matches
+
+SELECT convertpassword_to_a_hash('mintsoup');
+SElect * from CHECK_if_mstoken_exists_by_email('sendes12@gmail.com');
+SElect * from CHECK_if_mstoken_exists_by_username('sendes');
+select * from  Person;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,9 @@
+.FOOTER {
+    border-top: 1px solid black;
+    height:inherit;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-content: center;
+    background-color: whitesmoke;
+}

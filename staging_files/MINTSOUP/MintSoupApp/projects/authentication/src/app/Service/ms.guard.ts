@@ -13,7 +13,7 @@ export class MSGuard implements CanActivate, CanActivateChild, CanDeactivate<unk
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-      const token = localStorage.getItem("JWT");
+      const token = localStorage.getItem("MINTSOUPTOKEN");
       if(token && !this.jwtHelper.isTokenExpired(token)){
         return true;
       }

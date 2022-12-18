@@ -10,14 +10,53 @@ public interface IGET_LogicLayer
     //Task<(Viewer?, string)> GET_aViewer_by_MSToken_viewerID(string MSToken, Guid OBJID);
     //Task<(Admin?, string)> GET_myAdmin_by_MSToken(string MSToken);
     //Task<(Viewer?, string)> GET_myViewer_by_MSToken(string MSToken);
+    Task<List<Show?>> GET_all_SHOWS(Guid? MSToken);
 }
 
 public class GET_LogicLayer : IGET_LogicLayer
 {
-    private readonly IGET_AccessLayer _get_Repo;
+    private readonly IGET_AccessLayer get_Repo;
     public GET_LogicLayer(IGET_AccessLayer _get)
     {
-        this._get_Repo = _get;
+        this.get_Repo = _get;
+    }
+
+    public async Task<List<Show?>> GET_all_SHOWS(Guid? MSToken)
+    {
+       List<Show?> shows =  await this.get_Repo.GET_allShows(MSToken);
+        if (shows.Any())
+        {
+            foreach(Show? show in shows)
+            {
+                if (show != null)
+                {
+                    Guid? viewerID = show.FK_ViewerID_Owner;
+                    List<ShowSession?> Sessions = await this.get_Repo.GET_aShowsSessions(show.ID);
+                    List<ShowSessionJoins?> SessionJoins = await this.get_Repo.GET_aShowsJoinSessions(show.ID);
+                    List<ShowSubscriber?> Subscribers = await this.get_Repo.GET_aShowsSubscribers_by_showID(show.ID);
+                    List<Follower?> Followers = await this.get_Repo.GET_aShowsFollowers_by_showID(show.ID);
+                    List<ShowLikes?> ShowLikes = await this.get_Repo.GET_aShowsLikes_by_showID(show.ID);
+                    List<ShowComment?> ShowComments = await this.get_Repo.GET_aShowsComments_by_showID(show.ID);
+                    List<ShowDonation?> Donations = await this.get_Repo.GET_aShowsDonations_by_showID(show.ID);
+                    show.Sessions = Sessions;
+                    show.SessionJoins = SessionJoins;
+                    show.Subscribers = Subscribers;
+                    show.Followers = Followers;
+                    show.ShowLikes = ShowLikes;
+                    show.ShowComments = ShowComments;
+                    show.Donations = Donations;
+                    return shows;
+
+    //show.
+
+}
+            }
+            return shows;
+        }
+        else
+        {
+            return shows;
+        }
     }
 
     ////----------------------------------------------GET my ADMIN SECTION--------------------------------------------------
