@@ -76,5 +76,12 @@ namespace MS.MODELS
         public Guid personID { get; set; }
         public Guid commentID { get; set; }
     }
+
+    public class GetProductsDTO
+    {
+        public string? category { get; set; }
+        public int? type { get; set; }
+        public string? name { get; set; }
+    }
 }
 

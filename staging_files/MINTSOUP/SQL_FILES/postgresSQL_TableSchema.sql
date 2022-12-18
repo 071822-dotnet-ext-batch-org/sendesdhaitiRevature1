@@ -43,6 +43,8 @@ Create table MintSoupToken(
         updated TIMESTAMP not null default(NOW()),
         PRIMARY KEY (mstokenID)
 );
+Create index IF NOT EXISTS mintsouptoken_emails ON mintsouptoken (email);
+Create index IF NOT EXISTS mintsouptoken_usernames ON mintsouptoken (username);
 
 CREATE TABLE IF NOT EXISTS public.mstlocation
 (
@@ -76,11 +78,13 @@ CREATE TABLE IF NOT EXISTS public.mstlocation
     version character varying(10) COLLATE pg_catalog."default" NOT NULL DEFAULT ''::character varying,
     added timestamp without time zone NOT NULL DEFAULT now(),
     updated timestamp without time zone NOT NULL DEFAULT now(),
-    fk_mstokenid uuid DEFAULT uuid_generate_v4(),
+    fk_mstokenid uuid not null,
     CONSTRAINT mstlocation_pkey PRIMARY KEY (id),
     CONSTRAINT fk_mstoken_relation FOREIGN KEY (fk_mstokenid)
         REFERENCES public.mintsouptoken (mstokenid)
 );
+
+Create index IF NOT EXISTS mstlocation_mstokenids ON mstlocation (fk_mstokenid);
 
 Create table Person(
 	personID uuid DEFAULT(uuid_generate_v4()) primary key, --unique
@@ -91,19 +95,27 @@ Create table Person(
 	membership int not null default(0),
 	added TIMESTAMP not null default(NOW()),
 	updated TIMESTAMP not null default(NOW()),
-	fk_mstokenID uuid DEFAULT(uuid_generate_v4()),
+	fk_mstokenID uuid not null,
 	CONSTRAINT fk_mstoken_relation FOREIGN KEY(fk_mstokenID)
 			REFERENCES MintSoupToken(mstokenID)
 );
+
+Create index IF NOT EXISTS person_usernames ON person (username);
+Create index IF NOT EXISTS person_roles ON person (role);
+
+
+
 Create table Email(
 	emailID uuid DEFAULT(uuid_generate_v4()) primary key, --unique
-	email VARCHAR(200) not null default(''),
+	email VARCHAR(200) not null ,
 	added TIMESTAMP not null default(NOW()),
 	updated TIMESTAMP not null default(NOW()),
 	fk_personID uuid not null,
 	CONSTRAINT fk_person_relation FOREIGN KEY(fk_personID)
 			REFERENCES Person(personID)
 );
+
+Create index IF NOT EXISTS email_emails ON email (email);
 
 Create Table Address(
 	addressID uuid DEFAULT(uuid_generate_v4()) primary key, --unique
@@ -118,6 +130,8 @@ Create Table Address(
 	CONSTRAINT fk_person_relation FOREIGN KEY(fk_personID)
 			REFERENCES Person(personID)
 );
+
+Create index IF NOT EXISTS address_personids ON address (fk_personid);
 
 Create table Wallet_Person(
 	walletID uuid DEFAULT(uuid_generate_v4()) primary key,
@@ -152,6 +166,12 @@ Create table Store(
 			REFERENCES Person(personID)
 );
 
+Create index IF NOT EXISTS store_names ON store (storename);
+Create index IF NOT EXISTS store_ranks ON store (rank);
+Create index IF NOT EXISTS store_ratings ON store (rating);
+Create index IF NOT EXISTS store_owners ON store (fk_personid);
+
+
 Create table Wallet_Store(
 	walletID uuid DEFAULT(uuid_generate_v4()) primary key,
 	balance money not null,
@@ -179,6 +199,16 @@ Create Table Product(
 				REFERENCES Store(storeID)
 );
 
+Create index IF NOT EXISTS product_names ON product (name);
+Create index IF NOT EXISTS product_types ON product (type);
+Create index IF NOT EXISTS product_categories ON product (category);
+Create index IF NOT EXISTS product_prices ON product (price);
+Create index IF NOT EXISTS product_stores ON product (fk_storeid);
+Create index IF NOT EXISTS product_statuses ON product (productstatus);
+
+
+
+
 Create Table Category(
 	categoryID uuid DEFAULT(uuid_generate_v4()) primary key,
 	type int not null default(0), --product or service type
@@ -187,6 +217,8 @@ Create Table Category(
 	updated TIMESTAMP not null default(NOW())
 );
 
+Create index IF NOT EXISTS category_types ON category (type);
+Create index IF NOT EXISTS category_categories ON category (category);
 
 Create table Follower(
 	followerID uuid DEFAULT(uuid_generate_v4()) primary key,
@@ -234,39 +266,6 @@ Create Table "Order"(
 			REFERENCES Person(personID),
 	CONSTRAINT fk_store_relation FOREIGN KEY(fk_storeID)
 			REFERENCES Store(storeID)
-);
-
-Create Table IF NOT EXISTS "OrderReceipt"(
-	receiptID uuid DEFAULT(uuid_generate_v4()) primary key,
-	amount money not null default(0),
-	quantity int not null,
-	added TIMESTAMP not null default(NOW()),
-	updated TIMESTAMP not null default(NOW()),
-
-	fk_personID uuid not null,--a person
-	fk_orderID uuid not null,--made an order
-	fk_productID uuid not null,--containing this product
-	CONSTRAINT fk_person_customer_relation FOREIGN KEY(fk_personID)
-			REFERENCES Person(personID),
-	CONSTRAINT fk_order_relation FOREIGN KEY(fk_orderID)
-			REFERENCES "Order"(orderid),
-	CONSTRAINT fk_product_relation FOREIGN KEY(fk_productID)
-			REFERENCES Product(productid)
-);
-
-Create Table IF NOT EXISTS OrderInvoice(
-	invoiceid uuid DEFAULT(uuid_generate_v4()) primary key,
-	storename varchar(100) not null,
-	datepurchased TIMESTAMP not null,
-	payment_method varchar(25) not null,
-	card_number int not null,
-	quantity int not null,
-	added TIMESTAMP not null default(NOW()),
-	updated TIMESTAMP not null default(NOW()),
-
-	fk_orderID uuid not null,--made an order
-	CONSTRAINT fk_order_relation FOREIGN KEY(fk_orderID)
-			REFERENCES "Order"(orderid)
 );
 
 Create  table StoreLike(

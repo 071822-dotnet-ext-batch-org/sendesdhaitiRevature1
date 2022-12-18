@@ -1,3 +1,77 @@
+---------------------- get products by categoy, type and name --------------------
+DROP FUNCTION IF EXISTS get_products_by_category_name_and_type;
+CREATE OR REPLACE FUNCTION get_products_by_category_name_and_type(category_ varchar,  name_ varchar, type_ int)
+RETURNS setof product 
+	AS $$
+DECLARE
+   _prodname varchar := (name_);
+BEGIN
+  	return query SELECT * 
+	FROM product 
+	where product.name LIKE ('%'|| _prodname ||'%')
+	AND product.category = category_
+	AND product.type = type_
+	ORDER BY product.updated;
+END $$ language plpgsql;
+explain analyze select * from get_products_by_category_name_and_type( 'entertainment', 'product1', 1 );
+
+
+---------------------- get products by name --------------------
+DROP FUNCTION IF EXISTS get_products_by_name;
+CREATE OR REPLACE FUNCTION get_products_by_name(name_ varchar)
+RETURNS setof product 
+	AS $$
+BEGIN
+  	return query SELECT * 
+	FROM product 
+	where product.name = name_
+	ORDER BY product.updated;
+END $$ language plpgsql;
+explain analyze select * from get_products_by_name( 'product1' );
+
+---------------------- get products by category and type --------------------
+DROP FUNCTION IF EXISTS get_products_by_category_and_type;
+CREATE OR REPLACE FUNCTION get_products_by_category_and_type(category_ varchar, type_ int)
+RETURNS setof product 
+	AS $$
+BEGIN
+  	return query SELECT * 
+	FROM product 
+	WHERE type = type_ 
+	AND category = category_
+	ORDER BY updated;
+-- 	return query ret;
+END $$ language plpgsql;
+select * from get_products_by_category_and_type( 'entertainment' , 1);
+
+---------------------- get products by type --------------------
+DROP FUNCTION IF EXISTS get_products_by_type;
+CREATE OR REPLACE FUNCTION get_products_by_type(type_ int)
+RETURNS setof product 
+	AS $$
+BEGIN
+  	return query SELECT * 
+	FROM product 
+	WHERE type = type_
+	ORDER BY updated;
+-- 	return query ret;
+END $$ language plpgsql;
+select * from get_products_by_type(1);
+
+---------------------- get products by category --------------------
+DROP FUNCTION IF EXISTS get_products_by_category;
+CREATE OR REPLACE FUNCTION get_products_by_category(category_ varchar)
+RETURNS setof product 
+	AS $$
+BEGIN
+  	return query SELECT * 
+	FROM product 
+	WHERE category = category_
+	ORDER BY updated;
+-- 	return query ret;
+END $$ language plpgsql;
+select * from get_products_by_category('entertainment');
+
 ---------------------- get my person --------------------
 DROP FUNCTION IF EXISTS get_my_person;
 CREATE OR REPLACE FUNCTION get_my_person( mstoken uuid)

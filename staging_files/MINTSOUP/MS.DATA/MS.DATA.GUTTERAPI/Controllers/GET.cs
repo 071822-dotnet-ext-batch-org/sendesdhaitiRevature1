@@ -5,6 +5,7 @@ using MS.MODELS;
 using MS.DATA.GUTTERAPI;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
+using System.Diagnostics.Metrics;
 
 namespace MS.DATA.GUTTERAPI.Controllers;
 [EnableCors("MyAllowAllOrigins")]
@@ -88,6 +89,74 @@ public class GET_CONTROLLER : ControllerBase
             }
             Console.WriteLine($"The token {mstoken} got a person at {DateTime.Now}");
             return Ok(person);
+        }
+        return BadRequest();
+    }
+    //Task<List<Product>> get_products_by_category(string category);
+    //Task<List<Product>> get_products_by_type(Statuses.ProductType type);
+    //Task<List<Product>> get_products_by_category_and_type(string category, Statuses.ProductType type);
+    //Task<List<Product>> get_products_by_name(string name);
+
+    [HttpPost("get-products")]
+    public async Task<ActionResult<List<Product>>> Get_Products( [FromBody] GetProductsDTO dto)
+    {
+        if (ModelState.IsValid)
+        {
+            List<Product> products = new();
+            string? mstoken = Request.Headers["mstoken"];
+            try
+            {
+                if(mstoken != null)
+                {
+                    //if all three search args are used
+                    if(dto.category != null && dto.name != null && dto.type != null)
+                    {
+                        Console.WriteLine("all three args to search for products has been provided");
+                        products = await this.repo.get_products(dto.category, dto.name, (int) dto.type);
+                    }
+
+                    //if category and type search args are used
+                    else if ((dto.category != null) && (dto.name == null) && dto.type != null)
+                    {
+                        Console.WriteLine("category and type args to search for products has been provided");
+                        products = await this.repo.get_products(dto.category, (int) dto.type);
+                    }
+
+                    //if only category search arg is used
+                    else if (dto.category != null && dto.name == null && dto.type == null)
+                    {
+                        Console.WriteLine("only category arg to search for products has been provided");
+                        products = await this.repo.get_products(dto.category);
+                    }
+
+                    //if only name search arg is used
+                    else if (dto.category == null && dto.name != null && dto.type == null)
+                    {
+                        Console.WriteLine("only name arg to search for products has been provided");
+                        products = await this.repo.get_products_by_name(dto.name);
+                    }
+
+                    //if only type search arg is used
+                    else if (dto.category == null && dto.name == null && dto.type != null)
+                    {
+                        Console.WriteLine("only type arg to search for products has been provided");
+                        products = await this.repo.get_products( (int) dto.type);
+                    }
+
+                    //if all args are empty
+                    else if (dto.category == null && dto.name == null && dto.type == null)
+                    {
+                        Console.WriteLine(" No args to search for products have been provided");
+                        products = await this.repo.get_products();
+                    }
+                }
+            }
+            catch (ArgumentNullException msg)
+            {
+                Console.WriteLine($"The token used was null and as a result threw this exception: {msg}");
+            }
+            Console.WriteLine($"The token {mstoken} just searched for some products at {DateTime.Now}");
+            return Ok(products);
         }
         return BadRequest();
     }

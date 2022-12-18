@@ -28,6 +28,12 @@ namespace MS.REPO
         Task<List<Email>> GET_ALL_Emails(Guid personID);
         Task<Order> GET_MOST_RECENT_ORDER_by_PERSON_and_STOREID(Guid fk_personID, Guid fk_storeID);
         Task<Person> GET_myMOST_RECENT_PERSON_by_mstokenID(Guid mstoken);
+        Task<List<Product>> get_products();
+        Task<List<Product>> get_products(string category);
+        Task<List<Product>> get_products(int type);
+        Task<List<Product>> get_products(string category, int type);
+        Task<List<Product>> get_products_by_name(string name);
+        Task<List<Product>> get_products(string category,string name, int type);
     }
 
     public class dbaccess : Idbaccess
@@ -396,6 +402,223 @@ namespace MS.REPO
             }
             return person;
         }
+
+        public async Task<List<Product>> get_products()
+        {
+            string cmdstring = $"SELECT * from products Order by updated limit 50";
+            List<Product> objs = new();
+
+            using (NpgsqlConnection npgsqlConnection = this.connection.GETDBCONNECTION())
+            {
+                var command = new NpgsqlCommand(cmdstring, npgsqlConnection);
+
+                npgsqlConnection.Open();
+                NpgsqlDataReader ret = await command.ExecuteReaderAsync();
+                while (ret.Read())
+                {
+                    Product obj = new()
+                    {
+                        productID = ret.GetGuid(0),
+                        type = (Statuses.ProductType)this.actions.CONVERT_INT_TO_ENUM_STATUS(ret.GetInt32(1), typeof(Statuses.ProductType)),
+                        category = ret.GetString(2),
+                        name = ret.GetString(3),
+                        price = ret.GetDecimal(4),
+                        description = ret.GetString(5),
+                        productstatus = (Statuses.ProductStatus)this.actions.CONVERT_INT_TO_ENUM_STATUS(ret.GetInt32(6), typeof(Statuses.ProductStatus)),
+                        added = ret.GetDateTime(7),
+                        updated = ret.GetDateTime(8),
+                        fk_storeID = ret.GetGuid(9)
+                    };
+                    objs.Add(obj);
+                }
+                npgsqlConnection.Close();
+
+            }
+            return objs;
+        }
+
+        public async Task<List<Product>> get_products(string category)
+        {
+            string cmdstring = $"SELECT * from get_products_by_category( @category ) ";
+            List<Product> objs = new();
+            //msproperties.
+            using (NpgsqlConnection npgsqlConnection = this.connection.GETDBCONNECTION())
+            {
+                var command = new NpgsqlCommand(cmdstring, npgsqlConnection);
+                command.Parameters.AddWithValue("@category", category);
+
+                npgsqlConnection.Open();
+                NpgsqlDataReader ret = await command.ExecuteReaderAsync();
+                while (ret.Read())
+                {
+                    Product obj = new()
+                    {
+                        productID = ret.GetGuid(0),
+                        type = (Statuses.ProductType)this.actions.CONVERT_INT_TO_ENUM_STATUS(ret.GetInt32(1), typeof(Statuses.ProductType)),
+                        category = ret.GetString(2),
+                        name = ret.GetString(3),
+                        price = ret.GetDecimal(4),
+                        description = ret.GetString(5),
+                        productstatus = (Statuses.ProductStatus)this.actions.CONVERT_INT_TO_ENUM_STATUS(ret.GetInt32(6), typeof(Statuses.ProductStatus)),
+                        added = ret.GetDateTime(7),
+                        updated = ret.GetDateTime(8),
+                        fk_storeID = ret.GetGuid(9)
+                    };
+                    objs.Add(obj);
+                }
+                npgsqlConnection.Close();
+
+            }
+            return objs;
+        }
+
+
+        public async Task<List<Product>> get_products(int type)
+        {
+            string cmdstring = $"SELECT * from get_products_by_type( @type ) ";
+            List<Product> objs = new();
+            //msproperties.
+            using (NpgsqlConnection npgsqlConnection = this.connection.GETDBCONNECTION())
+            {
+                var command = new NpgsqlCommand(cmdstring, npgsqlConnection);
+                command.Parameters.AddWithValue("@type", type);
+
+                npgsqlConnection.Open();
+                NpgsqlDataReader ret = await command.ExecuteReaderAsync();
+                while (ret.Read())
+                {
+                    Product obj = new()
+                    {
+                        productID = ret.GetGuid(0),
+                        type = (Statuses.ProductType)this.actions.CONVERT_INT_TO_ENUM_STATUS(ret.GetInt32(1), typeof(Statuses.ProductType)),
+                        category = ret.GetString(2),
+                        name = ret.GetString(3),
+                        price = ret.GetDecimal(4),
+                        description = ret.GetString(5),
+                        productstatus = (Statuses.ProductStatus)this.actions.CONVERT_INT_TO_ENUM_STATUS(ret.GetInt32(6), typeof(Statuses.ProductStatus)),
+                        added = ret.GetDateTime(7),
+                        updated = ret.GetDateTime(8),
+                        fk_storeID = ret.GetGuid(9)
+                    };
+                    objs.Add(obj);
+                }
+                npgsqlConnection.Close();
+
+            }
+            return objs;
+        }
+
+        public async Task<List<Product>> get_products(string category, int type)
+        {
+            string cmdstring = $"SELECT * from get_products_by_category_and_type( @category, @type ) ";
+            List<Product> objs = new();
+
+            using (NpgsqlConnection npgsqlConnection = this.connection.GETDBCONNECTION())
+            {
+                var command = new NpgsqlCommand(cmdstring, npgsqlConnection);
+                command.Parameters.AddWithValue("@category", category);
+                command.Parameters.AddWithValue("@type", type);
+
+                npgsqlConnection.Open();
+                NpgsqlDataReader ret = await command.ExecuteReaderAsync();
+                while (ret.Read())
+                {
+                    Product obj = new()
+                    {
+                        productID = ret.GetGuid(0),
+                        type = (Statuses.ProductType)this.actions.CONVERT_INT_TO_ENUM_STATUS(ret.GetInt32(1), typeof(Statuses.ProductType)),
+                        category = ret.GetString(2),
+                        name = ret.GetString(3),
+                        price = ret.GetDecimal(4),
+                        description = ret.GetString(5),
+                        productstatus = (Statuses.ProductStatus)this.actions.CONVERT_INT_TO_ENUM_STATUS(ret.GetInt32(6), typeof(Statuses.ProductStatus)),
+                        added = ret.GetDateTime(7),
+                        updated = ret.GetDateTime(8),
+                        fk_storeID = ret.GetGuid(9)
+                    };
+                    objs.Add(obj);
+                }
+                npgsqlConnection.Close();
+
+            }
+            return objs;
+        }
+
+
+        public async Task<List<Product>> get_products_by_name(string name)
+        {
+            string cmdstring = $"SELECT * from get_products_by_name( @name ) ";
+            List<Product> objs = new();
+            //msproperties.
+            using (NpgsqlConnection npgsqlConnection = this.connection.GETDBCONNECTION())
+            {
+                var command = new NpgsqlCommand(cmdstring, npgsqlConnection);
+                command.Parameters.AddWithValue("@name", name);
+
+                npgsqlConnection.Open();
+                NpgsqlDataReader ret = await command.ExecuteReaderAsync();
+                while (ret.Read())
+                {
+                    Product obj = new()
+                    {
+                        productID = ret.GetGuid(0),
+                        type = (Statuses.ProductType)this.actions.CONVERT_INT_TO_ENUM_STATUS(ret.GetInt32(1), typeof(Statuses.ProductType)),
+                        category = ret.GetString(2),
+                        name = ret.GetString(3),
+                        price = ret.GetDecimal(4),
+                        description = ret.GetString(5),
+                        productstatus = (Statuses.ProductStatus)this.actions.CONVERT_INT_TO_ENUM_STATUS(ret.GetInt32(6), typeof(Statuses.ProductStatus)),
+                        added = ret.GetDateTime(7),
+                        updated = ret.GetDateTime(8),
+                        fk_storeID = ret.GetGuid(9)
+                    };
+                    objs.Add(obj);
+                }
+                npgsqlConnection.Close();
+
+            }
+            return objs;
+        }
+
+
+        public async Task<List<Product>> get_products(string category, string name, int type)
+        {
+            string cmdstring = $"SELECT * from get_products_by_category_name_and_type( @category, @name, @type ) ";
+            List<Product> objs = new();
+
+            using (NpgsqlConnection npgsqlConnection = this.connection.GETDBCONNECTION())
+            {
+                var command = new NpgsqlCommand(cmdstring, npgsqlConnection);
+                command.Parameters.AddWithValue("@category", category);
+                command.Parameters.AddWithValue("@name", name);
+                command.Parameters.AddWithValue("@type", type);
+
+                npgsqlConnection.Open();
+                NpgsqlDataReader ret = await command.ExecuteReaderAsync();
+                while (ret.Read())
+                {
+                    Product obj = new()
+                    {
+                        productID = ret.GetGuid(0),
+                        type = (Statuses.ProductType)this.actions.CONVERT_INT_TO_ENUM_STATUS(ret.GetInt32(1), typeof(Statuses.ProductType)),
+                        category = ret.GetString(2),
+                        name = ret.GetString(3),
+                        price = ret.GetDecimal(4),
+                        description = ret.GetString(5),
+                        productstatus = (Statuses.ProductStatus)this.actions.CONVERT_INT_TO_ENUM_STATUS(ret.GetInt32(6), typeof(Statuses.ProductStatus)),
+                        added = ret.GetDateTime(7),
+                        updated = ret.GetDateTime(8),
+                        fk_storeID = ret.GetGuid(9)
+                    };
+                    objs.Add(obj);
+                }
+                npgsqlConnection.Close();
+
+            }
+            return objs;
+        }
+
+        
 
 
 

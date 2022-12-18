@@ -4,7 +4,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { GeolocationService } from '@ng-web-apis/geolocation';
 import { Observable } from 'rxjs';
 import { environment as env } from 'src/environments/environment';
-import { Store } from '../store/store.component';
+import { Product, Store } from '../store/store.component';
 import { HttpHeaders } from '@angular/common/http';
 import { getMSTOKEN } from 'projects/authentication/src/app/app.module';
 
@@ -71,4 +71,15 @@ export class StoreService {
 
     }
   }//END
+
+  public get_products(category?:string, type?:number, name?:string)
+  {
+    
+    console.log(`getting products`)
+    return this.http.post<Product[]>(this.API + `get-products/`, {
+      "category": category,
+      "type": type,
+      "name": name
+    }, {headers: this.header})
+  }
 }
