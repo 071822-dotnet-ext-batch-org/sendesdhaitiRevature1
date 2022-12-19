@@ -9,97 +9,48 @@
           <div class="row flex-row flex-nowrap overflow-auto">
               <div class="col-3" *ngFor="let store of stores">
                   <div class="card card-block">
-                    
+                    <!-- storeID:string,
+                    fk_personID: string,
+                    storename: string,
+                    storeimage: string,
+                    clients: number,
+                    views: number,
+                    likes: number,
+                    comments:number,
+                    rating: number,
+                    rank: number,
+                    privacylevel: number,
+                    storestatus: number,
+                    added: Date,
+                    updated: Date
+                    products:Product[]   -->
                     <div class="card-deck">
                       <div class="card">
-                        <img src="..." class="card-img-top" alt="...">
+                        <img [src]="store.storeimage" class="card-img-top" alt="upload an image">
                         <div class="card-body">
-                          <h5 class="card-title">Card title</h5>
-                          <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                          <h4 class="card-title">{{store.storename}}</h4>
+                          <p class="card-text">Rating: {{store.rating}}</p>
+                          <p class="card-text">Ranked at: {{store.rank}}</p>
+                          <p class="card-text">Joined: {{store.added | date:'short'}}</p>
+                          <button >Visit</button>
                         </div>
                         <div class="card-footer">
-                          <small class="text-muted">Last updated 3 mins ago</small>
+                          <small class="text-muted">Last updated {{store.updated | date:'medium' }}</small>
                         </div>
                       </div>
                     </div>
   
                   </div>
                 </div>
-  
-              <div class="col-3">
-                <div class="card card-block">
-                  
-                  <div class="card-deck">
-                    <div class="card">
-                      <img src="..." class="card-img-top" alt="...">
-                      <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                      </div>
-                      <div class="card-footer">
-                        <small class="text-muted">Last updated 3 mins ago</small>
-                      </div>
-                    </div>
-                  </div>
-  
-                </div>
-            </div>
-  
-              <div class="col-3">
-                  <div class="card card-block">
-                    <div class="card-deck">
-                      <div class="card">
-                        <img src="..." class="card-img-top" alt="...">
-                        <div class="card-body">
-                          <h5 class="card-title">Card title</h5>
-                          <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                        </div>
-                        <div class="card-footer">
-                          <small class="text-muted">Last updated 3 mins ago</small>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-              </div>
-              <div class="col-3">
-                  <div class="card card-block">
-                    <div class="card-deck">
-                      <div class="card">
-                        <img src="..." class="card-img-top" alt="...">
-                        <div class="card-body">
-                          <h5 class="card-title">Card title</h5>
-                          <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                        </div>
-                        <div class="card-footer">
-                          <small class="text-muted">Last updated 3 mins ago</small>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-              </div>
-              <div class="col-3">
-                  <div class="card card-block">
-                    <div class="card-deck">
-                      <div class="card">
-                        <img src="..." class="card-img-top" alt="...">
-                        <div class="card-body">
-                          <h5 class="card-title">Card title</h5>
-                          <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                        </div>
-                        <div class="card-footer">
-                          <small class="text-muted">Last updated 3 mins ago</small>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-              </div>
   
           </div>
         </div>
 
         <ng-template class="container"  #nostores>
-          <div class="border border-primary rounded-pill" style="margin: auto; width: 100%;">
-            <h3 style="margin: auto; width: 15%;">No stores</h3>
+          <div class="border border-primary rounded-pill"  style="margin: auto; width: 100%; overflow: clip;">
+            <h3 style="display: flex; justify-content: center;">No stores</h3>
+            <h4 style="display: flex; justify-content: center;">Be the first to add one for free</h4>
+            <button routerLink="/mint/store/new" type="button" class="btn btn-primary btn-lg btn-block">Make my Store</button>
           </div>
         </ng-template>
 
@@ -141,7 +92,7 @@
               <span class="input-group-text" id="basic-addon1">Categories</span>
             </div>
             <select class="custom-select" id="inputGroupSelect03" aria-label="Example select with button addon" formControlName="category" (change)="search_products()">
-              <option selected value={{null}}>Choose...</option>
+              <option selected >Choose...</option>
               <option value="Product">Product</option>
               <option value="Service">Service</option>
             </select>
@@ -172,15 +123,20 @@
             <ol *ngIf="products.length > 0; else noproducts">
               <li *ngFor="let product of products">
                 <div class="card text-white bg-secondary mb-3" style="max-width: 90%; margin: auto; margin-top: 10px;  ">
-                  <div class="card-header">Product Name: product.name</div>
+                  <div class="card-header">Product Name: {{product.name}}</div>
                   <div class="card-body">
-                    <h5 class="card-title">Product Category: product.category</h5>
-                    <p class="card-text">Description: product.description</p>
+                    <h5 class="card-title">Product Category: {{product.category}}</h5>
+                    <p class="card-text">Description: {{product.description}}</p>
+                    <button [routerLink]="['mint/store/product']" [queryParams]="{ id: product.productID}">View</button>
                   </div>
                 </div>
               </li>
             </ol>
-            <ng-template #noproducts><h4>no products were found</h4></ng-template>
+            <ng-template #noproducts>
+              <h4>No products were found</h4>
+              <h5>Be the first to add one, you are the first of many</h5>
+              <button>Add a Product</button>
+            </ng-template>
           </div>
 
         </form>
@@ -206,7 +162,7 @@
       </div>
 
     </div>
-
+<!-- 
     <div class="card text-white bg-primary mb-3" style="max-width: 90%; margin: auto; margin-top: 10px;  ">
       <div class="card-header">Header</div>
       <div class="card-body">
@@ -220,7 +176,7 @@
         <h1>Welcome</h1>
         <h2>Store Page</h2>
         <h3>This is where the store apps content will be</h3>
-      </div>  
+      </div>   -->
     
 
 

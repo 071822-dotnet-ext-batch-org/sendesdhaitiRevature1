@@ -9,15 +9,30 @@ import { GeolocationService } from '@ng-web-apis/geolocation';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { StoreComponent } from './store/store.component';
+import { MakeStoreComponent } from './make-store/make-store.component';
+import { MyStoreComponent } from './my-store/my-store.component';
+import { MakeProductComponent } from './make-product/make-product.component';
+import { ProductDetailComponent } from './product-detail/product-detail.component';
+import { StoreDetailComponent } from './store-detail/store-detail.component';
 
 const routes: Routes = [
-  {path: "mint/store", component: StoreComponent},
+  {path: "mint/stores", component: StoreComponent},
+  {path: "mint/store/new", component: MakeStoreComponent},
+  {path: "mint/store/", component: StoreDetailComponent},
+  {path: "mint/store/my", component: MyStoreComponent},
+  {path: "mint/store/product/new", component: MakeProductComponent},
+  {path: "mint/store/product/", component: ProductDetailComponent},
 ]
 
 @NgModule({
   declarations: [
     AppComponent,
-    StoreComponent
+    StoreComponent,
+    MakeStoreComponent,
+    MyStoreComponent,
+    MakeProductComponent,
+    ProductDetailComponent,
+    StoreDetailComponent
   ],
   imports: [
     BrowserModule,

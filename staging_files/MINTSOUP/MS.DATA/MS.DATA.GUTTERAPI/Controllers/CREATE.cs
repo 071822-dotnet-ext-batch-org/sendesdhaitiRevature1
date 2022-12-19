@@ -38,7 +38,12 @@ namespace MS.DATA.GUTTERAPI.Controllers
             {
                 if (await this.check.CHECK_IF_PERSON_EXISTS(dto.personID))
                 {
-                    CHECK = await this.repo.CREATE_STORE(dto.personID, dto.storename, dto.image, dto.privacyLevel);
+                    Console.WriteLine($" {dto.privacyLevel} ");
+                    CHECK = await this.repo.CREATE_STORE(dto.personID, dto.storename, dto.image, (Statuses.Privacylevel)dto.privacyLevel);
+                    if (CHECK)
+                    {
+                        await this.repo.CREATE_STORES_ADDRESS(dto.personID, dto.address);
+                    }
                     Console.WriteLine($"{dto.personID} made a store called {dto.storename} at {DateTime.Now}");
                     return Created( "mystore/", CHECK);
                 }

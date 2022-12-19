@@ -20,8 +20,6 @@ import { NavComponent } from './Components/nav/nav.component';
 import { HomeComponent } from './Components/home/home.component';
 import { FooterComponent } from './Components/footer/footer.component';
 import { MSDataService } from './Service/msdata.service';
-import { ShowComponent } from './Components/show/show.component';
-import { ShowSessionComponent } from './Components/show-session/show-session.component';
 import { MenuComponent } from './Components/menu/menu.component';
 import { CustomerModule } from 'projects/customer/src/app/app.module';
 import { EmployeeModule } from 'projects/employee/src/app/app.module';
@@ -37,8 +35,6 @@ const routes: Routes = [
   {path: '', loadChildren:  () => OrdersModule},
   {path: '', loadChildren:  () => SettingsModule},
   {path: '', loadChildren:  () => StoreModule},
-  {path: 'shows', component: ShowComponent},
-  {path: 'shows/sesssion', component: ShowSessionComponent},
   // {path: "home", component: HomeComponent},
   // { path: '**', redirectTo: ''}
 ]
@@ -49,8 +45,6 @@ const routes: Routes = [
       NavComponent,
       HomeComponent,
       FooterComponent,
-      ShowComponent,
-      ShowSessionComponent,
       MenuComponent
     ],
     imports: [

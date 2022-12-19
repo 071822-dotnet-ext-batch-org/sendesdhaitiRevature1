@@ -1,9 +1,10 @@
 import { DatePipe, DATE_PIPE_DEFAULT_TIMEZONE } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit ,OnDestroy} from '@angular/core';
 import {GeolocationService} from '@ng-web-apis/geolocation';
 import { StoreService } from '../Services/store.service';
 import { Observer } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 // import {MatButtonModule} from '@angular/material/button';
 // import { TrackedObject } from 'ngx-googlemaps-tracking-view';
 
@@ -12,7 +13,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   templateUrl: './store.component.html',
   styleUrls: ['./store.component.css']
 })
-export class StoreComponent implements OnInit {
+export class StoreComponent implements OnInit, OnDestroy {
 
   private location?:GeolocationPosition
   private location2:any
@@ -23,14 +24,18 @@ export class StoreComponent implements OnInit {
   public products: Product[] = [];
   public searchform:FormGroup
 
-  constructor(private store:StoreService, private geo:GeolocationService, private form:FormBuilder) {
+  constructor(private store:StoreService, private geo:GeolocationService, private form:FormBuilder, private router:Router) {
     this.searchform = this.form.group({
       category: [null,Validators.required],
       producttype: [null, Validators.required],
       searchbar: [null,Validators.required]
     });
   }
-  
+  ngOnDestroy():void{
+    this.store.get_all_stores().subscribe().unsubscribe()
+    this.store.get_location().subscribe().unsubscribe()
+    this.store.get_api_location().subscribe().unsubscribe()
+  }
   ngOnInit(): void {
     this.get_locations()
 
@@ -61,6 +66,23 @@ export class StoreComponent implements OnInit {
         }
       }
     }
+  }
+
+  public go_to_product(pid:string){
+    this.router.navigate(
+      ['mint/store/product/'],
+      { queryParams: { id: pid } }
+    );
+  }
+
+  public go_to_store(sid:string){
+    this.router.navigate(
+      ['mint/store/'],
+      { queryParams: { id: sid },
+      queryParamsHandling: 'preserve'},
+      //(click)="go_to_store(store.storeID)"
+      //[routerLink]="['mint/store']" [queryParams]="{ id: store.storeID}"
+    );
   }
   
   private get_locations():void{
@@ -170,4 +192,12 @@ export interface StoreComments{
   updated:Date,
   fk_personID:string,
   fk_storeID:string
+}
+
+export interface Address{
+  street?: string ,
+  city?: string ,
+  state?: string ,
+  country?: string ,
+  areacode?: number
 }

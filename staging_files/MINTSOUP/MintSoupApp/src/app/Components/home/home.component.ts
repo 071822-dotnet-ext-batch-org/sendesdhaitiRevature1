@@ -74,6 +74,7 @@ export class HomeComponent implements OnInit {
             next: (ret:IPerson) => {
               let c:IPerson = ret
               this.setViewer(ret);
+              localStorage.setItem("PERSONID", ret.personID)
               console.log(`At ${Date.now()} - the viewer was gotten successfully with ${ret.personID}`);
             },
             error: (err) => {
