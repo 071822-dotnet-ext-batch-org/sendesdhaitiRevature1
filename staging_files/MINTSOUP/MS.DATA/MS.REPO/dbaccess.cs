@@ -1,16 +1,10 @@
 ﻿using System;
 using System.Reflection.Emit;
 using System.Reflection.Metadata;
-//using Microsoft.EntityFrameworkCore;
-//using Microsoft.EntityFrameworkCore.Design;
-//using Npgsql.EntityFrameworkCore.PostgreSQL;
-//using Npgsql.EntityFrameworkCore;
 using MS.MODELS;
 using MS.ACTIONS;
-//FROM PORSTGRES CODE_FIRST DOCs
 using Npgsql;
 using System.Data;
-//using System.Data.Entity;//from EntityFramework6.Npgsql Nuget 
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Reflection;//to use reflaection to iterate through class
@@ -34,6 +28,7 @@ namespace MS.REPO
         Task<List<Product>> get_products(string category, int type);
         Task<List<Product>> get_products_by_name(string name);
         Task<List<Product>> get_products(string category,string name, int type);
+        Task<Store> Get_my_Store_by_personidAsync(Guid personid);
     }
 
     public class dbaccess : Idbaccess
@@ -287,8 +282,9 @@ namespace MS.REPO
                         rating = ret.GetFloat(8),
                         rank = ret.GetInt32(9),
                         privacylevel = (Statuses.Privacylevel)this.actions.CONVERT_INT_TO_ENUM_STATUS(ret.GetInt32(10), typeof(Statuses.Privacylevel)),
-                        added = ret.GetDateTime(11),
-                        updated = ret.GetDateTime(12)
+                        storestatus = (Statuses.StoreStatus)this.actions.CONVERT_INT_TO_ENUM_STATUS(ret.GetInt32(11), typeof(Statuses.StoreStatus)),
+                        added = ret.GetDateTime(12),
+                        updated = ret.GetDateTime(13)
                     };
                     objs.Add(obj);
                 }
@@ -325,10 +321,50 @@ namespace MS.REPO
                         rating = ret.GetFloat(8),
                         rank = ret.GetInt32(9),
                         privacylevel = (Statuses.Privacylevel)this.actions.CONVERT_INT_TO_ENUM_STATUS(ret.GetInt32(10), typeof(Statuses.Privacylevel)),
-                        added = ret.GetDateTime(11),
-                        updated = ret.GetDateTime(12)
+                        storestatus = (Statuses.StoreStatus)this.actions.CONVERT_INT_TO_ENUM_STATUS(ret.GetInt32(11), typeof(Statuses.StoreStatus)),
+                        added = ret.GetDateTime(12),
+                        updated = ret.GetDateTime(13)
                     };
                     objs.Add(obj);
+                }
+                npgsqlConnection.Close();
+
+            }
+            return objs;
+        }
+
+        public async Task<Store> Get_my_Store_by_personidAsync(Guid personid)
+        {
+            string cmdstring = $"SELECT * from store where fk_personid = @personid Order BY updated Limit 1 ; ";
+            Store objs = new();
+            //msproperties.
+            using (NpgsqlConnection npgsqlConnection = this.connection.GETDBCONNECTION())
+            {
+                var command = new NpgsqlCommand(cmdstring, npgsqlConnection);
+                command.Parameters.AddWithValue("@personid", personid);
+
+                npgsqlConnection.Open();
+                NpgsqlDataReader ret = await command.ExecuteReaderAsync();
+                if (ret.Read())
+                {
+                    Store obj = new()
+                    {
+                        storeID = ret.GetGuid(0),
+                        fk_personID = ret.GetGuid(1),
+                        storename = ret.GetString(2),
+                        storeimage = ret.GetString(3),
+                        clients = ret.GetInt32(4),
+                        views = ret.GetInt32(5),
+                        likes = ret.GetInt32(6),
+                        comments = ret.GetInt32(7),
+                        rating = ret.GetFloat(8),
+                        rank = ret.GetInt32(9),
+                        privacylevel = (Statuses.Privacylevel)this.actions.CONVERT_INT_TO_ENUM_STATUS(ret.GetInt32(10), typeof(Statuses.Privacylevel)),
+                        storestatus = (Statuses.StoreStatus)this.actions.CONVERT_INT_TO_ENUM_STATUS(ret.GetInt32(11), typeof(Statuses.StoreStatus)),
+                        added = ret.GetDateTime(12),
+                        updated = ret.GetDateTime(13)
+                    };
+                    objs = obj;
                 }
                 npgsqlConnection.Close();
 

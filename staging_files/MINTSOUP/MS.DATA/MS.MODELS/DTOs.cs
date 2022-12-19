@@ -8,7 +8,17 @@ namespace MS.MODELS
         public Guid personID { get; set; }
         public string storename { get; set; } = "";
         public string image { get; set; } = "";
-        public Privacylevel privacyLevel { get; set; }
+        public int privacyLevel { get; set; }
+        public CreateShowsAddressDTO? address { get; set; }
+    }
+
+    public class CreateShowsAddressDTO
+    {
+        public string? street { get; set; }
+        public string? city { get; set; }
+        public string? state { get; set; }
+        public string? country { get; set; }
+        public int areacode { get; set; }
     }
 
     public class CreateProductDTO

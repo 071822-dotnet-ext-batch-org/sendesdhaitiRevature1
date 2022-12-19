@@ -72,6 +72,30 @@ public class GET_CONTROLLER : ControllerBase
         return BadRequest();
     }
 
+    [HttpGet("get-my-store/{personid}")]
+    public async Task<ActionResult<Store>> Get_Stores([FromRoute] Guid personid)
+    {
+        if (ModelState.IsValid)
+        {
+            Store store = new();
+            string? mstoken = Request.Headers["mstoken"];
+            try
+            {
+                if(mstoken != null)
+                {
+                    store = await this.repo.Get_my_Store_by_personidAsync(personid);
+                }
+            }
+            catch (ArgumentNullException msg)
+            {
+                Console.WriteLine($"The token used was null and as a result threw this exception: {msg}");
+            }
+            Console.WriteLine($"The token {mstoken} got a store at {DateTime.Now}");
+            return Ok(store);
+        }
+        return BadRequest();
+    }
+
     [HttpGet("myperson")]
     public async Task<ActionResult<Person>> Get_my_Person()
     {
@@ -92,10 +116,6 @@ public class GET_CONTROLLER : ControllerBase
         }
         return BadRequest();
     }
-    //Task<List<Product>> get_products_by_category(string category);
-    //Task<List<Product>> get_products_by_type(Statuses.ProductType type);
-    //Task<List<Product>> get_products_by_category_and_type(string category, Statuses.ProductType type);
-    //Task<List<Product>> get_products_by_name(string name);
 
     [HttpPost("get-products")]
     public async Task<ActionResult<List<Product>>> Get_Products( [FromBody] GetProductsDTO dto)

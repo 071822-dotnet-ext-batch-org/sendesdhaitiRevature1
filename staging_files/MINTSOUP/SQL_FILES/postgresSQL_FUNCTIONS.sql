@@ -1,3 +1,26 @@
+---------------------- create store's address --------------------
+DROP FUNCTION IF EXISTS create_stores_address;
+
+CREATE OR REPLACE FUNCTION public.create_stores_address(
+	personid_ uuid,
+	street_ character varying,
+	city_ character varying,
+	state_ character varying,
+	country_ character varying,
+	areacode_ integer)
+    RETURNS boolean
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+	BEGIN
+ 		INSERT INTO Address (fk_personid, street, city, state, country, areacode) VALUES(personid_, street_, city_, state_, country_, areacode_ );
+		return TRUE;
+		exception when others then 
+		return FALSE;
+	END;
+$BODY$;
+
 ---------------------- get products by categoy, type and name --------------------
 DROP FUNCTION IF EXISTS get_products_by_category_name_and_type;
 CREATE OR REPLACE FUNCTION get_products_by_category_name_and_type(category_ varchar,  name_ varchar, type_ int)
@@ -288,15 +311,15 @@ BEGIN
 					AND password = crypt(input_password, password);
 END $$ language plpgsql;
 
----------------------- create store with  --------------------
+---------------------- create store  --------------------
 DROP FUNCTION IF EXISTS create_store;
-CREATE OR REPLACE FUNCTION create_store(mstokenID uuid, sname varchar, image varchar, privacy int)
+CREATE OR REPLACE FUNCTION create_store(personid uuid, sname varchar, image varchar, privacy int)
 RETURNS boolean 
 LANGUAGE PLPGSQL
 AS
  $$
 	BEGIN
- 		INSERT INTO Store (fk_personID, storename, storeimage, privacylevel) VALUES( get_personID_with_mstokenID(mstokenID) , sname, image, privacy);
+ 		INSERT INTO Store (fk_personID, storename, storeimage, privacylevel) VALUES( personid , sname, image, privacy);
 		return TRUE;
 		exception when others then 
 		return FALSE;

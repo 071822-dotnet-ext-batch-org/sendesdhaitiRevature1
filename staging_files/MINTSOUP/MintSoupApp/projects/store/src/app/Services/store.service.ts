@@ -4,7 +4,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { GeolocationService } from '@ng-web-apis/geolocation';
 import { Observable } from 'rxjs';
 import { environment as env } from 'src/environments/environment';
-import { Product, Store } from '../store/store.component';
+import { Address, Product, Store } from '../store/store.component';
 import { HttpHeaders } from '@angular/common/http';
 import { getMSTOKEN } from 'projects/authentication/src/app/app.module';
 
@@ -21,6 +21,38 @@ export class StoreService {
   private API:string = env.API.Data.Data;
   private header: HttpHeaders = new HttpHeaders();
   private mstoken:any;
+  
+  private get_personsID(){
+    const personID = localStorage.getItem("PERSONID")
+    if(personID){
+      return personID;
+    }
+    else{
+      return undefined;
+    }
+  }
+
+  create_store(storename?:string, image?:any, privacy_level?:boolean, optional_address?:Address)
+  {
+    const personid = this.get_personsID() 
+    let pl:number
+    if(privacy_level == true){ pl = 1}
+    else{pl = 0}
+
+    return this.http.post<boolean>(this.API + "create-store", {
+      "personid":personid,
+      "storename":storename,
+       "image":image,
+       "privacy_level":pl,
+      "optional_address":JSON.stringify(optional_address)
+    }, {headers:this.header})
+  }
+
+  get_my_store()
+  {
+    let personID = this.get_personsID()
+    return this.http.get<Store>(this.API + "get-my-store/" + personID, {headers:this.header})
+  }
   
   get_token():Observable<boolean>
   {

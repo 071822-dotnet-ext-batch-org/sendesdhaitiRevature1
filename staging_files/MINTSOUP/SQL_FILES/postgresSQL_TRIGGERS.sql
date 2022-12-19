@@ -166,16 +166,17 @@ EXECUTE FUNCTION delete_all_that_belongs_to_person();
 
 ---------------------- after insert on Store--------------------
 DROP TRIGGER IF EXISTS insertStoreWallet_when_a_store_is_inserted  on Store;
-DROP FUNCTION IF EXISTS createStoreWallet_when_a_store_is_inserted;
-CREATE OR REPLACE FUNCTION createStoreWallet_when_a_store_is_inserted()
-RETURNS TRIGGER
-LANGUAGE PLPGSQL
-AS
-$$
+CREATE OR REPLACE FUNCTION public.createstorewallet_when_a_store_is_inserted()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
 	BEGIN
 		INSERT INTO Wallet_Store (fk_storeID, balance) VALUES(NEW.storeID, 0);
+        RETURN NEW;
 	END;
-$$;
+$BODY$;
 
 CREATE TRIGGER insertStoreWallet_when_a_store_is_inserted
 AFTER INSERT 

@@ -4,8 +4,8 @@ using MS.ACTIONS;
 using Npgsql;
 using Npgsql.Internal;
 using System.Data;
-using System.Xml.Linq;
-using System.Security.Cryptography.X509Certificates;
+//using System.Xml.Linq;
+//using System.Security.Cryptography.X509Certificates;
 
 namespace MS.REPO
 {
@@ -17,6 +17,7 @@ namespace MS.REPO
         Task<bool> CREATE_ORDER(Guid personID, Guid storeid, Statuses.ProductType type, string category, decimal amount, string desc, Statuses.OrderStatus orderStatus);
         Task<bool> CREATE_ORDER_INVOICE(Guid fk_orderID, string storename, string payment_method, int card_number, int quantity);
         Task<bool> CREATE_ORDER_RECEIPT(Guid fk_personID, Guid fk_orderID, Guid fk_productID, decimal amount, int quantity);
+        Task<bool> CREATE_STORES_ADDRESS(Guid personID, CreateShowsAddressDTO? address);
 
     }
 
@@ -30,7 +31,7 @@ namespace MS.REPO
 
         public async Task<bool> CREATE_STORE(Guid personID, string storename, string image, Statuses.Privacylevel privacyLevel)
         {
-            string cmdstring = $" SELECT * from create_store(@personID, @storename, @image, @pl)";
+            string cmdstring = $" INSERT INTO store (fk_personID, storename, storeimage, privacylevel) VALUES( @personID , @storename, @image, @privacyLevel); ";
             bool check = false;
             using(NpgsqlConnection dbconnection = this.connection.GETDBCONNECTION())
             {
@@ -38,7 +39,7 @@ namespace MS.REPO
                 command.Parameters.AddWithValue("@personID", personID);
                 command.Parameters.AddWithValue("@storename", storename);
                 command.Parameters.AddWithValue("@image", image);
-                command.Parameters.AddWithValue("@pl", privacyLevel);
+                command.Parameters.AddWithValue("@privacyLevel", ((int)privacyLevel));
 
                 dbconnection.Open();
                 int ret = await command.ExecuteNonQueryAsync();
@@ -51,9 +52,35 @@ namespace MS.REPO
             return check;
         }//END
 
+        public async Task<bool> CREATE_STORES_ADDRESS(Guid personID, CreateShowsAddressDTO? address)
+        {
+            string cmdstring = $" SELECT * from create_stores_address( @personID, @street, @city, @state, @country, @areacode ) ;";
+            bool check = false;
+            if(address == null) { return check; }
+            using (NpgsqlConnection dbconnection = this.connection.GETDBCONNECTION())
+            {
+                var command = new NpgsqlCommand(cmdstring, dbconnection);
+                command.Parameters.AddWithValue("@personID", personID);
+                command.Parameters.AddWithValue("@street", address.street);
+                command.Parameters.AddWithValue("@city", address.city);
+                command.Parameters.AddWithValue("@state", address.state);
+                command.Parameters.AddWithValue("@country", address.country);
+                command.Parameters.AddWithValue("@areacode", address.areacode);
+
+                dbconnection.Open();
+                int ret = await command.ExecuteNonQueryAsync();
+                if (ret > 0)
+                {
+                    check = true;
+                }
+                dbconnection.Close();
+            }
+            return check;
+        }//END
+
         public async Task<bool> CREATE_PRODUCT( Guid storeID, Statuses.ProductType type, string category, string name, decimal price, string description, Statuses.ProductStatus status)
         {
-            string cmdstring = $" SELECT * from create_product(@storeID,  @type, @category, @name, @price, @description, @status)";
+            string cmdstring = $" SELECT * from create_product(@storeID,  @type, @category, @name, @price, @description, @status) ;";
             bool check = false;
             using (NpgsqlConnection dbconnection = this.connection.GETDBCONNECTION())
             {
@@ -100,7 +127,7 @@ namespace MS.REPO
 
         public async Task<bool> CREATE_ORDER(Guid personID, Guid storeid, Statuses.ProductType type, string category, decimal amount, string desc, Statuses.OrderStatus orderStatus)
         {
-            string cmdstring = $" SELECT * from create_order(@personID, @storeid, @type, @category, @amount , @desc , @orderStatus)";
+            string cmdstring = $" SELECT * from create_order(@personID, @storeid, @type, @category, @amount , @desc , @orderStatus) ;";
             bool check = false;
             using (NpgsqlConnection dbconnection = this.connection.GETDBCONNECTION())
             {
@@ -126,7 +153,7 @@ namespace MS.REPO
 
         public async Task<bool> CREATE_ORDER_RECEIPT(Guid fk_personID, Guid fk_orderID, Guid fk_productID, decimal amount, int quantity)
         {
-            string cmdstring = $" SELECT * from create_order_receipt(@fk_personID, @fk_orderID, @fk_productID, @amount, @quantity)";
+            string cmdstring = $" SELECT * from create_order_receipt(@fk_personID, @fk_orderID, @fk_productID, @amount, @quantity) ;";
             bool check = false;
             using (NpgsqlConnection dbconnection = this.connection.GETDBCONNECTION())
             {
@@ -150,7 +177,7 @@ namespace MS.REPO
 
         public async Task<bool> CREATE_ORDER_INVOICE(Guid fk_orderID, string storename , string payment_method, int card_number, int quantity)
         {
-            string cmdstring = $" SELECT * from create_order_invoice( @fk_orderID, @storename, @payment_method, @card_number, @quantity)";
+            string cmdstring = $" SELECT * from create_order_invoice( @fk_orderID, @storename, @payment_method, @card_number, @quantity) ;";
             bool check = false;
             using (NpgsqlConnection dbconnection = this.connection.GETDBCONNECTION())
             {
